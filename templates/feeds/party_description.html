@@ -1,0 +1,27 @@
+{% with obj.beneficiaries.all as beneficiaries %}
+    <ul>
+        {% if beneficiaries %}
+        	<li>
+        		<span class="detail_head">For:</span>
+        		{% for b in beneficiaries %}
+        			<a href="http://www.politicalpartytime.org/search/Beneficiary/{{ b.name }}">{{ b }}</a>
+        		{% endfor %}
+        	</li>
+    	{% endif %}
+    	{% with obj.hosts.all as hosts %}
+    	    {% if hosts %}<li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="http://www.politicalpartytime.org/search/Host/{{ host }}">{{ host }}</a> {% endfor %}</li>{% endif %}
+    	{% endwith %}
+    	{% if obj.start_date %}<li><span class="detail_head">When:</span> {{ obj.start_date }} ({{ obj.start_time }} - {{ obj.end_time }})</a></li>{% endif %}
+    	{% if obj.venue_name %}<li><span class="detail_head">Where:</span> <a href="http://www.politicalpartytime.org/search/Venue_Name/{{ obj.venue_name }}">{{ obj.venue_name }}</a> - {{ obj.venue_address }}</li>{% endif %}
+    	{% if obj.entertainment_type %}<li><span class="detail_head">Type of Event:</span> <a href="http://www.politicalpartytime.org/search/Entertainment_Type/{{ obj.entertainment_type }}">{{ obj.entertainment_type }}</a></li>{% endif %}
+    	{% with obj.other_members.all as other_members %}
+    	    {% if other_members %}<li><span class="detail_head">Also in Attendance:</span> {% for other_member in other_members %} <a href="http://www.politicalpartytime.org/search/Other_Members_of_Congress/{{ other_member }}">{{ other_member }}</a> {% endfor %}</li>{% endif %}
+    	{% endwith %}
+    	{% if obj.contributions_info %}<li><span class="detail_head">Contribution Information:</span> {{ obj.contributions_info }}</li>{% endif %}
+    	{% if obj.make_checks_payable_to %}<li><span class="detail_head">Make Checks Payable To:</span> {{ obj.make_checks_payable_to }} - {{ obj.checks_payable_to_address }}</li>{% endif %}
+    	{% if obj.committee_id %}<li><span class="detail_head">Committee ID:</span> {{ obj.committee_id }}</li>{% endif %}
+    	{% if obj.rsvp_info %}<li><span class="detail_head">RSVP:</span> {{ obj.rsvp_info }}</li>{% endif %}
+    	{% if obj.event__paid_for_by %}<li><span class="detail_head">Event Paid for by:</span> {{ obj.event__paid_for_by }}</li>{% endif %}
+    	{% if obj.distribution_paid_for_by %}<li><span class="detail_head">Distribution Paid for by:</span> {{ obj.distribution_paid_for_by }}</li>{% endif %}
+    </ul>
+{% endwith %}

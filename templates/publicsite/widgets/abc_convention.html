@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>politicalpartytime.org</title>
+	<style type="text/css">
+		body { margin: 0; padding: 0; }
+		#pt_container { border:1px solid #000000; width:322px; height: 148px; background-color:#f4f4f4; overflow: hidden; }
+		#pt_container a:link { text-decoration:none; color:#000000;}
+		#pt_container a:visited {  text-decoration:none; color:#000000;}
+		#pt_container a:hover {  text-decoration:none; color:#cc0000; }
+		#pt_container a:active {  text-decoration:none; color:#000000;}
+		#pt_date { width:40px; padding:10px; padding-top:12px; font-size:12px; font-family:Helvetica Neue, Corbel, Tahoma, Arial, Trebuchet MS, sans-serif; text-align:center; height: 40px; float:left;}
+		#pt_event { font-size:12px; padding:10px; font-family:Helvetica Neue, Corbel, Tahoma, Arial, Trebuchet MS, sans-serif;}
+		#pt_more { font-size:11px; padding:5px; padding-top:8px; font-family:Helvetica Neue, Corbel, Tahoma, Arial, Trebuchet MS, sans-serif; font-weight:bold; clear:both; border-top:1px solid #b0b0b0; margin-left:3px; margin-right:3px;}
+	</style>
+</head>
+<body>
+	<div id="pt_container">
+		<a href="http://politicalpartytime.org/convention/{{ args }}/">
+			<img src="http://widgets.politicalpartytime.org/abc/pt_{{ convention }}_head.gif" border="0">
+		</a>
+		<div id="pt_date">
+			<a href="http://politicalpartytime.org/party/{{ doc.id }}">
+				<strong>{{ doc.start_date|date:"N jS" }}</strong>
+			</a>
+		</div>
+		<div id="pt_event">
+			<a href="http://politicalpartytime.org/party/{{ doc.id }}" class="listings">
+				{% if doc.entertainment.entertainment_type %}{{ doc.entertainment.entertainment_type }}{% endif %}
+				{% if doc.venue.venue_name %}@ {{ doc.venue.venue_name }}{% endif %}
+				{% with doc.beneficiaries.all as beneficiaries %}
+				    {% if beneficiaries %}
+				        For: {% for beneficiary in beneficiaries %}{{ beneficiary }} {%endfor%}
+				    {% endif %}
+			    {% endwith %}
+			</a>
+		</div>
+		<div id="pt_more">
+			<a href="http://politicalpartytime.org/convention/{{ convention }}/">See more 2008 Convention Party listings at Party Time</a>
+		</div> 
+	</div>
+</body>
+</html>

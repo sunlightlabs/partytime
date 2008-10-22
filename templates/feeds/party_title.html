@@ -1,0 +1,13 @@
+{% with obj.beneficiaries.all as beneficiaries %}
+    {% if obj.entertainment.entertainment_type %}
+    	{{ obj.entertainment.entertainment_type }}
+    {% else %}
+    	Event
+    {% endif %}	
+    {% if beneficiaries %}
+        for
+        {% for b in beneficiaries %}
+        	{{ b }}
+        {% endfor %}
+    {% endif %}
+{% endwith %}

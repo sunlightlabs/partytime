@@ -1,0 +1,21 @@
+{% extends "publicsite/base.html" %}
+
+{% block content %}
+
+<img src="http://media.sunlightprojects.org/partytime/images/contact.png" border="0">
+
+	<p>For press inquiries, contact Sunlight&#8217;s Communications Director at 202/742-1520 ext 236 or via Sunlight&#8217;s <a href="http://www.sunlightfoundation.com/contact/">contact form</a> and be sure to include &#8220;Attn: Communications Director&#8221; in the first line of your message.</p>
+
+	<p>To report any errors in data entry or comments on the site, please send an email using the form below.  </p>
+
+
+ <div id="contact_form">
+<fieldset>
+<legend>Send us an Email</legend>
+    <form action="." method="post" id="contactus">
+        {{ form.as_ul }}
+        <p class="submit"><input type="submit" value="Send Your Messsage"></p>
+    </form>
+</fieldset>
+</div>
+{% endblock %}

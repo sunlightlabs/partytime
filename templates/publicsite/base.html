@@ -1,0 +1,161 @@
+{% load partytime %}
+{% load cache %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+	<meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=" />
+	{% block refresh %}{% endblock %}
+	
+		<title>{% block title %}{% endblock %} Sunlight Foundation's Party Time!</title>
+		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/reset-min.css"> 
+		<link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/screen.css" type="text/css" media="screen, projection">
+		<!--[if IE]><link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/style.css"> 
+		<link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="http://politicalpartytime.org/feeds/upcoming/">
+		<link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="http://politicalpartytime.org/feeds/recent/">
+		<link rel="shortcut icon" href="http://sunlightfoundation.com/favicon.ico" type="image/x-icon">
+		<script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
+		<link rel="shortcut icon" href="http://media.sunlightprojects.org/partytime/images/favicon.ico">
+		<script type="text/javascript">
+		function toggleLayer( whichLayer )
+{
+  var elem, vis;
+  if( document.getElementById ) // this is the way the standards work
+    elem = document.getElementById( whichLayer );
+  else if( document.all ) // this is the way old msie versions work
+      elem = document.all[whichLayer];
+  else if( document.layers ) // this is the way nn4 works
+    elem = document.layers[whichLayer];
+  vis = elem.style;
+  // if the style.display value is blank we try to figure it out here
+  if(vis.display==''&&elem.offsetWidth!=undefined&&elem.offsetHeight!=undefined)
+    vis.display = (elem.offsetWidth!=0&&elem.offsetHeight!=0)?'block':'none';
+  vis.display = (vis.display==''||vis.display=='block')?'none':'block';
+}
+</script>
+		
+		
+		<style type="text/css" media="screen">
+		/************ moved to style.css in wp dir ***********/
+		</style>
+	</head>
+	<body>
+		
+		<div class="container bg_lines">	
+
+			<div class="column span-24">
+
+				<div id="masthead">
+
+					<div>
+						<div id="mast_sunlight" style="float:left; width:700px;"><a href="http://www.sunlightfoundation.com"><img src="http://media.sunlightprojects.org/partytime/images/sf_logo_horizontal.png"></a></div>
+						<div id="today_is">Today is {% now "F jS" %}</div>
+					</div>
+
+					<div id="mast_title" class="clear">
+						<a href="/"><img src="http://media.sunlightprojects.org/partytime/images/mast_title.png"></a>
+					</div>
+					
+					<div id="mast_nav">
+						<div class="mast_slogan">Documenting the Political Partying Circuit</div>
+						<div id="navbar">
+							<ul>
+								
+								<li><a href="http://www.politicalpartytime.org/blog/">BLOG</a></li>
+								<li><a href="/about/">ABOUT</a></li>
+								<li><a href="/methodology/">METHODOLOGY</a></li>
+								<li><a href="/faq/">FAQ</a></li>
+								<li><a href="/contact/">CONTACT</a></li>		
+							</ul>
+						</div>
+					</div>
+
+					<div id="partyfinder_bar">
+						<div class="partyfinder_copy">
+							From the early hours of the morning until late in the evening, politicians are partying. Sunlight's PARTY TIME can help you find out who is partying, where and when.</p>
+						</div>
+
+						<div class="partyfinder_box">				
+<form action="/search/" method="POST"><fieldset><legend>PARTYFINDER&#153;</legend><select name="field" id="field">
+<option value="Beneficiary" {% ifequal field "Beneficiary" %} selected {% endifequal %}>Beneficiary</option>
+<option value="Host" {% ifequal field "Host" %} selected {% endifequal %}>Host</option>
+<option value="Venue_Name" {% ifequal field "Venue_Name" %} selected {% endifequal %}>Venue Name</option>
+<option value="Entertainment_Type" {% ifequal field "Entertainment_Type" %} selected {% endifequal %}>Entertainment Type</option>
+<option value="Other_Members_of_Congress" {% ifequal field "Other_Members_of_Congress" %} selected {% endifequal %}>Other Lawmakers Mentioned</option>
+</select>
+<input id="args" type="text" name="args" size="15"><input type="submit" value="Find a Party!"></fieldset></form>
+<p class="hints"><em><a href="javascript:toggleLayer('partyfinder_explain');">Search Hints</a></em></p>
+						</div>
+
+					</div> <!--end partyfinder_bar -->
+
+				</div> <!--end masthead -->
+
+				<div id="content_container">
+					
+					<div class="column span-14">
+						<div id="content_box">
+							{% block content %}{% endblock %}
+						</div>
+					</div>
+
+					<div class="column span-9 last">
+					<div id="partyfinder_explain">
+					<h5>PARTYFINDER&#153; Hints</h5>
+									<p><strong>Beneficiary:</strong> congressional candidate, lawmaker, or entity which collects funds raised at party</p>
+									<p><strong>Host:</strong> person who is hosting party-often, but not always, a registered federal lobbyist </p>
+									<p><strong>Venue Name:</strong> where the party is </p>
+									<p><strong>Entertainment Type:</strong> type of gathering, such as "breakfast," "ski trip," "bowling" </p>
+									<p><strong>Other Lawmakers Mentioned:</strong> lawmakers mentioned on invitation who are used as a draw for the event </p>
+									<p>Note: You may wonder why you often see repeat entries for the same party. Sometimes we receive the same invitation from more than one source. We are working on eliminating these duplicates.</p>
+									</div>
+					
+					
+					
+						{% block sidebar %}{% endblock %}
+						
+						
+						
+						{% cache 7200 events %}
+						    {% upcoming_events %}
+    						<div id="got_invites"><a href="/upload/"><img src="http://media.sunlightprojects.org/partytime/images/got_invites.png" border="0"></a></div>
+    						{% recent_events %}
+                        {% endcache %}
+                        
+                        {% include "publicsite/includes/conventions.html" %}
+                        
+					</div> <!--end right col -->
+					
+				</div> <!--end content container box -->
+				
+			</div> <!-- end colspan 24 started right after container-->
+
+			<div class="column span-24">
+				<div id="footer">
+				<div id="footer_image"><a href="http://www.sunlightfoundation.com">
+				<img src="http://media.sunlightprojects.org/partytime/images/sf_logo_black.png" border="0"></a></div>
+				<div id="footer_copy"><strong>Founded in 2006, the Sunlight Foundation supports, develops and deploys new Internet technologies to make information about Congress and the federal government more accessible to the American people. Through its projects and grant-making, Sunlight serves as a catalyst to create greater political transparency and to foster more openness and accountability in government. Visit <a href="http://www.sunlightfoundation.com" class="white">SunlightFoundation.com</a> to learn more.</strong>
+				<!-- <br />
+				<br /> See also: OpenSecrets | FedSpending | EarmarkWatch | PublicMarkup | OpenCongress -->
+				</div>
+				
+				
+				</div>
+			</div>
+			
+		</div>
+		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+			var pageTracker = _gat._getTracker("UA-1265484-20");
+			pageTracker._initData();
+			pageTracker._trackPageview();
+		</script>
+		<script type="text/javascript" src="http://twitter.com/javascripts/blogger.js"></script>
+<script type="text/javascript" src="http://twitter.com/statuses/user_timeline/sfpartytime.json?callback=twitterCallback2&amp;count=1"></script>
+	</body>
+</html>
+

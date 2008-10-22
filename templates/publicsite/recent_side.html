@@ -1,0 +1,33 @@
+<a href="/recent/">
+    <img src="http://media.sunlightprojects.org/partytime/images/labels_recent.png" border="0">
+</a>
+<div id="rt_col_event">
+    <div id="rt_col_header">
+        <span class="rt_col_head_copy">RECENT FUNDRAISING EVENTS</span>
+        <a href="/feeds/recent/">
+            <img src="http://media.sunlightprojects.org/partytime/images/feed-icon-14x14.png" border="0">
+        </a>
+    </div>
+    {% for doc in docset %}
+        {% with doc.beneficiaries.all as beneficiaries %}
+        <div id="event_listing">
+            <ul>
+                <li>
+                    <div class="event_listing_date_box">
+                        <a href="/party/{{doc.id}}" class="listings">
+                            <span class="event_listing_date">{{ doc.start_date|date:"N j" }}</span>
+                        </a>
+                    </div>
+                    <div class="event_listing_data_box">
+                        <a href="/party/{{doc.id}}" class="listings">
+                            {% if doc.entertainment.entertainment_type %}{{ doc.entertainment.entertainment_type }} {% endif %}{% if doc.venue.venue_name %}@ {{ doc.venue.venue_name }}{% endif %}<br />
+                            {% if beneficiaries %}For: {% for beneficiary in beneficiaries %}{{ beneficiary }}  {%endfor%}<br />{% endif %}
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        {% endwith %}
+    {% endfor %}
+<div id="side_view_more"><a href="/recent/"><img src="http://media.sunlightprojects.org/partytime/images/view_more.png" border="0"></a></div>
+</div> <!--end recent-->

@@ -1,0 +1,44 @@
+{% extends "publicsite/base.html" %}
+
+{% block sidebar %}
+	{% include "publicsite/includes/about.html" %}
+{% endblock %}
+
+{% block content %}
+<a href="/blog/"><img src="http://media.sunlightprojects.org/partytime/images/party_blog_header.png" border="0"></a>
+<a href="/blog/feed/"><img src="http://media.sunlightprojects.org/partytime/images/party_blog_header_rss.png" border="0"></a>
+	<!--starts a blog post-->
+	
+	{% for post in blog_posts %}
+	
+		<div id="blog_post">
+		
+			<div class="blog_meta">
+				<span class="blog_category red2black">
+					{% for c in post.categories %}
+						<a href="http://politicalpartytime.org/blog/category/{{ c.slug }}/">{{ c.name|safe }}</a>
+					{% endfor %}
+				</span>
+				&bull; POSTED - {{ post.post_date.month }}.{{post.post_date.day}}.{{post.post_date.year}} BY {{post.author.user_name}}
+			</div>
+			
+			<h2><a href="{{ post.guid }}">{{ post.title }}</a></h2>
+			
+			<div class="the_post">
+				{{ post.clean_content|safe|linebreaks }}
+				<p style="text-align:right;">
+					<a href="{{ post.guid }}#comments">{{ post.comment_count}} comments</a>
+				</p>
+			</div>
+			
+			<div class="the_tags red2black">TAGS:
+				{% for t in post.tags %}
+					<a href="http://politicalpartytime.org/blog/tag/{{ t.slug }}/">{{ t.name|safe }}</a>{% if not forloop.last %},{% endif %}
+				{% endfor %}
+			</div>
+			
+		</div> 
+		
+	{% endfor %}
+	<div class="red2black" style="margin-bottom:2em;"><a href="/blog/page/2/">&larr; Previous Party Time Posts</a></div>
+{% endblock %}
