@@ -73,8 +73,8 @@ class Post(models.Model):
         pass
         
 class EventManager(models.Manager):
-    def ical(self,limit=10):
-        events = Event.objects.filter(start_date__isnull=False,status='').order_by('-start_date','-start_time')[:limit]
+    def ical(self):
+        events = Event.objects.filter(start_date__isnull=False,status='').order_by('-start_date','-start_time')
         return events 
    
     def recent(self, limit=10):
