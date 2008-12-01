@@ -73,7 +73,10 @@ class Post(models.Model):
         pass
         
 class EventManager(models.Manager):
-    
+    def ical(self,limit=10):
+        events = Event.objects.filter(start_date__isnull=False,status='').order_by('-start_date','-start_time')[:limit]
+        return events 
+   
     def recent(self, limit=10):
         events = Event.objects.filter(
                     start_date__lt=datetime.datetime.now(),
@@ -172,14 +175,14 @@ class Venue(models.Model):
     latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6, db_index=True)
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
     def __unicode__(self):
-        return self.venue_name
+        return u"%s" % (self.venue_name)
 
 class Entertainment(models.Model):
     entertainment_type = models.CharField(max_length=255)
     class Meta:
         db_table = u'publicsite_entertainment'
     def __unicode__(self):
-        return self.entertainment_type
+        return u"%s" % (self.entertainment_type)
 
 class Event(models.Model):
     objects = EventManager()
@@ -214,106 +217,3 @@ class Event(models.Model):
         db_table = u'publicsite_event'
     def __unicode__(self):
         return u"%s at %s" % (self.entertainment.entertainment_type, self.venue.venue_name)
-'''
-class EventBeneficiary(models.Model):
-    event_id = models.IntegerField(null=True, blank=True)
-    lawmaker_id = models.IntegerField(null=True, blank=True)
-    class Meta:
-        db_table = u'publicsite_event_beneficiary'
-
-class EventHosts(models.Model):
-    event_id = models.IntegerField(primary_key=True)
-    host_id = models.IntegerField()
-    class Meta:
-        db_table = u'publicsite_event_hosts'
-
-class EventOmc(models.Model):
-    event_id = models.IntegerField(primary_key=True)
-    lawmaker_id = models.IntegerField()
-    class Meta:
-        db_table = u'publicsite_event_omc'
-
-class EventTags(models.Model):
-    tag_id = models.IntegerField(primary_key=True)
-    event_id = models.IntegerField()
-    class Meta:
-        db_table = u'publicsite_event_tags'
-'''
-
-
-
-'''           
-class Event(models.Model):
-    
-    objects = EventManager()
-    
-    status = models.CharField(blank=True, max_length=255, db_index=True)
-    venue_id = 
-    entertainment_id = 
-     
-    start_date = models.DateField(blank=True, null=True)
-    start_time = models.TimeField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-    end_time = models.TimeField(blank=True, null=True)
-    
-    pdf_document_link = models.CharField(blank=True, max_length=255)
-    committee_id = models.CharField(blank=True, max_length=255)
-    
-    rsvp_info = models.CharField(blank=True, max_length=255)
-    event_paid_for_by = models.CharField(blank=True, max_length=255)
-    distribution_paid_for_by = models.CharField(blank=True, max_length=255)
-    make_checks_payable_to = models.CharField(blank=True, max_length=255)
-    checks_payable_to_address = models.CharField(blank=True, max_length=255)
-    contributions_info = models.CharField(blank=True, max_length=255)
-        
-    user_initials = models.CharField(blank=True, max_length=32)
-    data_entry_problems = models.TextField(blank=True)
-    
-    def __unicode__(self):
-        return u"%s at %s" % (self.entertainment_type, self.venue_name)
-
-class Other_Info(models.Model):
-    tag_name = models.CharField(blank=True,max_length=255, db_index=True)
-    
-    def __unicode__(self):
-        return self.tag_name
-
-    
-class Tags(models.Model):
-    tag_name = models.CharField(blank=True,max_length=255, db_index=True)
-    
-    def __unicode__(self):
-        return self.tag_name
-
-class Host(models.Model):
-    name = models.CharField(blank=True,max_length=255, db_index=True)
-    event = models.ForeignKey(Event, related_name='hosts')
-    
-    def __unicode__(self):
-        return self.name
-    
-class Lawmaker(models.Model):
-    title = models.CharField(blank=True,max_length=25, db_index=True)
-    name = models.CharField(blank=True,max_length=255, db_index=True)
-    party = models.CharField(blank=True,max_length=1)
-    state = models.CharField(blank=True,max_length=2)
-    district = models.CharField(blank=True,max_length=2)
-
-    event = models.ForeignKey(Event, related_name='other_members')
-    
-    def __unicode__(self):
-        return self.name
-
-class Venue(models.Model):
-    venue_name = models.CharField(blank=True,max_length=255)
-    venue_address = models.TextField(blank=True)
-    latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6, db_index=True)
-    longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
-    def __unicode__(self):
-        return self.venue_name
-
-class Entertainment(models.Model):
-    entertainment_type = models.CharField(blank=True, max_length=255)
-    def __unicode__(self):
-        return self.entertainment_type
-'''

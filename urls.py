@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
-from publicsite.feeds import RecentFeed, UpcomingFeed
+from publicsite.feeds import *
 
 from contact_form.forms import ContactForm
 
@@ -35,5 +35,6 @@ urlpatterns = patterns('',
     (r'^convention/$', 'partytime.publicsite.views.convention_list'),
     (r'^widget/abc_convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.abc_convention'),
     (r'^widget/abc_convention/$', 'partytime.publicsite.views.abc_convention'),
-    (r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming')
+    (r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming'),
+    (r'^ical/$', IcalFeed())
 )
