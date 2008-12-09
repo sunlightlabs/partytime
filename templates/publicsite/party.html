@@ -26,6 +26,10 @@
 			</div>
 		</div>
 
+	
+
+
+
 		<div id="party_data">
 			<ul>
 				{% with doc.beneficiaries.all as beneficiaries %}
@@ -56,7 +60,29 @@
 				{% if doc.rsvp_info %}<li><span class="detail_head">RSVP:</span> {{ doc.rsvp_info }}</li>{% endif %}
 				{% if doc.event__paid_for_by %}<li><span class="detail_head">Event Paid for by:</span> {{ doc.event__paid_for_by }}</li>{% endif %}
 				{% if doc.distribution_paid_for_by %}<li><span class="detail_head">Distribution Paid for by:</span> {{ doc.distribution_paid_for_by }}</li>{% endif %}
-			</ul>
+					</ul>
+				{% if doc.venue.latitude %} 
+				
+				
+					<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAkEpHXjFNm14XKpW83X-MLRRdQbzwbY56bYDtVz2O0JEKShpUKBRmLsQvMblKN89lblfAT7XTcvKk3Q" type="text/javascript"></script>
+									    <script type="text/javascript">
+										
+									    function initialize() {
+									      if (GBrowserIsCompatible()) {
+									        var map = new GMap2(document.getElementById("map_canvas"));
+									        map.setCenter(new GLatLng({{ doc.venue.longitude }}, {{ doc.venue.latitude }}), 13);
+											map.addControl(new GSmallMapControl());
+											map.addControl(new GMapTypeControl());
+											map.addOverlay(new GMarker(map.getCenter()));
+									      }
+									    }
+
+									    </script>
+<div id="map_canvas" style="width: 470px; height: 200px; margin-left:20px"></div>
+				{% endif %}
+				
+				
+		
 		</div>
 
 	</div>
