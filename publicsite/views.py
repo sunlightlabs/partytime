@@ -40,6 +40,11 @@ def search(request, field, args):
     events = Event.objects.by_field(field.lower(), args)
     return render_to_response('publicsite/search_results.html', {"field":field, "args":args, "docset":events})
 
+def search_embed(request, field, args):
+    events = Event.objects.by_field(field.lower(), args)
+    return render_to_response('publicsite/search_embed.html', {"field":field, "args":args, "docset":events})
+
+
 def convention_list(request, convention=''):
     
     if convention == 'republican':

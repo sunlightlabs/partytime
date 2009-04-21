@@ -1,0 +1,25 @@
+{% load partytime %}
+{% load cache %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+	<meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=" />
+	{% block refresh %}{% endblock %}
+	
+		<title>{% block title %}{% endblock %} Sunlight Foundation's Party Time!</title>
+		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/reset-min.css"> 
+		<link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/screen.css" type="text/css" media="screen, projection">
+		<!--[if IE]><link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/style.css"> 
+
+	</head>
+	<body style="background-image:none; background-color:#ffffff;">
+		
+	
+						<div id="content_box" style="padding:10px;">
+							{% block content %}{% endblock %}
+						</div>
+					</body>
+</html>
+
