@@ -2,8 +2,14 @@
 
 {% block content %}
 
-<h2 class="results_head">PARTYFINDER&#153; Results for "{{ args }}"</h2>
-<p><small>Note: You may wonder why you often see repeat entries for the same party. Sometimes we receive the same invitation from more than one source. We are working on eliminating these duplicates.</small></p>
+<h2 class="results_head">PARTYFINDER&#153; Results for "{{ args }}" within {{ field }}</h2>
+<span class="search_embed"><a href="javascript:toggleLayer('partyfinder_embed');">Embed these results on your site/blog</a></span>
+<div id="partyfinder_embed">
+<form>
+	<input name="embed_results" type="text" size="70" value='
+	<iframe src="http://politicalpartytime.org/search_embed/{{ field }}/{{ args}}/" width="520" height="500" frameborder="0" border="0"></iframe>'</input>
+</form>
+</div>
 
 {% for doc in docset %}
     <div id="summary_container">
@@ -37,5 +43,6 @@
         </div>
     </div>
 {% endfor %}
+<span class="search_disclaimer"><strong>Note:</strong> You may wonder why you often see repeat entries for the same party. Sometimes we receive the same invitation from more than one source. We are working on eliminating these duplicates.</span>
 
 {% endblock %}
