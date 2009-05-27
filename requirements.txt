@@ -1,0 +1,4 @@
+pip
+python-memcached
+-e svn+http://code.djangoproject.com/svn/django/tags/releases/1.0.2/#egg=django
+-e hg+http://bitbucket.org/ubernostrum/django-contact-form/#egg=django-contact-form
