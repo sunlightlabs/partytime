@@ -37,5 +37,8 @@ urlpatterns = patterns('',
     (r'^widget/abc_convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.abc_convention'),
     (r'^widget/abc_convention/$', 'partytime.publicsite.views.abc_convention'),
     (r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming'),
+    (r'^cmte/(?P<cmteid>\w{4})/$', 'partytime.publicsite.views.cmtedetail' ),
+    (r'^cmte/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes'),
+    (r'^cmte/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'} ),
     (r'^ical/$', IcalFeed())
 )

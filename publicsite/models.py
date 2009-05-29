@@ -3,6 +3,9 @@ from django.db import connection
 import datetime
 import re
 
+from sunlightapi import sunlight, SunlightApiError
+sunlight.apikey = '***REMOVED***'
+
 BLOCK_ELEMENTS = ('blockquote','ol','ul')
 BLOCK_ELEMENT_RE = re.compile(r"(%s)" % "|".join([r"<%s>(.*?)</%s>" % (e, e) for e in BLOCK_ELEMENTS]))
 
@@ -110,6 +113,19 @@ class EventManager(models.Manager):
         except:
             pass
 
+	
+    def by_cmte(self, cmteid):
+        since_year = 2009 #beginning of election cycle
+
+    	cmte = sunlight.committees.get(cmteid)
+    	SunLeg = cmte.members
+    	ev = []
+    	for m in SunLeg:
+        	for e in Event.objects.filter(start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__crp_id = m.crp_id,status=''):
+			ev.append(e)
+	ret = {"cmte": cmte, "events": ev, "nummems": len(SunLeg), "since_year": since_year } 
+	return ret
+
 class Host(models.Model):
     name = models.CharField(blank=True,max_length=255, db_index=True)
     class Meta:
@@ -130,6 +146,9 @@ class Lawmaker(models.Model):
     party = models.CharField(blank=True,max_length=1)
     state = models.CharField(blank=True,max_length=2)
     district = models.CharField(blank=True,max_length=2)
+    crp_id =  models.CharField(blank=True,max_length=15)
+    #cmtes = models.ManyToManyField(Committee,db_table=u'publicsite_committees')
+
     class Meta:
         db_table = u'publicsite_lawmaker'
     def __unicode__(self):
@@ -158,6 +177,14 @@ class Lawmaker(models.Model):
 	#info =  "" if self.district=="" and self.party=="" and self.state=="" else " ("+partyStr+self.state+districtStr+")"
         return u"%s%s%s" % (titleStr, self.name,info) 
 
+class Committee(models.Model):
+    title = models.CharField(blank=False,max_length=100)
+    #keyc = models.CharField(blank=False,max_length=6)
+    members = models.ManyToManyField(Lawmaker)
+    def __unicode__(self):
+        return self.title
+
+
 class OtherInfo(models.Model):
     event_id = models.IntegerField(null=True, blank=True)
     lawmaker_id = models.IntegerField(null=True, blank=True)
@@ -185,6 +212,8 @@ class Entertainment(models.Model):
         return u"%s" % (self.entertainment_type)
 
 class Event(models.Model):
+    def __unicode__(self):
+        return self.other_info
     objects = EventManager()
 
     entertainment = models.ForeignKey(Entertainment,null=True)
@@ -216,4 +245,4 @@ class Event(models.Model):
     class Meta:
         db_table = u'publicsite_event'
     def __unicode__(self):
-        return u"%s at %s" % (self.entertainment.entertainment_type, self.venue.venue_name)
+        return self.event_paid_for_by #u"%s at %s" % (self.entertainment.entertainment_type, self.venue.venue_name)

@@ -4,12 +4,15 @@ from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
-from partytime.publicsite.models import Event, Post
+from partytime.publicsite.models import *
 import random
 import simplejson
 import time
 import datetime
 
+
+from sunlightapi import sunlight, SunlightApiError
+sunlight.apikey = '***REMOVED***'
 #
 # view methods
 #
@@ -123,3 +126,31 @@ def upload(request):
     
 def upload_thanks(request):
     return HttpResponse("thanks")
+
+
+#committees .... added by luke rosiak 5/27
+def cmtes(request, chamber='House'):
+    #Cmtes = Committee.objects.all()
+    Cmtes = sunlight.committees.getList(chamber)   
+    res = []
+    for c in Cmtes:
+	res.append(  Event.objects.by_cmte(c.id) )
+    return render_to_response('publicsite/cmte.html', {"res": res, "chamber": chamber }) #res = list of {"cmte": cmte, "events": ev, "nummems": len(SunLeg) } 
+
+#def cmtedetail(request, cmteid):
+#    cmte = sunlight.committees.get(cmteid)
+#    SunLeg = cmte.members
+#    Mems = []
+#    for m in SunLeg:
+#        for e in Event.objects.filter(beneficiaries__crp_id = m.crp_id):
+#		Mems.append(e)
+    #Mems = Lawmaker.objects.all()
+#    return render_to_response('publicsite/cmtedetail.html', {"mems": Mems, "cmte": cmte, "sunleg": SunLeg }) 
+
+def cmtedetail(request, cmteid):
+    res = Event.objects.by_cmte(cmteid)
+    docset = res['events']
+    cmte = res['cmte'] #sunlight.committees.get(cmteid)
+    mems = cmte.members
+    return render_to_response('publicsite/cmtedetail2.html', {"cmte": cmte, "docset":docset, "mems": mems, "since_year": res['since_year'] })
+
