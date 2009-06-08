@@ -24,11 +24,11 @@
 			
 			<h2><a href="{{ post.guid }}">{{ post.title }}</a></h2>
 			
-			<div class="the_post">
+			<div class="the_post" id="wp_blogpost">
 				{{ post.clean_content|safe|linebreaks }}
-				<p style="text-align:right;">
+					<span class="comment_link">
 					<a href="{{ post.guid }}#comments">{{ post.comment_count}} comments</a>
-				</p>
+				</span>
 			</div>
 			
 			<div class="the_tags red2black">TAGS:
