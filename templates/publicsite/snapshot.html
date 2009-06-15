@@ -10,7 +10,7 @@
 				<div id="summary_date">
 					<img src="http://media.sunlightprojects.org/partytime/images/date.png">
 					<span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
-					<span class="summary_time">({{ doc.start_time }} - {{ doc.end_time }})</span>
+					<span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
 				</div>
 				<div id="summary_invite">
 					<a href="/party/{{ doc.id }}/">

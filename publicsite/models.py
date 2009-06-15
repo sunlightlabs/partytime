@@ -116,15 +116,11 @@ class EventManager(models.Manager):
 	
     def by_cmte(self, cmteid):
         since_year = 2009 #beginning of election cycle
+        cmte = Committee.objects.get(short=cmteid)
+        ev = Event.objects.filter(status='', start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__committee = cmte)
+        retu = {"cmte": cmte, "events": ev, "members": cmte.members.all(), "since_year": since_year } 
+        return retu
 
-    	cmte = sunlight.committees.get(cmteid)
-    	SunLeg = cmte.members
-    	ev = []
-    	for m in SunLeg:
-        	for e in Event.objects.filter(start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__crp_id = m.crp_id,status=''):
-			ev.append(e)
-	ret = {"cmte": cmte, "events": ev, "nummems": len(SunLeg), "since_year": since_year } 
-	return ret
 
 class Host(models.Model):
     name = models.CharField(blank=True,max_length=255, db_index=True)
@@ -147,7 +143,6 @@ class Lawmaker(models.Model):
     state = models.CharField(blank=True,max_length=2)
     district = models.CharField(blank=True,max_length=2)
     crp_id =  models.CharField(blank=True,max_length=15)
-    #cmtes = models.ManyToManyField(Committee,db_table=u'publicsite_committees')
 
     class Meta:
         db_table = u'publicsite_lawmaker'
@@ -170,7 +165,7 @@ class Lawmaker(models.Model):
 	if self.district=="" and self.party=="" and self.state=="":
 	    info = ""
 	else:
-	    info ="("+partyStr+self.state+districtStr+")"
+	    info =" ("+partyStr+self.state+districtStr+")"
 	
 	#districtStr = "" if self.district=="" else "-"+self.district
 	#partyStr = "" if self.party=="" else self.party+", "
@@ -178,11 +173,13 @@ class Lawmaker(models.Model):
         return u"%s%s%s" % (titleStr, self.name,info) 
 
 class Committee(models.Model):
+    short = models.CharField(blank=False,max_length=4, primary_key=True)
     title = models.CharField(blank=False,max_length=100)
-    #keyc = models.CharField(blank=False,max_length=6)
     members = models.ManyToManyField(Lawmaker)
+    chamber = models.CharField(blank=False,max_length=10)
     def __unicode__(self):
         return self.title
+
 
 
 class OtherInfo(models.Model):

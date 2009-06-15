@@ -39,6 +39,9 @@ urlpatterns = patterns('',
     (r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming'),
     (r'^cmte/(?P<cmteid>\w{4})/$', 'partytime.publicsite.views.cmtedetail' ),
     (r'^cmte/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes'),
+    (r'^cmte/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
     (r'^cmte/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'} ),
+    (r'^dump/all$', 'partytime.publicsite.views.dump_all'),
+    (r'^dump/mult$', 'partytime.publicsite.views.dump_mult'),
     (r'^ical/$', IcalFeed())
 )

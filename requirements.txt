@@ -2,3 +2,4 @@ pip
 python-memcached
 Django
 -e hg+http://bitbucket.org/ubernostrum/django-contact-form/#egg=django-contact-form
+python-sunlightapi
