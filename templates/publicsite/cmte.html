@@ -1,0 +1,25 @@
+{% extends "publicsite/base.html" %}
+
+{% block sidebar %}
+        {% include "publicsite/includes/about.html" %}
+{% endblock %}
+
+{% block content %}
+        <h2>Parties by Committee Membership</h2><h3>
+        {% ifnotequal chamber 'House' %} <a href="/cmte/House">House</a> {% else %} House {% endifnotequal %} |
+        {% ifnotequal chamber 'Senate' %} <a href="/cmte/Senate">Senate</a> {% else %} Senate {% endifnotequal %} |
+        {% ifnotequal chamber 'Joint' %} <a href="/cmte/Joint">Joint</a> {% else %} Joint {% endifnotequal %} </h3>
+
+        {% for c in res %}
+
+                        <li><a href="/cmte/{{ c.short }}">{{ c.title  }}</a> ({{c.members.all|length}} members, 
+             {% for s in summary %} 
+                {%ifequal s.0 c.short%} {{s.1}} {%endifequal%}
+             {%endfor%}
+
+ parties)</li>
+
+
+        {% endfor %}
+{% endblock %}
+
