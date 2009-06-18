@@ -180,7 +180,9 @@ class Committee(models.Model):
     def __unicode__(self):
         return self.title
 
-
+class LeadPAC(models.Model):
+    pac = models.CharField(blank=False, max_length=200)
+    lawmaker = Lawmaker()
 
 class OtherInfo(models.Model):
     event_id = models.IntegerField(null=True, blank=True)

@@ -189,7 +189,7 @@ def dump_all(request):
 
     # Data retrieval operation - no commit required
     try:
-        cursor.execute("SELECT pe.id _id,ifnull(group_concat(distinct pb.name, IF(STRCMP(pb.party,''),' (',''),pb.party,IF(STRCMP(pb.state,''),', ',''),pb.state,IF(STRCMP(pb.district,''),concat('-',pb.district),'') , IF(STRCMP(pb.party,''),')','') separator ' || ' ),'') beneficiary,ifnull(group_concat(distinct thost.name separator ' || '),'') host,ifnull(group_concat(distinct  omcl.name, IF(STRCMP(omcl.party,''),' (',''),omcl.party,IF(STRCMP(omcl.state,''),', ',''),omcl.state,IF(STRCMP(omcl.district,''),concat('-',omcl.district),'') , IF(STRCMP(omcl.party,''),')','') separator ' || ' ),'') Other_Members_of_Congress, IFNULL(DATE_FORMAT(start_date,'%%m/%%d/%%Y'),'') Start_Date,IFNULL(DATE_FORMAT(end_date,'%%m/%%d/%%Y'),'') End_Date,IFNULL(DATE_FORMAT(Start_Time,'%%l:%%i %%p'),'') Start_Time,IFNULL(DATE_FORMAT(end_time,'%%l:%%i %%p'),'') End_Time,  entertainment_type,venue_name,address1,address2,city,v.state,zipcode,website,concat(ifnull(v.latitude,''),';',ifnull(v.longitude,'')) LatLong,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By, ifnull(group_concat(distinct ttag.tag_name separator ' || '),'') tags  FROM publicsite_event pe left join publicsite_event_beneficiary peb on (peb.event_id = pe.id) left join publicsite_lawmaker pb on (peb.lawmaker_id = pb.id) left join publicsite_venue v on (v.id = pe.venue_id)  left join publicsite_entertainment et on (et.id = pe.entertainment_id) left join publicsite_event_omc tomc on (tomc.event_id = pe.id) left join publicsite_lawmaker omcl on (tomc.lawmaker_id = omcl.id) left join publicsite_event_hosts ev_hosts on (ev_hosts.event_id = pe.id) left join publicsite_host thost on (ev_hosts.host_id = thost.id)  left join publicsite_event_tags evtags on (evtags.event_id = pe.id) left join publicsite_tags ttag on (evtags.tag_id = ttag.id) WHERE pe.status=null OR pe.status=''  GROUP BY pe.id")
+        cursor.execute("SELECT pe.id _id,ifnull(group_concat(distinct pb.name, IF(STRCMP(pb.party,''),' (',''),pb.party,IF(STRCMP(pb.state,''),', ',''),pb.state,IF(STRCMP(pb.district,''),concat('-',pb.district),'') , IF(STRCMP(pb.party,''),')','') separator ' || ' ),'') beneficiary,ifnull(group_concat(distinct thost.name separator ' || '),'') host,ifnull(group_concat(distinct  omcl.name, IF(STRCMP(omcl.party,''),' (',''),omcl.party,IF(STRCMP(omcl.state,''),', ',''),omcl.state,IF(STRCMP(omcl.district,''),concat('-',omcl.district),'') , IF(STRCMP(omcl.party,''),')','') separator ' || ' ),'') Other_Members_of_Congress, IFNULL(DATE_FORMAT(start_date,'%%m/%%d/%%Y'),'') Start_Date,IFNULL(DATE_FORMAT(end_date,'%%m/%%d/%%Y'),'') End_Date,IFNULL(DATE_FORMAT(Start_Time,'%%l:%%i %%p'),'') Start_Time,IFNULL(DATE_FORMAT(end_time,'%%l:%%i %%p'),'') End_Time,  entertainment_type,venue_name,address1,address2,city,v.state,zipcode,website,concat(ifnull(v.latitude,''),';',ifnull(v.longitude,'')) LatLong,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By, ifnull(group_concat(distinct ttag.tag_name separator ' || '),'') tags  FROM publicsite_event pe left join publicsite_event_beneficiary peb on (peb.event_id = pe.id) left join publicsite_lawmaker pb on (peb.lawmaker_id = pb.id) left join publicsite_venue v on (v.id = pe.venue_id)  left join publicsite_entertainment et on (et.id = pe.entertainment_id) left join publicsite_event_omc tomc on (tomc.event_id = pe.id) left join publicsite_lawmaker omcl on (tomc.lawmaker_id = omcl.id) left join publicsite_event_hosts ev_hosts on (ev_hosts.event_id = pe.id) left join publicsite_host thost on (ev_hosts.host_id = thost.id)  left join publicsite_event_tags evtags on (evtags.event_id = pe.id) left join publicsite_tags ttag on (evtags.tag_id = ttag.id) WHERE (pe.status=null OR pe.status='') GROUP BY pe.id")
 
     except:
         pass
@@ -199,9 +199,9 @@ def dump_all(request):
     rows = cursor.fetchall()
     for row in rows:
         newrow = []
-	for nr in row:
-	    newrow.append( smart_str(nr) )
-            writer.writerow(newrow)
+        for nr in row:
+            newrow.append( smart_str(nr) )
+        writer.writerow(newrow)
 
 
     return response
@@ -323,7 +323,7 @@ def dump_mult(request):
     zfile.close()
     zbuffer.flush()
     ret_zip = zbuffer.getvalue()
-    #zbuffer.close()
+    zbuffer.close()
     response.write(ret_zip)
     return response
 
