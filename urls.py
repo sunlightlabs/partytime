@@ -37,10 +37,10 @@ urlpatterns = patterns('',
     (r'^widget/abc_convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.abc_convention'),
     (r'^widget/abc_convention/$', 'partytime.publicsite.views.abc_convention'),
     (r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming'),
-    (r'^cmte/(?P<cmteid>\w{4})/$', 'partytime.publicsite.views.cmtedetail' ),
-    (r'^cmte/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes'),
-    (r'^cmte/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
-    (r'^cmte/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'} ),
+    (r'^committee/(?P<cmteid>\w{4})/$', 'partytime.publicsite.views.cmtedetail' ),
+    (r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes'),
+    (r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
+    (r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'} ),
     (r'^dump/all$', 'partytime.publicsite.views.dump_all'),
     (r'^dump/mult$', 'partytime.publicsite.views.dump_mult'),
     (r'^ical/$', IcalFeed())

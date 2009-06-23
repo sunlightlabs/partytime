@@ -5,21 +5,31 @@
 {% endblock %}
 
 {% block content %}
-        <h2>Parties by Committee Membership</h2><h3>
-        {% ifnotequal chamber 'House' %} <a href="/cmte/House">House</a> {% else %} House {% endifnotequal %} |
-        {% ifnotequal chamber 'Senate' %} <a href="/cmte/Senate">Senate</a> {% else %} Senate {% endifnotequal %} |
-        {% ifnotequal chamber 'Joint' %} <a href="/cmte/Joint">Joint</a> {% else %} Joint {% endifnotequal %} </h3>
 
+
+<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
+<div id="committee_tab">
+	<ul>
+        {% ifnotequal chamber 'House' %}<li><a href="/committee/House">House Committees</a> </li>{% else %} <li>House Committees</li>{% endifnotequal %}
+        {% ifnotequal chamber 'Senate' %}<li><a href="/committee/Senate">Senate Committees</a></li> {% else %} <li>Senate Committees</li>{% endifnotequal %}
+        {% ifnotequal chamber 'Joint' %}<li><a href="/committee/Joint">Joint Committees</a></li> {% else %} <li>Joint Committees</li>{% endifnotequal %}
+</ul>
+</div>
+<div id="committee_party_box">
+<ul id="committee_parties">
         {% for c in res %}
-
-                        <li><a href="/cmte/{{ c.short }}">{{ c.title  }}</a> ({{c.members.all|length}} members, 
-             {% for s in summary %} 
+		<li><a href="/committee/{{ c.short }}">{{ c.title  }}</a> ({{c.members.all|length}} members, 
+         
+			{% for s in summary %} 
                 {%ifequal s.0 c.short%} {{s.1}} {%endifequal%}
-             {%endfor%}
-
- parties)</li>
+            {%endfor%}
+			parties)
+		</li>
 
 
         {% endfor %}
+
+</ul>
+</div>
 {% endblock %}
 

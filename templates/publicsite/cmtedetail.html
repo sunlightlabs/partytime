@@ -5,11 +5,11 @@
 	<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">
 
 
-<h2><a href="/cmte">Parties by Committee Membership</a>: {{cmte.title}}</h2>
-{{docset|length}} parties since {{since_year}}.
-<br/>Members:
-{% for mem in members %}{{mem.name}}{% for s in summary %}{%ifequal s.0 mem.id%} ({{s.2}}){%endifequal%}{%endfor%}{%if not forloop.last%}, {%endif%}{%endfor%}
-<br/><br/>
+<a href="/cmte"><img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership"></a> <h4 style="margin:0; padding:0;">{{cmte.title}} - 
+{{docset|length}} parties since {{since_year}}</h4>
+<div id="committee_members" style="margin-bottom:1em; font-size:12px;"><p>Members:
+{% for mem in members %}<a href="/search/Beneficiary/{{mem.name}}/">{{mem.name}}</a>{% for s in summary %}{%ifequal s.0 mem.id%} ({{s.2}}){%endifequal%}{%endfor%}{%if not forloop.last%}, {%endif%}{%endfor%}
+</p></div>
 
 
 
