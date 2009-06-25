@@ -92,6 +92,15 @@ class EventManager(models.Manager):
                     status='').order_by('start_date','start_time')[:limit]
         return events
         
+    def daterange(self, start, end):
+        startdate = datetime.datetime(int(start[0:4]),int(start[4:6]),int(start[6:8]))
+        enddate = datetime.datetime(int(end[0:4]),int(end[4:6]),int(end[6:8]))
+        events = Event.objects.filter(
+                    start_date__gte=startdate, start_date__lte=enddate,
+                    status='').order_by('start_date','start_time')
+        return events
+
+
     def by_field(self, field, args, limit=10):
         try:
             events = Event.objects.filter(status='').order_by('-start_date','-start_time')
@@ -120,6 +129,7 @@ class EventManager(models.Manager):
         ev = Event.objects.filter(status='', start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__committee = cmte)
         retu = {"cmte": cmte, "events": ev, "members": cmte.members.all(), "since_year": since_year } 
         return retu
+
 
 
 class Host(models.Model):
@@ -245,3 +255,11 @@ class Event(models.Model):
         db_table = u'publicsite_event'
     def __unicode__(self):
         return self.event_paid_for_by #u"%s at %s" % (self.entertainment.entertainment_type, self.venue.venue_name)
+
+
+class LeadPAC(models.Model):
+    cycle = models.CharField(max_length=4)
+    pacname = models.CharField(max_length=155)
+    polname = models.CharField(max_length=155)
+    #cid = models.ForeignKey(to_field='cid')
+    #pol = Lawmaker()
