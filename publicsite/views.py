@@ -73,6 +73,10 @@ def upcoming(request):
     docset = Event.objects.upcoming(15)
     return render_to_response('publicsite/snapshot.html', {"snapshot_image_name":"upcoming", "docset":docset})
 
+def upcoming_embed(request):
+        docset = Event.objects.upcoming(5)
+        return render_to_response('publicsite/upcoming_embed.html', {"snapshot_image_name":"upcoming", "docset":docset})
+
 
 def bydate(request,start,end):
     docset = Event.objects.daterange(start,end)
