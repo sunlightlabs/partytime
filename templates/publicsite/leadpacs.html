@@ -27,11 +27,8 @@
 <div id="parties">
 <ul>
 {% for doc in docset %}
-<li><a href="http://www.politicalpartytime.org/party/{{ doc.0 }}" class="linky">{{ doc.1 }} {{ doc.3 }}</a>
-							{% if doc.6 %}{{ doc.6 }}{% endif %}
-							{% if doc.10 %}{{ doc.10 }}{% endif %}
-	                        {% if doc.11 %} @ {{ doc.11 }}{% endif %}
-
+<li><a href="http://www.politicalpartytime.org/party/{{ doc.0 }}" class="linky">{{ doc.4 }} {{ doc.0 }}</a>
+							{{ doc.2 }} {{doc.3}} {%if doc.1%} @ {{doc.1}}{%endif%}
 </li>
 {% endfor %}
 
