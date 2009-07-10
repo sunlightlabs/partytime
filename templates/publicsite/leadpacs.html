@@ -6,7 +6,7 @@
 	body { margin: 0; padding: 0;   font-family: Helvetica Neue, Corbel, Tahoma, Arial,Trebuchet MS, sans-serif; }
 	#widget180 { width:178px; border:1px solid #000000; height:180px;  background-color:#f4f4f4; }	
 	#header { background-color:#cc0000; }
-	#tag { background-color:#000000;  }	
+	#tag { background-color:#000000; color: #FFFFFF; font-size: 10px }	
 	#parties { background-color:#f4f4f4; padding:3px;}
 	#parties ul { margin:0; padding:0; padding-bottom:3px;}
 	#parties li { font-size:11px; border-bottom:1px solid  #b0b0b0; display:block; padding:5px; width:160px; overflow:hidden;}
@@ -23,7 +23,7 @@
 <body>
 <div id="widget180">
 <div id="header"><a href="http://www.politicalpartytime.org"><img src="http://media.sunlightprojects.org/partytime/external/widget/pt_logo_180.png" border="0"></a></div>
-<div id="tag"><a href="http://www.politicalpartytime.org"><img src="http://media.sunlightprojects.org/partytime/external/widget/upcoming_180.png" border="0"></a></div>
+<div id="tag"><!--a href="http://www.politicalpartytime.org"><img src="http://media.sunlightprojects.org/partytime/external/widget/upcoming_180.png" border="0"-->Upcoming Leadership PAC Parties</a></div>
 <div id="parties">
 <ul>
 {% for doc in docset %}
@@ -36,7 +36,7 @@
 
 </ul>
 </div>
-<div id="viewmore"><a href="http://www.politicalpartytime.org">View More @ PoliticalPartyTime.org</a></div>
+<div id="viewmore"><a href="http://www.politicalpartytime.org">Source: PoliticalPartyTime.org</a></div>
 <div id="viewmore"><a href="http://www.opensecrets.org">LeadPAC info from OpenSecrets.org</a></div>
 </div>
 </body>
