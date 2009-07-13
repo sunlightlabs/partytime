@@ -46,5 +46,6 @@ urlpatterns = patterns('',
     (r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'} ),
     (r'^dump/all$', 'partytime.publicsite.views.dump_all'),
     (r'^dump/mult$', 'partytime.publicsite.views.dump_mult'),
-    (r'^ical/$', IcalFeed())
+    (r'^ical/$', IcalFeed()),
+    (r'^test/$', IcalFeed()),
 )
