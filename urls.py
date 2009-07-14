@@ -47,5 +47,4 @@ urlpatterns = patterns('',
     (r'^dump/all$', 'partytime.publicsite.views.dump_all'),
     (r'^dump/mult$', 'partytime.publicsite.views.dump_mult'),
     (r'^ical/$', IcalFeed()),
-    (r'^test/$', IcalFeed()),
 )
