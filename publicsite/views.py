@@ -47,6 +47,10 @@ def search_embed(request, field, args):
     events = Event.objects.by_field(field.lower(), args)
     return render_to_response('publicsite/search_embed.html', {"field":field, "args":args, "docset":events})
 
+def search_embed_flex(request, field, args):
+        events = Event.objects.by_field(field.lower(), args).order_by('start_date')[:3]
+        return render_to_response('publicsite/search_embed_flex.html', {"field":field, "args":args, "docset":events})
+
 
 def convention_list(request, convention=''):
     
@@ -77,6 +81,9 @@ def upcoming_embed(request):
         docset = Event.objects.upcoming(5)
         return render_to_response('publicsite/upcoming_embed.html', {"snapshot_image_name":"upcoming", "docset":docset})
 
+def upcoming_embed2(request):
+        docset = Event.objects.upcoming(5)
+        return render_to_response('publicsite/upcoming_embed_2.html', {"snapshot_image_name":"upcoming", "docset":docset})
 
 def bydate(request,start,end):
     docset = Event.objects.daterange(start,end)
