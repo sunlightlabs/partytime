@@ -126,7 +126,7 @@ class EventManager(models.Manager):
     def by_cmte(self, cmteid):
         since_year = 2009 #beginning of election cycle
         cmte = Committee.objects.get(short=cmteid)
-        ev = Event.objects.filter(status='', start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__committee = cmte).order_by('-start_date','-start_time')
+        ev = Event.objects.filter(status='', start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__committee = cmte).order_by('-start_date','-start_time').distinct()
         retu = {"cmte": cmte, "events": ev, "members": cmte.members.all(), "since_year": since_year } 
         return retu
 
