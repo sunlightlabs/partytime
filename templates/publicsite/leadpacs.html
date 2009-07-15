@@ -2,48 +2,39 @@
 <html>
 <head>
 <title>politicalpartytime.org</title>
-<style type="text/css">
-	body { margin: 0; padding: 0;   font-family: Helvetica Neue, Corbel, Tahoma, Arial,Trebuchet MS, sans-serif; }
-	#widget180 { width:178px; border:1px solid #000000; height:180px;  background-color:#f4f4f4; }	
-	#header { background-color:#cc0000; }
-	#tag { background-color:#000000; color: #FFFFFF; font-size: 10px }	
-	#parties { background-color:#f4f4f4; padding:3px;}
-	#parties ul { margin:0; padding:0; padding-bottom:3px;}
-	#parties li { font-size:11px; border-bottom:1px solid  #b0b0b0; display:block; padding:5px; width:160px; overflow:hidden;}
-	a:link { text-decoration:none; color:#000000;}	
-	a:visited { text-decoration:none; color:#000000;}
-	a:hover { text-decoration:none; color:#cc0000;}
-	a:active { text-decoration:none; color:#000000;}		
-	#parties .linky { display:block }
-	#viewmore {font-size:10px; text-align:center; color:#666666; padding-top:3px;}
-	#viewmore a:link { text-decoration:none; color:#666666;}
-	#viewmore a:visited { text-decoration:none; color:#666666;}
-	</style>
-</head>
-<body>
-<div id="widget180">
-<div id="header"><a href="http://www.politicalpartytime.org"><img src="http://media.sunlightprojects.org/partytime/external/widget/pt_logo_180.png" border="0"></a></div>
-<div id="tag"><!--a href="http://www.politicalpartytime.org"><img src="http://media.sunlightprojects.org/partytime/external/widget/upcoming_180.png" border="0"-->Upcoming Leadership PAC Parties</a></div>
-<div id="parties">
+<style>	
+body { background-color:#E6E6E6; margin:0; padding:0;}
+#pp_header { background-color:#e42200; border-bottom:2px solid #000000;}
+#pp_list { font-size:12px; list-style:none; margin:0; padding:0;}
+#pp_list ul { list-style:none; margin:0; padding:0; }
+#pp_list a { display: block; text-decoration: none; padding:5px 5px 5px 5px; }
+#pp_list a:hover { background-color: #fff; color: #953931;}
+#pp_list li { list-style:none; font-family:Helvetica Neue,Helvetica,Corbel,Tahoma,Arial,Trebuchet MS,sans-serif; border-bottom:1px solid #b0b0b0;}
+#pp_list a:link { text-decoration:none; color:#000000;}
+#pp_list a:visited { text-decoration:none; color:#000000;}
+#pp_list a:hover { text-decoration:none; color:#953931;}
+#pp_list a:active { text-decoration:none; color:#000000;}
+strong { font-weight:bold;}
+#identity_bar { background-color:#000; color:#fff; font-size:11px; font-family:Helvetica Neue,Helvetica,Corbel,Tahoma,Arial,Trebuchet MS,sans-serif; padding:0 0 2px 3px;}
+#more ul { padding:0; margin:0;}
+#more li { padding:0 0 0 10px; margin:0; font-size:11px; font-family:Helvetica Neue,Helvetica,Corbel,Tahoma,Arial,Trebuchet MS,sans-serif;}
+#more a:link, a:visited, a:active { color:#000; text-decoration:none;}
+#more a:hover { color:#953931;}
+</style>	
+</head><body><div id="pp_header"><a href="http://politicalpartytime.org" target="_top"><img src="http://media.sunlightprojects.org/partytime/external/widget/pp_header_250.png" border="0"></a></div>
+<div id="identity_bar">Upcoming Leadership PAC Parties</div>
+<div id="pp_upcoming"><ul id="pp_list">
+	{% for doc in docset %}
+	<li><a href="http://www.politicalpartytime.org/party/{{ doc.5 }}" class="linky" target="_top"><strong>{{ doc.2|date:"N j" }}</strong> {{ doc.0 }} {{doc.3}} {%if doc.1%} @ {{doc.1}} {%endif%}</a></li>{% endfor %}	
+</ul>
+<div id="more">
 <ul>
-{% for doc in docset %}
-<li><a href="http://www.politicalpartytime.org/party/{{ doc.5 }}" class="linky">{{ doc.4 }} {{ doc.0 }}</a>
-							{{ doc.2 }} {{doc.3}} {%if doc.1%} @ {{doc.1}}{%endif%}
-</li>
-{% endfor %}
-
-
-
+<li><a href="http://www.politicalpartytime.org" target="_top">Source: PoliticalPartyTime.org</a></li>
+<li><a href="http://www.opensecrets.org" target="_top">LeadPAC info from OpenSecrets.org</a></li>
 </ul>
 </div>
-<div id="viewmore"><a href="http://www.politicalpartytime.org">Source: PoliticalPartyTime.org</a></div>
-<div id="viewmore"><a href="http://www.opensecrets.org">LeadPAC info from OpenSecrets.org</a></div>
-</div>
-</body>
-</html>
-
+</div></body></html>
 
 					
 
-		
-
+	
