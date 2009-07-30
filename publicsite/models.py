@@ -191,8 +191,9 @@ class Committee(models.Model):
         return self.title
 
 class LeadPAC(models.Model):
-    pac = models.CharField(blank=False, max_length=200)
-    lawmaker = Lawmaker()
+    pacname = models.CharField(blank=False, max_length=200)
+    cmteid = models.CharField(blank=False, max_length=16)
+    cid = models.ForeignKey(Lawmaker, to_field='crp_id', db_column='cid')
 
 class OtherInfo(models.Model):
     event_id = models.IntegerField(null=True, blank=True)
@@ -257,9 +258,3 @@ class Event(models.Model):
         return self.event_paid_for_by #u"%s at %s" % (self.entertainment.entertainment_type, self.venue.venue_name)
 
 
-class LeadPAC(models.Model):
-    cycle = models.CharField(max_length=4)
-    pacname = models.CharField(max_length=155)
-    polname = models.CharField(max_length=155)
-    #cid = models.ForeignKey(to_field='cid')
-    #pol = Lawmaker()

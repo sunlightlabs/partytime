@@ -32,7 +32,7 @@
 					{% if beneficiaries %}
 					    <li>
     					        <span class="detail_head">For:</span>
-    					        {% for ben in beneficiaries %}<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a>  {% endfor %}	    
+    					        {% for ben in beneficiaries %}<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a> <a href="/pol/{{ ben.name }}/">{{ ben }}</a>  {% endfor %}	    
     					</li>
     				{% endif %}
     				{% endwith %}
