@@ -175,7 +175,7 @@ def polwithpac(request, cid):
     polname=None
     l = Lawmaker.objects.filter(crp_id=cid).distinct()
     for ll in l:
-        if ll.affiliate!=None
+        if ll.affiliate:
             pacname = ll.name
         else:
             lm = ll
