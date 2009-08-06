@@ -153,6 +153,7 @@ class Lawmaker(models.Model):
     state = models.CharField(blank=True,max_length=2)
     district = models.CharField(blank=True,max_length=2)
     crp_id =  models.CharField(blank=True,max_length=15)
+    affiliate =  models.CharField(blank=True,max_length=200)
 
     class Meta:
         db_table = u'publicsite_lawmaker'
@@ -193,6 +194,8 @@ class Committee(models.Model):
 class LeadPAC(models.Model):
     pacname = models.CharField(blank=False, max_length=200)
     cmteid = models.CharField(blank=False, max_length=16)
+    pol = models.CharField(blank=False, max_length=200)
+    lmname = models.CharField(blank=False, max_length=200)
     cid = models.ForeignKey(Lawmaker, to_field='crp_id', db_column='cid')
 
 class OtherInfo(models.Model):

@@ -32,7 +32,9 @@
 					{% if beneficiaries %}
 					    <li>
     					        <span class="detail_head">For:</span>
-    					        {% for ben in beneficiaries %}<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a> <a href="/pol/{{ ben.name }}/">{{ ben }}</a>  {% endfor %}	    
+    					        {% for ben in beneficiaries %}
+<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a> {%if ben.affiliate %} (<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.affiliate}}{%endif%}/">{{ ben.affiliate }}</a>) {%endif%}  
+{% endfor %}	    
     					</li>
     				{% endif %}
     				{% endwith %}

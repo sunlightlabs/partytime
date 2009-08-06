@@ -124,7 +124,7 @@ def widget180_upcoming(request):
 	return render_to_response('publicsite/widgets/widget_180.html', {"docset":events})
 
 
-
+"""
 def leadpacs(request):
     from django.db import connection, transaction
     cursor = connection.cursor()
@@ -139,13 +139,12 @@ def leadpacs(request):
             l.append(row)                    
     return render_to_response('publicsite/leadpacs.html', {"docset":l[0:6]})
 
-
 def leadpac_all(request):
     from django.db import connection, transaction
     cursor = connection.cursor()
     rows = []
     #try:
-    cursor.execute("SELECT publicsite_lawmaker.name, publicsite_venue.venue_name, publicsite_event.start_date, publicsite_entertainment.entertainment_type, leadpacdistinct.pol, publicsite_event.id FROM ((publicsite_event_beneficiary INNER JOIN ((publicsite_venue INNER JOIN publicsite_event ON publicsite_venue.id = publicsite_event.venue_id) INNER JOIN publicsite_entertainment ON publicsite_event.entertainment_id = publicsite_entertainment.id) ON publicsite_event_beneficiary.event_id = publicsite_event.id) INNER JOIN publicsite_lawmaker ON publicsite_event_beneficiary.lawmaker_id = publicsite_lawmaker.id) INNER JOIN (SELECT DISTINCT pacname, pol FROM publicsite_leadpac) leadpacdistinct ON publicsite_lawmaker.name = leadpacdistinct.pacname WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='')) ORDER BY publicsite_event.start_date DESC;")
+    cursor.execute("SELECT publicsite_lawmaker.name, publicsite_venue.venue_name, publicsite_event.start_date, publicsite_event.start_time, publicsite_event.end_time, publicsite_entertainment.entertainment_type, leadpacdistinct.pol, leadpacdistinct.lmname, publicsite_event.id FROM ((publicsite_event_beneficiary INNER JOIN ((publicsite_venue INNER JOIN publicsite_event ON publicsite_venue.id = publicsite_event.venue_id) INNER JOIN publicsite_entertainment ON publicsite_event.entertainment_id = publicsite_entertainment.id) ON publicsite_event_beneficiary.event_id = publicsite_event.id) INNER JOIN publicsite_lawmaker ON publicsite_event_beneficiary.lawmaker_id = publicsite_lawmaker.id) INNER JOIN (SELECT DISTINCT pacname, pol, lmname FROM publicsite_leadpac) leadpacdistinct ON publicsite_lawmaker.name = leadpacdistinct.pacname WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='')) ORDER BY publicsite_event.start_date DESC;")
     rows = cursor.fetchall()      
     #except:
     #    pass
@@ -156,23 +155,37 @@ def leadpac_all(request):
     #docset = []
     #for key in e.iterkeys():
     #    docset.append(e[key])
-    return render_to_response('publicsite/snapshot.html', {"snapshot_image_name":"leadpac", "docset":l})
+    return render_to_response('publicsite/leadpac_all.html', {"snapshot_image_name":"leadpac", "docset":l})
+"""
 
+def leadpac_all(request):
+    docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False).order_by('-start_date','-start_time')
+    return render_to_response('publicsite/snapshot.html', {"snapshot_image_name":"", "docset":docset})
+
+def leadpacs(request):
+    docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False).order_by('-start_date','-start_time')[0:6]       
+    return render_to_response('publicsite/leadpacs.html', {"docset":docset})
 
 
 #added 7/29 for lawmaker search including leadpac
-def polwithpac(request, name):
+def polwithpac(request, cid):
+    #from django.db.models import Count
+
+    pacname=None
+    polname=None
     try:
-        l = Lawmaker.objects.get(name=name)
-        lp = LeadPAC.objects.filter(cid=l.crp_id)
-        lp1 = lp[0].pacname
+        l = Lawmaker.objects.filter(crp_id=cid).distinct()
+        for ll in l:
+            if ll.affiliate!=None:
+                pacname = ll.name
+            else:
+                lm = ll
+      
+        eventlist = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date','-start_time')
 
-        eventlist = Event.objects.filter(beneficiaries__name=name)
-        pacevents = Event.objects.filter(beneficiaries__name=lp1)
-
-        return render_to_response('publicsite/polwithpac.html', {"eventlist":eventlist, "pacevents":pacevents, "lm": l, "pacname": lp1 })
+        return render_to_response('publicsite/polwithpac.html', {"eventlist":eventlist, "lm": lm, "pacname": pacname })
     except:
-         return HttpResponseRedirect('/search/Beneficiary/'+name) 
+         return HttpResponseRedirect('/') 
 
           
     
@@ -250,19 +263,15 @@ def dump_all(request):
     from django.db import connection, transaction
     from django.utils.encoding import smart_str, smart_unicode
     import csv
-
     cursor = connection.cursor()
 
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=party_dumpall.csv'
     writer = csv.writer(response)
 
-    # Data retrieval operation - no commit required
     try:
         cursor.execute("SELECT pe.id _id,ifnull(group_concat(distinct pb.name, IF(STRCMP(pb.party,''),' (',''),pb.party,IF(STRCMP(pb.state,''),', ',''),pb.state,IF(STRCMP(pb.district,''),concat('-',pb.district),'') , IF(STRCMP(pb.party,''),')','') separator ' || ' ),'') beneficiary,ifnull(group_concat(distinct thost.name separator ' || '),'') host,ifnull(group_concat(distinct  omcl.name, IF(STRCMP(omcl.party,''),' (',''),omcl.party,IF(STRCMP(omcl.state,''),', ',''),omcl.state,IF(STRCMP(omcl.district,''),concat('-',omcl.district),'') , IF(STRCMP(omcl.party,''),')','') separator ' || ' ),'') Other_Members_of_Congress, IFNULL(start_date,'') Start_Date,IFNULL(end_date,'') End_Date,IFNULL(Start_Time,'') Start_Time,IFNULL(end_time,'') End_Time,  entertainment_type,venue_name,address1,address2,city,v.state,zipcode,website,concat(ifnull(v.latitude,''),';',ifnull(v.longitude,'')) LatLong,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By FROM publicsite_event pe left join publicsite_event_beneficiary peb on (peb.event_id = pe.id) left join publicsite_lawmaker pb on (peb.lawmaker_id = pb.id) left join publicsite_venue v on (v.id = pe.venue_id)  left join publicsite_entertainment et on (et.id = pe.entertainment_id) left join publicsite_event_omc tomc on (tomc.event_id = pe.id) left join publicsite_lawmaker omcl on (tomc.lawmaker_id = omcl.id) left join publicsite_event_hosts ev_hosts on (ev_hosts.event_id = pe.id) left join publicsite_host thost on (ev_hosts.host_id = thost.id)  WHERE (pe.status is null OR pe.status='') GROUP BY pe.id")
 
-
-#"SELECT pe.id _id,ifnull(group_concat(distinct pb.name, IF(STRCMP(pb.party,''),' (',''),pb.party,IF(STRCMP(pb.state,''),', ',''),pb.state,IF(STRCMP(pb.district,''),concat('-',pb.district),'') , IF(STRCMP(pb.party,''),')','') separator ' || ' ),'') beneficiary,ifnull(group_concat(distinct thost.name separator ' || '),'') host,ifnull(group_concat(distinct  omcl.name, IF(STRCMP(omcl.party,''),' (',''),omcl.party,IF(STRCMP(omcl.state,''),', ',''),omcl.state,IF(STRCMP(omcl.district,''),concat('-',omcl.district),'') , IF(STRCMP(omcl.party,''),')','') separator ' || ' ),'') Other_Members_of_Congress, IFNULL(DATE_FORMAT(start_date,'%m/%d/%Y'),'') Start_Date,IFNULL(DATE_FORMAT(end_date,'%m/%d/%Y'),'') End_Date,IFNULL(DATE_FORMAT(Start_Time,'%l:%i %p'),'') Start_Time,IFNULL(DATE_FORMAT(end_time,'%l:%i %p'),'') End_Time,  entertainment_type,venue_name,address1,address2,city,v.state,zipcode,website,concat(ifnull(v.latitude,''),';',ifnull(v.longitude,'')) LatLong,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By, ifnull(group_concat(distinct ttag.tag_name separator ' || '),'') tags  FROM publicsite_event pe left join publicsite_event_beneficiary peb on (peb.event_id = pe.id) left join publicsite_lawmaker pb on (peb.lawmaker_id = pb.id) left join publicsite_venue v on (v.id = pe.venue_id)  left join publicsite_entertainment et on (et.id = pe.entertainment_id) left join publicsite_event_omc tomc on (tomc.event_id = pe.id) left join publicsite_lawmaker omcl on (tomc.lawmaker_id = omcl.id) left join publicsite_event_hosts ev_hosts on (ev_hosts.event_id = pe.id) left join publicsite_host thost on (ev_hosts.host_id = thost.id)  left join publicsite_event_tags evtags on (evtags.event_id = pe.id) left join publicsite_tags ttag on (evtags.tag_id = ttag.id) WHERE (pe.status=null OR pe.status='') GROUP BY pe.id"
 
     except:
         pass
