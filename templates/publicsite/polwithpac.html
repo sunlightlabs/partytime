@@ -1,0 +1,106 @@
+{% extends "publicsite/base.html" %}
+
+{% block content %}
+
+	{%ifnotequal snapshot_image_name ""%}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{%endifnotequal%}
+
+    <h2>{{lm.title}} {{ lm.name }} ({{lm.party}}, {{lm.state}})</h2>
+
+    <b>{{eventlist|length}}</b> parties benefitting the campaign committee 
+    {%if pacname %} and leadership PAC, <b>{{ pacname }}</b>{%endif%}
+
+{%if lm.committee_set%}<p>Committee seats: {% for c in lm.committee_set.all %}<a href="/committee/{{c.short}}">{{c.title}}</a>{%if not forloop.last%}, {%endif%} {%endfor%}</p>{%endif%}
+
+	{% for doc in eventlist %}
+		<div id="summary_container">
+			<div id="summary_topbar">
+				<div id="summary_date">
+					<img src="http://media.sunlightprojects.org/partytime/images/date.png">
+					<span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
+					<span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
+				</div>
+				<div id="summary_invite">
+					<a href="/party/{{ doc.id }}/">
+						<img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
+					</a>
+					<a href="/party/{{ doc.id }}/">View Invitation</a>
+				</div>
+			</div>
+			<div id="summary_data">
+				<ul>
+					{% if doc.entertainment.entertainment_type or doc.venue.venue_name %}
+						<li>
+							{% if doc.entertainment.entertainment_type %}<span class="detail_head">{{ doc.entertainment.entertainment_type }}</span>{% endif %}
+							{% if doc.venue.venue_name %}@ <a href="/search/Venue_Name/{{ doc.venue.venue_name }}/">{{ doc.venue.venue_name }}</a>{% endif %}
+						</li>
+					{% endif %}
+					
+					{% with doc.beneficiaries.all as beneficiaries %}
+					{% if beneficiaries %}
+					    <li>
+    					        <span class="detail_head">For:</span>
+    					        {% for ben in beneficiaries %}<a href="/pol/{{ ben.name }}/">{{ ben.name }}</a>  {% endfor %}	    
+    					</li>
+    				{% endif %}
+    				{% endwith %}
+    				
+    				{% with doc.hosts.all as hosts %}
+					{% if hosts %}
+						<li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}/">{{ host }}</a> {% endfor %}</li>
+					{% endif %}
+					{% endwith %}
+					
+				</ul>
+			</div>
+		</div>
+		{% endfor %}
+
+
+
+
+	{% for doc in pacevents %}
+		<div id="summary_container">
+			<div id="summary_topbar">
+				<div id="summary_date">
+					<img src="http://media.sunlightprojects.org/partytime/images/date.png">
+					<span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
+					<span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
+				</div>
+				<div id="summary_invite">
+					<a href="/party/{{ doc.id }}/">
+						<img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
+					</a>
+					<a href="/party/{{ doc.id }}/">View Invitation</a>
+				</div>
+			</div>
+			<div id="summary_data">
+				<ul>
+					{% if doc.entertainment.entertainment_type or doc.venue.venue_name %}
+						<li>
+							{% if doc.entertainment.entertainment_type %}<span class="detail_head">{{ doc.entertainment.entertainment_type }}</span>{% endif %}
+							{% if doc.venue.venue_name %}@ <a href="/search/Venue_Name/{{ doc.venue.venue_name }}/">{{ doc.venue.venue_name }}</a>{% endif %}
+						</li>
+					{% endif %}
+					
+					{% with doc.beneficiaries.all as beneficiaries %}
+					{% if beneficiaries %}
+					    <li>
+    					        <span class="detail_head">For:</span>
+    					        {% for ben in beneficiaries %}<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a>  {% endfor %}	    
+    					</li>
+    				{% endif %}
+    				{% endwith %}
+    				
+    				{% with doc.hosts.all as hosts %}
+					{% if hosts %}
+						<li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}/">{{ host }}</a> {% endfor %}</li>
+					{% endif %}
+					{% endwith %}
+					
+				</ul>
+			</div>
+		</div>
+		{% endfor %}
+
+
+{% endblock %}
