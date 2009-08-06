@@ -170,7 +170,7 @@ def leadpacs(request):
 #added 7/29 for lawmaker search including leadpac
 def polwithpac(request, cid):
     #from django.db.models import Count
-
+    lm=None
     pacname=None
     polname=None
     l = Lawmaker.objects.filter(crp_id=cid).distinct()
