@@ -173,20 +173,16 @@ def polwithpac(request, cid):
 
     pacname=None
     polname=None
-    try:
-        l = Lawmaker.objects.filter(crp_id=cid).distinct()
-        for ll in l:
-            if ll.affiliate!=None:
-                pacname = ll.name
-            else:
-                lm = ll
+    l = Lawmaker.objects.filter(crp_id=cid).distinct()
+    for ll in l:
+        if ll.affiliate!=None
+            pacname = ll.name
+        else:
+            lm = ll
       
-        eventlist = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date','-start_time')
-
-        return render_to_response('publicsite/polwithpac.html', {"eventlist":eventlist, "lm": lm, "pacname": pacname })
-    except:
-         return HttpResponseRedirect('/') 
-
+    eventlist = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date','-start_time')
+    return render_to_response('publicsite/polwithpac.html', {"eventlist":eventlist, "lm": lm, "pacname": pacname })
+   
           
     
 
