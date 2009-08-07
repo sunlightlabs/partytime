@@ -40,6 +40,12 @@ def search_proxy(request):
     return HttpResponseRedirect('/')
     
 def search(request, field, args):
+    if field == 'Beneficiary':
+        lm = Lawmaker.objects.filter(name__icontains=args)
+        if len(lm)==1:
+            if lm[0].crp_id and lm[0].affiliate==None:
+                return HttpResponseRedirect('/pol/'+lm[0].crp_id)
+
     events = Event.objects.by_field(field.lower(), args)
 
     return render_to_response('publicsite/search_results.html', {"field":field, "args":args, "docset":events})
