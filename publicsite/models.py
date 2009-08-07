@@ -191,13 +191,6 @@ class Committee(models.Model):
     def __unicode__(self):
         return self.title
 
-class LeadPAC(models.Model):
-    pacname = models.CharField(blank=False, max_length=200)
-    cmteid = models.CharField(blank=False, max_length=16)
-    pol = models.CharField(blank=False, max_length=200)
-    lmname = models.CharField(blank=False, max_length=200)
-    cid = models.ForeignKey(Lawmaker, to_field='crp_id', db_column='cid')
-
 class OtherInfo(models.Model):
     event_id = models.IntegerField(null=True, blank=True)
     lawmaker_id = models.IntegerField(null=True, blank=True)

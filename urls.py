@@ -12,6 +12,7 @@ class PartyTimeContactForm(ContactForm):
 feeds = {
     'recent': RecentFeed,
     'upcoming': UpcomingFeed,
+    'pol': PolFeed
 }
 
 admin.autodiscover()

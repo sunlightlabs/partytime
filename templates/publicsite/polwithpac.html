@@ -4,7 +4,8 @@
 
 	{%ifnotequal snapshot_image_name ""%}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{%endifnotequal%}
 
-    <h2>{{lm.title}} {{ lm.name }} ({{lm.party}}, {{lm.state}})</h2>
+    <h2>{{lm.title}} {{ lm.name }} ({{lm.party}}, {{lm.state}})      
+<a href="/feeds/pol/{{lm.crp_id}}/"><img src="http://media.sunlightprojects.org/partytime/images/feed-icon-14x14.png" border="0"></a></h2>
 
     <b>{{eventlist|length}}</b> parties benefitting the campaign committee 
     {%if pacname %} and leadership PAC, <b>{{ pacname }}</b>{%endif%}
