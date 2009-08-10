@@ -124,7 +124,7 @@ def main():
     zfile.close()
     zbuffer.flush()
 
-    flob=open('partytime_dump_all.zip','wb')
+    flob=open('partytime_dump.zip','wb')
     flob.write( zbuffer.getvalue() )
     flob.close()
 
