@@ -1,7 +1,6 @@
 
 
 def main():
-    print 'yeaaaaaa'
     import MySQLdb
 
     # connect
