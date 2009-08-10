@@ -36,7 +36,7 @@
 {%if ben.affiliate %}
 <a href="/search/Beneficiary/{{ ben.name }}/">{{ ben.name }}</a> (<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.affiliate}}{%endif%}/">{{ ben.affiliate }}</a>) 
 {%else%}
-<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben.name }}</a>
+<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a>
 {%endif%}  
 
 
