@@ -42,7 +42,7 @@ def search_proxy(request):
 def search(request, field, args):
 
     if field=='Blog':
-        blog_posts = Post.objects.filter(post_type='post', content__icontains=args).order_by('-post_date')[:10]
+        blog_posts = Post.objects.filter(post_type='post', content__icontains=args).order_by('-post_date')
         return render_to_response('publicsite/index.html', {"blog_posts":blog_posts})
 
     if field == 'Beneficiary':
