@@ -10,6 +10,12 @@
 	<iframe src="http://politicalpartytime.org/search_embed/{{ field }}/{{ args}}/"width="520" height="500" frameborder="0" border="0"></iframe>'</input>
 </form>
 </div>
+{%if lm %}
+Matching lawmakers:
+{% for doc in lm %}
+<a href="/pol/{{ doc.crp_id }}">{{doc}}</a> 
+{%endfor%}<br/><br/>
+{%endif%}
 
 {% for doc in docset %}
     <div id="summary_container">

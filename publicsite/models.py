@@ -2,6 +2,7 @@ from django.db import models
 from django.db import connection
 import datetime
 import re
+from django.contrib import admin
 
 from sunlightapi import sunlight, SunlightApiError
 sunlight.apikey = '***REMOVED***'
@@ -252,5 +253,7 @@ class Event(models.Model):
         db_table = u'publicsite_event'
     def __unicode__(self):
         return self.event_paid_for_by #u"%s at %s" % (self.entertainment.entertainment_type, self.venue.venue_name)
+
+
 
 
