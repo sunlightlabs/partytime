@@ -1,6 +1,7 @@
 {% extends "publicsite/base.html" %}
 
 {% block sidebar %}
+Search blog: <form method="post" action="/"><input type="text" name="term"/></form><br/>
 	{% include "publicsite/includes/about.html" %}
 {% endblock %}
 
