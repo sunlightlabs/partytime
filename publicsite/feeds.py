@@ -87,9 +87,16 @@ class PolFeed(Feed):
         # check that bits has only one member.
         if len(bits) != 1:
             raise ObjectDoesNotExist
-        return Lawmaker.objects.get(crp_id=bits[0], affiliate=None)
+        try:
+            lm = Lawmaker.objects.get(crp_id=bits[0], affiliate=None)
+            return lm
+        except:
+            raise ObjectDoesNotExist
+
 
     def title(self, obj):
+        if not obj:
+            raise FeedDoesNotExist
         return "PartyTime events for %s" % obj.name
 
     def link(self, obj):
@@ -98,11 +105,22 @@ class PolFeed(Feed):
         return "/feeds/pol/" + obj.crp_id
 
     def item_link(self, item):
+        if not item:
+            raise FeedDoesNotExist
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})  
 
     def description(self, obj):
+        if not obj:
+            raise FeedDoesNotExist
         return "Parties for %s from the Sunlight Foundation" % obj.name
 
     def items(self, obj):
-        return Event.objects.filter(status='', beneficiaries__crp_id=obj.crp_id).order_by('-start_date','-start_time')[:10]
+        if obj==None:
+            raise FeedDoesNotExist
+            return []
+        items = Event.objects.filter(status='', beneficiaries__crp_id=obj.crp_id).order_by('-start_date','-start_time')[:10]
+        if not items:
+            raise FeedDoesNotExist
+        else:
+            return items
 

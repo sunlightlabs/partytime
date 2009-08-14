@@ -153,6 +153,8 @@ def polwithpac(request, cid):
     pacname=None
     polname=None
     l = Lawmaker.objects.filter(crp_id=cid).distinct()
+    if len(l)==0:
+        return HttpResponseRedirect('/')     
     for ll in l:
         if ll.affiliate:
             pacname = ll.name

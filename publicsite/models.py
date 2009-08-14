@@ -245,14 +245,17 @@ class Event(models.Model):
     make_checks_payable_to = models.CharField(blank=True, max_length=255)
     checks_payable_to_address = models.CharField(blank=True, max_length=255)
     contributions_info = models.CharField(blank=True, max_length=255)
-    user_initials = models.CharField(blank=True, max_length=32)
-    data_entry_problems = models.TextField(blank=True)
+    user_initials = models.CharField(blank=True, max_length=5)
+    data_entry_problems = models.CharField(blank=True, max_length=255)
  
         
     class Meta:
         db_table = u'publicsite_event'
     def __unicode__(self):
-        return self.entertainment.entertainment_type + " at " + self.venue.venue_name
+        if self.entertainment:
+            return self.entertainment.entertainment_type + " at " + self.venue.venue_name
+        else:
+            return 'Event at ' + self.venue.venue_name
 
 
 
