@@ -4,6 +4,7 @@ from publicsite.models import Event, Lawmaker
 import time 
 import datetime
 from publicsite.management.icalendarfeed import ICalendarFeed
+from django.http import Http404
 
 class IcalFeed(ICalendarFeed):
 
@@ -86,41 +87,40 @@ class PolFeed(Feed):
         # In case of "/rss/beats/0613/foo/bar/baz/", or other such clutter,
         # check that bits has only one member.
         if len(bits) != 1:
-            raise ObjectDoesNotExist
+            raise Http404
         try:
             lm = Lawmaker.objects.get(crp_id=bits[0], affiliate=None)
             return lm
         except:
-            raise ObjectDoesNotExist
+            raise Http404
 
 
     def title(self, obj):
         if not obj:
-            raise FeedDoesNotExist
+            raise Http404
         return "PartyTime events for %s" % obj.name
 
     def link(self, obj):
         if not obj:
-            raise FeedDoesNotExist
+            raise Http404
         return "/feeds/pol/" + obj.crp_id
 
     def item_link(self, item):
         if not item:
-            raise FeedDoesNotExist
+            raise Http404
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})  
 
     def description(self, obj):
         if not obj:
-            raise FeedDoesNotExist
+            raise Http404
         return "Parties for %s from the Sunlight Foundation" % obj.name
 
     def items(self, obj):
         if obj==None:
-            raise FeedDoesNotExist
             return []
         items = Event.objects.filter(status='', beneficiaries__crp_id=obj.crp_id).order_by('-start_date','-start_time')[:10]
         if not items:
-            raise FeedDoesNotExist
+            raise Http404
         else:
             return items
 
