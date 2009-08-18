@@ -19,7 +19,7 @@ sunlight.apikey = '***REMOVED***'
 
 def index(request):
     now = datetime.datetime.now()
-    blog_posts = Post.objects.filter(post_type='post').order_by('-post_date')[:10]
+    blog_posts = Post.objects.filter(post_type='revision').order_by('-post_date')[:10]
     return render_to_response('publicsite/index.html', {"blog_posts":blog_posts})
 
     
