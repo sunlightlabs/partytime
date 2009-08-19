@@ -252,7 +252,7 @@ class Event(models.Model):
     class Meta:
         db_table = u'publicsite_event'
     def __unicode__(self):
-        if self.entertainment and self.venue.venue_name:
+        if self.entertainment and self.venue:
             return self.entertainment.entertainment_type + " at " + self.venue.venue_name
         else:
             return 'Event'
