@@ -148,13 +148,13 @@ class Tag(models.Model):
         return self.tag_name
 
 class Lawmaker(models.Model):
-    title = models.CharField(blank=True,max_length=25)
+    title = models.CharField("Title (Senator, Representative", blank=True,max_length=25)
     name = models.CharField(blank=True,max_length=255, db_index=True)
     party = models.CharField(blank=True,max_length=1)
     state = models.CharField(blank=True,max_length=2)
     district = models.CharField(blank=True,max_length=2)
     crp_id =  models.CharField(blank=True,max_length=15)
-    affiliate =  models.CharField(blank=True,max_length=200)
+    affiliate =  models.CharField("If this is a leadership PAC, this 'affiliate' field is the lawmaker's name", blank=True,max_length=200)
 
     class Meta:
         db_table = u'publicsite_lawmaker'
@@ -219,8 +219,6 @@ class Entertainment(models.Model):
         return u"%s" % (self.entertainment_type)
 
 class Event(models.Model):
-    def __unicode__(self):
-        return self.other_info
     objects = EventManager()
 
     entertainment = models.ForeignKey(Entertainment,null=True)
