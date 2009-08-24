@@ -4,7 +4,6 @@
 <head>
 <title>{% block title %}{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/base.css{% endblock %}" />
-<script type="text/javascript">alert('{{title}}')</script>
 {%ifequal title 'Change event'%}
 <script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
 <script type="text/javascript">
