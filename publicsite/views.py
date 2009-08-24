@@ -237,23 +237,4 @@ def updatecmtes(request,chamber):
 
 
 
-###testing
-
-
-def search2(request, modelname, field, criteria):
-    import operator
-    def construct_search(field_name):
-        return "%s__icontains" % field_name
- 
-    model = models.get_model('publicsite', modelname)
-    qs = model._default_manager.all()
-    for bit in criteria.split():
-        or_queries = [models.Q(**{construct_search(smart_str(field)): smart_str(bit)})]
-        other_qs = QuerySet(model)
-        other_qs.dup_select_related(qs)
-        other_qs = other_qs.filter(reduce(operator.or_, or_queries))
-        qs = qs & other_qs
-    data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
-    return HttpResponse(data)
-
 

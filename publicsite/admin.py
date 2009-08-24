@@ -15,7 +15,7 @@ class EventAdmin(ManyToManyAdmin):
 
     fieldsets = (
         (None, {
-            'fields': (('start_date', 'start_time', 'end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link')
+            'fields': (('start_date', 'start_time'), ('end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link')
         }),
         (None, {
             'fields': ('hosts', 'beneficiaries', 'other_members')
