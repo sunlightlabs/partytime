@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from publicsite.feeds import *
+from settings import *
 
 from contact_form.forms import ContactForm
 
