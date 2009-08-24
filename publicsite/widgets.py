@@ -121,14 +121,6 @@ class ManyToManySearchInput(forms.SelectMultiple):
                     model_name: '%(model_name)s',
                 }
             });
-            //var event=$('#lookup_%(name)s').autocomplete('/search/%(model_name)s/%(search_fields)s/', {
-            /// /acomplete/(model_name)/(serach_fields)/('#lookup_%(name)s').val()
-            //    extraParams: {
-            //        search_fields: '%(search_fields)s',
-            //        app_label: '%(app_label)s',
-            //        model_name: '%(model_name)s',
-            //    }
-            //});
             event.result(function(event, data, formatted) {
                 $('#busy_%(name)s').hide();
                 if (data) {
@@ -170,15 +162,6 @@ from django.utils.encoding import smart_str
 
 
 class ManyToManyAdmin(admin.ModelAdmin):
-    """
-    def __call__(self, request, url):
-        if url is None:
-            pass
-        elif url == 'search':
-            return self.search(request)
-        return super(ManyToManyAdmin, self).__call__(request, url)
-        #return super(WidgetAdmin, self).__call__(request, url)
-        """
 
     def get_urls(self):
         urls = super(ManyToManyAdmin,self).get_urls()

@@ -7,6 +7,7 @@ class EventAdmin(ManyToManyAdmin):
 
   
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status')
+    list_filter = ('status',)
 
 
     ajax_manytomany_fields={'hosts':('name'), 'beneficiaries':('name'), 'other_members':('name')}
@@ -14,7 +15,7 @@ class EventAdmin(ManyToManyAdmin):
 
     fieldsets = (
         (None, {
-            'fields': (('start_date', 'start_time', 'end_date', 'end_time'), 'entertainment', 'venue')
+            'fields': (('start_date', 'start_time', 'end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link')
         }),
         (None, {
             'fields': ('hosts', 'beneficiaries', 'other_members')

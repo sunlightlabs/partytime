@@ -235,7 +235,8 @@ class Event(models.Model):
     end_time = models.TimeField(blank=True, null=True)
 
     status = models.CharField(blank=True, max_length=255, db_index=True)    
-    pdf_document_link = models.CharField(blank=True, max_length=255)
+    pdf_document_link = models.CharField(blank=True, max_length=255, help_text='<a onclick="window.open(\'http://files.politicalpartytime.org/pdfs/\'+document.getElementById(\'id_pdf_document_link\').value)">Open PDF</a>.')
+
     committee_id = models.CharField(blank=True, max_length=255)    
     rsvp_info = models.CharField(blank=True, max_length=255)
     event_paid_for_by = models.CharField(blank=True, max_length=255)
