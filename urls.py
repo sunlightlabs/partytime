@@ -51,7 +51,7 @@ urlpatterns = patterns('',
     (r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all'),
     (r'^ical/$', IcalFeed()),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media'}),
-    (r'^acomplete/(?P<modelname>.+)/(?P<field>.+)/(?P<criteria>.+)$', 'partytime.publicsite.views.search2' )
+    #(r'^acomplete/(?P<modelname>.+)/(?P<field>.+)/(?P<criteria>.+)$', 'partytime.publicsite.views.search2' )
 )
 
 
