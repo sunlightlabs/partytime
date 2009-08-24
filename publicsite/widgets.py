@@ -8,13 +8,13 @@ from django.conf.urls.defaults import *
 class ManyToManySearchInput(forms.SelectMultiple):
     class Media:
         css = {
-            'all': (settings.MEDIA_URL+'jquery-autocomplete/jquery.autocomplete.css',)
+            'all': (settings.MEDIA_URL+'scripts/jquery-autocomplete/jquery.autocomplete.css',)
         }
         js = (
-            settings.MEDIA_URL+'jquery-autocomplete/lib/jquery.js',
-            settings.MEDIA_URL+'jquery-autocomplete/lib/jquery.bgiframe.min.js',
-            settings.MEDIA_URL+'jquery-autocomplete/lib/jquery.ajaxQueue.js',
-            settings.MEDIA_URL+'jquery-autocomplete/jquery.autocomplete.js'
+            settings.MEDIA_URL+'scripts/jquery-autocomplete/lib/jquery.js',
+            settings.MEDIA_URL+'scripts/jquery-autocomplete/lib/jquery.bgiframe.min.js',
+            settings.MEDIA_URL+'scripts/jquery-autocomplete/lib/jquery.ajaxQueue.js',
+            settings.MEDIA_URL+'scripts/jquery-autocomplete/jquery.autocomplete.js'
         )
 
     def label_for_value(self, value):
