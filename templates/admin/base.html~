@@ -91,7 +91,7 @@ width:300px;
 	</div>
 
     <!-- Content -->
-    <div id="content" class="{% block coltype %}colM{% endblock %}" {%ifequal title 'Change event'%}style="float:right"{%endifequal%}>
+    <div id="content" class="{% block coltype %}colM{% endblock %}" {%ifequal title 'Change event'%}style="float:right; width:400px"{%endifequal%}>
        <div> {% block pretitle %}{% endblock %}
         {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
         {% block content %}
