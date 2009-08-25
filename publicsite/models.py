@@ -221,31 +221,31 @@ class Entertainment(models.Model):
 class Event(models.Model):
     objects = EventManager()
 
-    entertainment = models.ForeignKey(Entertainment,null=True)
-    venue = models.ForeignKey(Venue,null=True)
+    entertainment = models.ForeignKey(Entertainment,null=True,blank=True)
+    venue = models.ForeignKey(Venue,null=True,blank=True)
 
-    hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts')
-    tags = models.ManyToManyField(Tag,db_table=u'publicsite_event_tags')
-    beneficiaries = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_beneficiary', related_name='publicsite_event_beneficiary')
-    other_members = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_omc', related_name='publicsite_event_omc')
+    hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts',null=True,blank=True)
+    tags = models.ManyToManyField(Tag,db_table=u'publicsite_event_tags',null=True)
+    beneficiaries = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_beneficiary', related_name='publicsite_event_beneficiary',null=True,blank=True)
+    other_members = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_omc', related_name='publicsite_event_omc',null=True,blank=True)
      
     start_date = models.DateField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
 
-    status = models.CharField(blank=True, max_length=255, db_index=True)    
+    status = models.CharField(blank=True, max_length=255, db_index=True,null=True)    
     pdf_document_link = models.CharField(blank=True, max_length=255, help_text='<a onclick="tryPDF()">Load PDF</a>')
 
-    committee_id = models.CharField(blank=True, max_length=255)    
-    rsvp_info = models.CharField(blank=True, max_length=255)
-    event_paid_for_by = models.CharField(blank=True, max_length=255)
-    distribution_paid_for_by = models.CharField(blank=True, max_length=255)
-    make_checks_payable_to = models.CharField(blank=True, max_length=255)
-    checks_payable_to_address = models.CharField(blank=True, max_length=255)
-    contributions_info = models.CharField(blank=True, max_length=255)
-    user_initials = models.CharField(blank=True, max_length=5)
-    data_entry_problems = models.CharField(blank=True, max_length=255)
+    committee_id = models.CharField(blank=True, max_length=255,null=True)    
+    rsvp_info = models.CharField(blank=True, max_length=255,null=True)
+    event_paid_for_by = models.CharField(blank=True, max_length=255,null=True)
+    distribution_paid_for_by = models.CharField(blank=True, max_length=255,null=True)
+    make_checks_payable_to = models.CharField(blank=True, max_length=255,null=True)
+    checks_payable_to_address = models.CharField(blank=True, max_length=255,null=True)
+    contributions_info = models.CharField(blank=True, max_length=255,null=True)
+    user_initials = models.CharField(blank=True, max_length=5,null=True)
+    data_entry_problems = models.CharField(blank=True, max_length=255,null=True)
  
         
     class Meta:
