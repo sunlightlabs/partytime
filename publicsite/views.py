@@ -248,8 +248,6 @@ def uploadzip(request):
 
     if request.FILES:
             f = request.FILES['file'] #.read()
-            if f[-4:]!='.zip':
-                return HttpResponse("This file doesn't have a .zip extension.")
             zfile = zipfile.ZipFile(f,'r')
             for zfname in zfile.namelist():
                 if zfname[-4:]=='.pdf':
