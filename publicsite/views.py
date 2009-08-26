@@ -254,13 +254,13 @@ def uploadzip(request):
             for zfname in zfile.namelist():
                 if zfname[-4:]=='.pdf':
                     newe = Event(status='tempLR')
-                   newe.save()
+                    newe.save()
                     pk = newe.pk
-                   localfilename = 'flyer_'+str(pk)+'.pdf'
-                   syspath = '/var/www/files.politicalpartytime.org/pdfs/'
-                   dirpath = str(datetime.date.today().year)+'/'+str(datetime.date.today().month)+'/'
-                   if not os.path.isdir(syspath + dirpath):
-                       os.makedirs(syspath + dirpath)
+                    localfilename = 'flyer_'+str(pk)+'.pdf'
+                    syspath = '/var/www/files.politicalpartytime.org/pdfs/'
+                    dirpath = str(datetime.date.today().year)+'/'+str(datetime.date.today().month)+'/'
+                    if not os.path.isdir(syspath + dirpath):
+                        os.makedirs(syspath + dirpath)
                     destination = open(syspath + dirpath + localfilename, 'wb')
                     destination.write(zfile.read(zfname))
                     destination.close()
