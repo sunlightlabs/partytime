@@ -262,7 +262,7 @@ def uploadzip(request):
                     destination = open(syspath + dirpath + localfilename, 'wb')
                     destination.write(zfile.read(zfname))
                     destination.close()
-                    newe.pdf_document_link = dirpath + localfilename
+                    newe.pdf_document_link = '/' + dirpath + localfilename
                     newe.save()
             return HttpResponseRedirect('/admin/publicsite/event/')
     else:
