@@ -256,9 +256,12 @@ def uploadzip(request):
                     pk = newe.pk
                     localfilename = 'flyer_'+str(pk)+'.pdf'
                     syspath = '/var/www/files.politicalpartytime.org/pdfs/'
-                    dirpath = str(datetime.date.today().year)+'/'+str(datetime.date.today().month)+'/'
+                    m = datetime.date.today().month
+                    if m<10:
+                        strm = '0'+str(m)
+                    dirpath = str(datetime.date.today().year)+'/'+strm+'/'
                     if not os.path.isdir(syspath + dirpath):
-                        os.makedirs(syspath + dirpath)
+                        os.makedirs(syspath + dirpath,0777)
                     destination = open(syspath + dirpath + localfilename, 'wb')
                     destination.write(zfile.read(zfname))
                     destination.close()
