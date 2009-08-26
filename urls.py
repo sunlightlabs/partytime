@@ -52,12 +52,12 @@ urlpatterns = patterns('',
     (r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all'),
     (r'^ical/$', IcalFeed()),
     #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT }),
-    #(r'^acomplete/(?P<modelname>.+)/(?P<field>.+)/(?P<criteria>.+)$', 'partytime.publicsite.views.search2' )
+    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    (r'^accounts/uploadzip/$', 'partytime.publicsite.views.uploadzip'),
+
 )
 
 
-#urlpatterns += patterns('',
-#    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media'}),
-#)
+
 
 

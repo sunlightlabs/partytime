@@ -10,7 +10,7 @@
 function showPDF(url) {
 	   		var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs'+url, 'pub-43329585085964116591');
 	   		scribd_doc.addParam("height", 740);
-	   		scribd_doc.addParam("width", 480);
+	   		scribd_doc.addParam("width", 540);
 			scribd_doc.addParam("public", false);
 	   		scribd_doc.write('embedded_doc');
 }
@@ -22,7 +22,10 @@ function tryPDF() {
 </script>
 <style type="text/css">
 #id_entertainment{
-width:300px;
+width:400px;
+} 
+#id_venue{
+width:400px;
 } 
 </style>
 {%endifequal%}
@@ -91,7 +94,7 @@ width:300px;
 	</div>
 
     <!-- Content -->
-    <div id="content" class="{% block coltype %}colM{% endblock %}" {%ifequal title 'Change event'%}style="float:right; width:400px"{%endifequal%}>
+    <div id="content" class="{% block coltype %}colM{% endblock %}" {%ifequal title 'Change event'%}style="float:right; width:600px"{%endifequal%}>
        <div> {% block pretitle %}{% endblock %}
         {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
         {% block content %}
@@ -102,6 +105,8 @@ width:300px;
         <br class="clear" />
     </div>
     <!-- END Content --></div>
+
+{%ifequal title 'Change event'%}<form enctype="multipart/form-data" method="post" action="/accounts/uploadzip/"><label for="file">Upload ZIP file of processed PDFs and add to list (Nancy)</label><input type="file" name="file"><input type="submit"></form>{%endifequal%}>
 
     {% block footer %}<div id="footer"></div>{% endblock %}
 </div>

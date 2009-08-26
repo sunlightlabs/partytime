@@ -209,7 +209,14 @@ class Venue(models.Model):
     latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6, db_index=True)
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
     def __unicode__(self):
-        return u"%s" % (self.venue_name)
+        if self.venue_name and self.venue_address:
+            return u"%s (%s)" % (self.venue_name, self.venue_address)
+        else:
+            return u"%s" % (self.venue_name)
+    #class Meta:
+    #    ordering = ('venue_name',)
+
+
 
 class Entertainment(models.Model):
     entertainment_type = models.CharField(max_length=255)
@@ -217,6 +224,8 @@ class Entertainment(models.Model):
         db_table = u'publicsite_entertainment'
     def __unicode__(self):
         return u"%s" % (self.entertainment_type)
+    class Meta:
+        ordering = ('entertainment_type',)
 
 class Event(models.Model):
     objects = EventManager()
@@ -238,7 +247,7 @@ class Event(models.Model):
     pdf_document_link = models.CharField(blank=True, max_length=255, help_text='<a onclick="tryPDF()">Load PDF</a>')
 
     committee_id = models.CharField(blank=True, max_length=255,null=True)    
-    rsvp_info = models.CharField(blank=True, max_length=255,null=True)
+    rsvp_info = models.CharField(null=True,blank=True, max_length=255)
     event_paid_for_by = models.CharField(blank=True, max_length=255,null=True)
     distribution_paid_for_by = models.CharField(blank=True, max_length=255,null=True)
     make_checks_payable_to = models.CharField(blank=True, max_length=255,null=True)

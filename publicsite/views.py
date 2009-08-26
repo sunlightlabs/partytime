@@ -236,5 +236,40 @@ def updatecmtes(request,chamber):
 
 
 
+def uploadzip(request):    
+    import os, zipfile
+    from django.contrib.auth.decorators import login_required
+    import datetime
+
+    #if not request.user.is_authenticated():
+    #    views.redirect_to_login('accounts/login')
+    login_required(uploadzip)
+
+
+    if request.FILES:
+            f = request.FILES['file'] #.read()
+            if f[-4:]!='.zip':
+                return HttpResponse("This file doesn't have a .zip extension.")
+            zfile = zipfile.ZipFile(f,'r')
+            for zfname in zfile.namelist():
+                if zfname[-4:]=='.pdf':
+                    newe = Event(status='tempLR')
+                   newe.save()
+                    pk = newe.pk
+                   localfilename = 'flyer_'+str(pk)+'.pdf'
+                   syspath = '/var/www/files.politicalpartytime.org/pdfs/'
+                   dirpath = str(datetime.date.today().year)+'/'+str(datetime.date.today().month)+'/'
+                   if not os.path.isdir(syspath + dirpath):
+                       os.makedirs(syspath + dirpath)
+                    destination = open(syspath + dirpath + localfilename, 'wb')
+                    destination.write(zfile.read(zfname))
+                    destination.close()
+                    newe.pdf_document_link = dirpath + localfilename
+                    newe.save()
+            return HttpResponseRedirect('/admin/publicsite/event/')
+    else:
+        return HttpResponseRedirect('/')
+
+
 
 
