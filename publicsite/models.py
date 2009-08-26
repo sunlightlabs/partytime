@@ -213,10 +213,11 @@ class Venue(models.Model):
             return u"%s (%s)" % (self.venue_name, self.venue_address)
         else:
             return u"%s" % (self.venue_name)
-    __unicode__.admin_order_field = 'venue_name'
-
+    #def listname(self):    
+    #    return __unicode__(self)        
+    #listname.admin_order_field = 'venue_name'    
     #class Meta:
-    #    ordering = ('venue_name',)
+    #    ordering = ('listname',)
 
 
 
