@@ -234,24 +234,22 @@ class ManyToManyAdmin(admin.ModelAdmin):
 
 
 
-"""
-from django import forms
-from django.conf import settings
-from django.utils.safestring import mark_safe
-from django.utils.text import truncate_words
+
+
 
 class ForeignKeySearchInput(forms.HiddenInput):
 
     class Media:
         css = {
-            'all': ('jquery.autocomplete.css',)
+            'all': (settings.MEDIA_URL+'jquery.autocomplete.css',)
         }
         js = (
-            'lib/jquery.js',
-            'lib/jquery.bgiframe.min.js',
-            'lib/jquery.ajaxQueue.js',
-            'jquery.autocomplete.js'
+            settings.MEDIA_URL+'lib/jquery.js',
+            settings.MEDIA_URL+'lib/jquery.bgiframe.min.js',
+            settings.MEDIA_URL+'lib/jquery.ajaxQueue.js',
+            settings.MEDIA_URL+'jquery.autocomplete.js'
         )
+ 
 
     def label_for_value(self, value):
         key = self.rel.get_related_field().name
@@ -317,5 +315,5 @@ class ForeignKeySearchInput(forms.HiddenInput):
             'label': label,
             'name': name,
         }
-"""
+
 

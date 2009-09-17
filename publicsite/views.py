@@ -235,6 +235,50 @@ def updatecmtes(request,chamber):
 
 
 
+#lobbyists .... added by luke rosiak 9/16
+def lobby(request, level="ind"):
+    from django.db import connection, transaction 
+    cursor = connection.cursor()
+    if level=='ind':
+        query = "SELECT catname, realcode, count(id) c FROM (SELECT publicsite_crp_category.catname, publicsite_crp_category.realcode, publicsite_event.id FROM (((publicsite_crp_lobbying INNER JOIN publicsite_host ON publicsite_crp_lobbying.datekey = publicsite_host.crp_id) INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id) INNER JOIN publicsite_crp_category ON publicsite_crp_lobbying.realcode = publicsite_crp_category.realcode WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='')) GROUP BY publicsite_crp_category.catname, publicsite_crp_category.realcode, publicsite_event.id ) a GROUP BY catname ORDER BY c DESC"
+    elif level=='person':
+        query = "SELECT publicsite_host.name, publicsite_host.crp_id, Count(publicsite_event.id) c FROM (publicsite_host INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='') AND ((publicsite_host.crp_id) Is Not Null)) GROUP BY publicsite_host.name, publicsite_host.crp_id ORDER BY Count(publicsite_event.id) DESC;"
+    else:
+        level = "corp"
+        query = "SELECT org, o2, count(id) c FROM (SELECT publicsite_crp_lobbying.org, publicsite_crp_lobbying.org o2, publicsite_event.id FROM (((publicsite_crp_lobbying INNER JOIN publicsite_host ON publicsite_crp_lobbying.datekey = publicsite_host.crp_id) INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id)  WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='')) GROUP BY publicsite_crp_lobbying.org, o2, publicsite_event.id) a GROUP BY org, o2 ORDER BY c DESC;"
+
+    cursor.execute(query)
+    summary = cursor.fetchall()
+     
+    return render_to_response('publicsite/lobby.html', {"summary": summary, "level": level }) 
+
+
+def lobbydetail(request, category):
+    #hostset = Host.objects.filter(crp_lobbying__category=category)
+    lobset = Crp_lobbying.objects.filter(category=category).order_by('org', 'datekey')
+
+    corps = []
+    for l in lobset:
+      isin=False
+      for c in corps:
+            if c['org']==l.org:
+               c['lobbyists'].append( (l.datekey.name, l.datekey.crp_id)  )
+               isin=True
+      if isin==False:
+            corps.append( { "org": l.org, "lobbyists": [(l.datekey.name, l.datekey.crp_id)] } )
+
+
+    docset = Event.objects.filter(hosts__crp_lobbying__category=category, status='')
+    return render_to_response('publicsite/lobbydetail.html', {"snapshot_image_name":"recent", "docset":docset, "lobset": corps })
+
+def lobbydetailcorp(request, name):
+    #hostset = Host.objects.filter(crp_lobbying__category=category)
+    lobset = Crp_lobbying.objects.filter(org=name)
+    docset = Event.objects.filter(hosts__crp_lobbying__org=name, status='')
+    return render_to_response('publicsite/lobbydetailcorp.html', {"snapshot_image_name":"recent", "docset":docset, "lobset": lobset, "name": name })
+
+
+
 
 def uploadzip(request):    
     import os, zipfile

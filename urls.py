@@ -54,6 +54,9 @@ urlpatterns = patterns('',
     #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT }),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
     (r'^accounts/uploadzip/$', 'partytime.publicsite.views.uploadzip'),
+    (r'^lobby/ind/(?P<category>.{5})/$', 'partytime.publicsite.views.lobbydetail'),
+    (r'^lobby/corp/(?P<name>.*)/$', 'partytime.publicsite.views.lobbydetailcorp'),
+    (r'^lobby/(?P<level>.*)/$', 'partytime.publicsite.views.lobby'),
 
 )
 
