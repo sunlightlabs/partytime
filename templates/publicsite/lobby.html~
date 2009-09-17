@@ -1,0 +1,32 @@
+{% extends "publicsite/base.html" %}
+
+{% block sidebar %}
+        {% include "publicsite/includes/about.html" %}
+{% endblock %}
+
+{% block content %}
+
+
+<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
+<div id="committee_tab">
+	<ul>
+        {% ifnotequal level 'ind' %}<li><a href="/lobby/ind/">Industries</a> </li>{% else %} <li>Industries</li>{% endifnotequal %}
+        {% ifnotequal level 'corp' %}<li><a href="/lobby/corp/">Companies</a></li> {% else %} <li>Companies</li>{% endifnotequal %}
+        {% ifnotequal level 'person' %}<li><a href="/lobby/person/">Lobbyists</a></li> {% else %} <li>Lobbyists</li>{% endifnotequal %}
+</ul>
+</div>
+<div id="committee_party_box">
+<ul id="committee_parties">
+        {% for c in summary %}
+{% ifequal level 'person' %}
+<li><a href="/search/Host/{{ c.0 }}">{{ c.0  }}</a> ({{c.2}} parties)</li>
+{%else%}		
+<li><a href="/lobby/{{level}}/{{ c.1 }}">{{ c.0  }}</a> ({{c.2}} parties)</li>
+{%endifequal%}
+
+        {% endfor %}
+
+</ul>
+</div>
+{% endblock %}
+

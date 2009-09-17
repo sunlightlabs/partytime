@@ -1,0 +1,38 @@
+<html>
+<script language="javascript">
+
+
+var hostname = 'http://localhost';
+var osWili=document.createElement('link');
+osWili.rel='stylesheet';
+osWili.type='text/css';
+osWili.href='http://media.sunlightprojects.org/partytime/css/style.css';
+osWili.media='all';
+document.lastChild.firstChild.appendChild(osWili);
+document.write('<div id=\"osWitotr\">');
+
+var t='';
+
+{% for doc in docset %} 
+		t += '<div id="summary_container"><div id="summary_topbar"><div id="summary_date"><img src="http://media.sunlightprojects.org/partytime/images/date.png">
+        <span class="summary_date"><a href="/party/{{ doc.0 }}/">{{ doc.1 }} ({{doc.3}})</span> <span class="summary_date"> {{ doc.6 }}</a></span>
+		</div><div id="summary_invite"><a href="/party/{{ doc.0 }}/"><img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png"></a>
+		</div></div>
+		<div id="summary_data"><ul>
+						<li>';
+							{% if doc.8 %}t+= '<span class="detail_head">{{ doc.8 }}</span>{% endif %}';
+							{% if doc.10 %}t+= '{{ doc.10 }}';{% endif %}
+	                        {% if doc.11 %}t+= ' @ {{ doc.11 }}';{% endif %}
+						t+= '</li></ul></div></div>';
+		{% endfor %}
+
+osWidiv=document.createElement('div');
+osWidiv.setAttribute('id','theOswitotr');
+osWidiv.innerHTML=t;
+osRef = document.getElementById('osWitotr');
+var ospDiv = osRef.parentNode;
+ospDiv.insertBefore(osWidiv, osRef);
+document.write('</div>');
+
+</script></html>
+

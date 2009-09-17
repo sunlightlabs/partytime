@@ -1,0 +1,118 @@
+{% extends "publicsite/base.html" %}
+{% block title %}
+{% if doc.entertainment.entertainment_type %}{{ doc.entertainment.entertainment_type }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}
+- {% endblock %}
+{% block sidebar %}
+
+{% endblock %}
+
+{% block content %}
+	
+	<img src="http://media.sunlightprojects.org/partytime/images/labels_411.png">
+
+	<div id="party_container">
+
+		<div id="summary_topbar">
+			<div id="summary_date">
+				<img src="http://media.sunlightprojects.org/partytime/images/date.png">
+				<span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
+				{% if doc.start_time or doc.end_time %}<span class="summary_time">({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</span>{% endif %}
+			</div>
+			<div id="summary_invite">
+				<a href="#invite">
+					<img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
+				</a>
+				<a href="#invite">View Invitation</a>
+			</div>
+		</div>
+
+	
+
+
+
+		<div id="party_data">
+			<ul>
+				{% with doc.beneficiaries.all as beneficiaries %}
+				{% if beneficiaries %}
+					<li><span class="detail_head">For:</span> {% for ben in beneficiaries %}
+
+{%if ben.affiliate %}
+<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a> (<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.affiliate}}{%endif%}/">{{ ben.affiliate }}</a>) 
+{%else%}
+<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a>
+{%endif%}  
+
+{% endfor %}</li>
+
+
+   				{% endif %}
+   				{% endwith %}
+				
+				
+				{% with doc.hosts.all as hosts %}
+				{% if hosts %}
+					<li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a><a href="/search/Host/{{ host }}">{{ host }}</a> {% endfor %}</li>
+				{% endif %}
+				{% endwith %}
+				
+				{% if doc.start_time or doc.end_time %}<li><span class="detail_head">When:</span> {{ doc.start_date }} ({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</a></li>{% endif %}
+				{% if doc.venue.venue_name %}<li><span class="detail_head">Where:</span> <a href="/search/Venue_Name/{{ doc.venue.venue_name }}">{{ doc.venue.venue_name }}</a> {% if doc.venue.venue_address %} - {{ doc.venue.venue_address }}{% endif %}</li>{% endif %}
+				{% if doc.entertainment.entertainment_type %}<li><span class="detail_head">Type of Event:</span> <a href="/search/Entertainment_Type/{{ doc.entertainment.entertainment_type }}">{{ doc.entertainment.entertainment_type }}</a></li>{% endif %}
+				{% with doc.other_members.all as other_members %}
+				{% if other_members %}
+				<li><span class="detail_head">Other Lawmakers Mentioned:</span> {% for other_member in other_members %} <a href="/search/Other_Members_of_Congress/{{ other_member.name }}/">{{ other_member }}</a> {% endfor %}</li>
+				{% endif %}
+				{% endwith %}
+				
+				{% if doc.contributions_info %}<li><span class="detail_head">Contribution Information:</span> {{ doc.contributions_info }}</li>{% endif %}
+				{% if doc.make_checks_payable_to %}<li><span class="detail_head">Make Checks Payable To:</span> {{ doc.make_checks_payable_to }} - {{ doc.checks_payable_to_address }}</li>{% endif %}
+				{% if doc.committee_id %}<li><span class="detail_head">Committee ID:</span> {{ doc.committee_id }}</li>{% endif %}
+				{% if doc.rsvp_info %}<li><span class="detail_head">RSVP:</span> {{ doc.rsvp_info }}</li>{% endif %}
+				{% if doc.event__paid_for_by %}<li><span class="detail_head">Event Paid for by:</span> {{ doc.event__paid_for_by }}</li>{% endif %}
+				{% if doc.distribution_paid_for_by %}<li><span class="detail_head">Distribution Paid for by:</span> {{ doc.distribution_paid_for_by }}</li>{% endif %}
+					</ul>
+				{% if doc.venue.latitude %} 
+				
+				
+					<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAkEpHXjFNm14XKpW83X-MLRRdQbzwbY56bYDtVz2O0JEKShpUKBRmLsQvMblKN89lblfAT7XTcvKk3Q" type="text/javascript"></script>
+									    <script type="text/javascript">
+										
+									    function initialize() {
+									      if (GBrowserIsCompatible()) {
+									        var map = new GMap2(document.getElementById("map_canvas"));
+									        map.setCenter(new GLatLng({{ doc.venue.longitude }}, {{ doc.venue.latitude }}), 13);
+											map.addControl(new GSmallMapControl());
+											map.addControl(new GMapTypeControl());
+											map.addOverlay(new GMarker(map.getCenter()));
+									      }
+									    }
+
+									    </script>
+<div id="map_canvas" style="width: 470px; height: 200px; margin-left:20px"></div>
+				{% endif %}
+				
+				
+		
+		</div>
+
+	</div>
+
+	<br /><br />
+
+	<img src="http://media.sunlightprojects.org/partytime/images/labels_invite.png">
+	
+	<a name="invite"></a>
+	
+	<div id="the_invite">
+
+		<div id='embedded_doc'></div>
+		<script type="text/javascript">
+	   		var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs{{ doc.pdf_document_link }}', 'pub-43329585085964116591');
+	   		scribd_doc.addParam("height", 700);
+	   		scribd_doc.addParam("width", 530);
+			scribd_doc.addParam("public", false);
+	   		scribd_doc.write('embedded_doc');
+		</script>
+	</div>
+	
+{% endblock %}

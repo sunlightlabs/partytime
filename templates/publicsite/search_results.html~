@@ -1,0 +1,66 @@
+{% extends "publicsite/base.html" %}
+
+{% block content %}
+
+<h2 class="results_head">PARTYFINDER&#153; Results for "{{ args }}" within {{ field }}</h2>
+<span class="search_embed"><a href="javascript:toggleLayer('partyfinder_embed');">Embed these results on your site/blog</a></span>
+<div id="partyfinder_embed">
+<form>
+	<input name="embed_results" type="text" size="70" value='
+	<iframe src="http://politicalpartytime.org/search_embed/{{ field }}/{{ args}}/"width="520" height="500" frameborder="0" border="0"></iframe>'</input>
+</form>
+</div>
+{%if lm %}
+Matching lawmakers:
+{% for doc in lm %}
+<a href="/pol/{{ doc.crp_id }}">{{doc}}</a> 
+{%endfor%}<br/>
+{%endif%}
+
+{% for doc in docset %}
+    <div id="summary_container">
+        <div id="summary_topbar">
+            <div id="summary_date">
+                <img src="http://media.sunlightprojects.org/partytime/images/date.png">
+                <span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
+                {% if doc.start_time or doc.end_time %}<span class="summary_time">({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</span>{% endif %}
+            </div>
+            <div id="summary_invite">
+                <a href="/party/{{ doc.id }}/">
+                    <img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
+                </a>
+                <a href="/party/{{ doc.id }}/">View Invitation</a>
+            </div>
+        </div>
+        <div id="summary_data">
+            <ul>
+                <li>
+                    {% if doc.entertainment.entertainment_type %}<span class="detail_head">{{ doc.entertainment.entertainment_type }}</span>{% endif %}
+                    {% with doc.beneficiaries.all as beneficiaries %}
+                        {% if beneficiaries %}for {% for ben in beneficiaries %}
+
+{%if ben.affiliate %}
+<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben.name }}</a> (<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.affiliate}}{%endif%}/">{{ ben.affiliate }}</a>) 
+{%else%}
+<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a>
+{%endif%}  
+
+
+{% endfor %}{% endif %} {% if doc.venue.venue_name %}at <a href="/search/Venue_Name/{{ doc.venue.venue_name }}">{{ doc.venue.venue_name }}</a>{% endif %}
+
+
+
+                    {% endwith %}
+                </li>
+                {% with doc.hosts.all as hosts %}
+                {% if hosts %}
+                    <li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}">{{ host }}</a> {% endfor %}</li>
+                {% endif %}
+                {% endwith %}
+            </ul>
+        </div>
+    </div>
+{% endfor %}
+<span class="search_disclaimer"><strong>Note:</strong> You may wonder why you often see repeat entries for the same party. Sometimes we receive the same invitation from more than one source. We are working on eliminating these duplicates.</span>
+
+{% endblock %}
