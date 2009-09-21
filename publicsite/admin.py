@@ -37,7 +37,7 @@ class EventAdminWid(ManyToManyAdmin):
 
 
 
-
+from django.conf.urls.defaults import *
 from publicsite.widgets import ForeignKeySearchInput
 
 
