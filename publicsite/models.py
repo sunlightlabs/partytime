@@ -260,7 +260,7 @@ class Event(models.Model):
 
     hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts',null=True,blank=True)
     tags = models.ManyToManyField(Tag,db_table=u'publicsite_event_tags',null=True)
-    beneficiaries = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_beneficiary', related_name='publicsite_event_beneficiary',null=True,blank=True)
+    beneficiaries = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_beneficiary', null=True,blank=True) #related_name='publicsite_event_beneficiary',
     other_members = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_omc', related_name='publicsite_event_omc',null=True,blank=True)
      
     start_date = models.DateField(blank=True, null=True)

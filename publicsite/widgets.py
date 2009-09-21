@@ -223,20 +223,6 @@ class ManyToManyAdmin(admin.ModelAdmin):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class ForeignKeySearchInput(forms.HiddenInput):
 
     class Media:

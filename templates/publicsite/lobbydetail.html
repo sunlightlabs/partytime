@@ -1,13 +1,11 @@
 {% extends "publicsite/base.html" %}
 
 {% block content %}
-
-	<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">
+	<a href="/lobby/">
+	<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png"  alt="Parties by Lobbyist Host"></a>
 <div id="cmte_detail">
-	<a href="/committee/">
-		<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
-	</a> 
-<h4>{{cmte.title}}</h4>
+
+<h4>Hosted by lobbyists representing industry: {{category.catname}}</h4>
 
 </div>
 <div id="committee_members">
@@ -16,8 +14,19 @@
 <li>{{ l.org }}: {%for ll in l.lobbyists%} <a href="http://www.opensecrets.org/lobby/lobbyist.php?lname={{ ll.0 }}&id={{ ll.1 }}&year=2008">{{ ll.0 }}</a> {%endfor%}</li>
 {%endfor%}
 	</ul></p>
-</div>
 
+	<p><strong>Most frequent beneficiaries:</strong><ul>
+{% for l in polset %}
+{{ l.1 }} ({{ l.3 }})
+{%endfor%}
+	</ul></p>
+
+	<p><strong>Events for committee members:</strong><ul>
+{% for l in cmteset %}
+{{ l.0 }} ({{ l.1 }})
+{%endfor%}
+	</ul></p>
+</div>
 
 
 	{% for doc in docset %}

@@ -33,7 +33,10 @@ def index(request):
 
     
 def party(request, docid): 
-    doc = Event.objects.get(pk=docid)
+    try:
+        doc = Event.objects.get(pk=docid)
+    except:
+        return HttpResponseRedirect('/')
     return render_to_response('publicsite/party.html', {"doc": doc}) 
 
 def search_proxy(request):
@@ -242,7 +245,7 @@ def lobby(request, level="ind"):
     if level=='ind':
         query = "SELECT catname, realcode, count(id) c FROM (SELECT publicsite_crp_category.catname, publicsite_crp_category.realcode, publicsite_event.id FROM (((publicsite_crp_lobbying INNER JOIN publicsite_host ON publicsite_crp_lobbying.datekey = publicsite_host.crp_id) INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id) INNER JOIN publicsite_crp_category ON publicsite_crp_lobbying.realcode = publicsite_crp_category.realcode WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='')) GROUP BY publicsite_crp_category.catname, publicsite_crp_category.realcode, publicsite_event.id ) a GROUP BY catname ORDER BY c DESC"
     elif level=='person':
-        query = "SELECT publicsite_host.name, publicsite_host.crp_id, Count(publicsite_event.id) c FROM (publicsite_host INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='') AND ((publicsite_host.crp_id) Is Not Null)) GROUP BY publicsite_host.name, publicsite_host.crp_id ORDER BY Count(publicsite_event.id) DESC;"
+        query = "SELECT publicsite_host.name, publicsite_host.crp_id, Count(publicsite_event.id) c FROM (publicsite_host INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='') AND ((publicsite_host.crp_id) Is Not Null)) GROUP BY publicsite_host.name, publicsite_host.crp_id HAVING c>2 ORDER BY Count(publicsite_event.id) DESC;"
     else:
         level = "corp"
         query = "SELECT org, o2, count(id) c FROM (SELECT publicsite_crp_lobbying.org, publicsite_crp_lobbying.org o2, publicsite_event.id FROM (((publicsite_crp_lobbying INNER JOIN publicsite_host ON publicsite_crp_lobbying.datekey = publicsite_host.crp_id) INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id)  WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='')) GROUP BY publicsite_crp_lobbying.org, o2, publicsite_event.id) a GROUP BY org, o2 ORDER BY c DESC;"
@@ -254,27 +257,49 @@ def lobby(request, level="ind"):
 
 
 def lobbydetail(request, category):
+    from django.db.models import *
+    from django.db import connection, transaction 
+    cursor = connection.cursor()
+
+    cat = Crp_category.objects.get(realcode=category)
+
+    """get list of lobbyists and who they're representing, in this industry"""
     #hostset = Host.objects.filter(crp_lobbying__category=category)
-    lobset = Crp_lobbying.objects.filter(category=category).order_by('org', 'datekey')
+    query = "SELECT publicsite_crp_lobbying.org, publicsite_host.name, publicsite_host.crp_id FROM ((publicsite_host INNER JOIN publicsite_crp_lobbying ON publicsite_host.crp_id = publicsite_crp_lobbying.datekey) INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='') AND ((publicsite_crp_lobbying.realcode)='"+category+"')) GROUP BY publicsite_crp_lobbying.org, publicsite_host.name, publicsite_host.crp_id ORDER BY publicsite_crp_lobbying.org, publicsite_host.name;"
+    cursor.execute(query)
+    lobset = cursor.fetchall()
 
     corps = []
     for l in lobset:
-      isin=False
-      for c in corps:
-            if c['org']==l.org:
-               c['lobbyists'].append( (l.datekey.name, l.datekey.crp_id)  )
-               isin=True
-      if isin==False:
-            corps.append( { "org": l.org, "lobbyists": [(l.datekey.name, l.datekey.crp_id)] } )
+        isin=False
+        for c in corps:
+            if c['org']==l[0]:
+                c['lobbyists'].append( (l[1], l[2])  )
+                isin=True
+        if isin==False:
+            corps.append( { "org": l[0], "lobbyists": [(l[1], l[2])] } )
 
 
-    docset = Event.objects.filter(hosts__crp_lobbying__category=category, status='')
-    return render_to_response('publicsite/lobbydetail.html', {"snapshot_image_name":"recent", "docset":docset, "lobset": corps })
+    """get list of party beneficiaries"""
+    query = "SELECT publicsite_event_beneficiary.lawmaker_id, publicsite_lawmaker.name, publicsite_lawmaker.crp_id, Count(publicsite_event_beneficiary.event_id) AS CountOfevent_id FROM publicsite_lawmaker INNER JOIN ((((publicsite_host INNER JOIN publicsite_crp_lobbying ON publicsite_host.crp_id = publicsite_crp_lobbying.datekey) INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id) INNER JOIN publicsite_event_beneficiary ON publicsite_event.id = publicsite_event_beneficiary.event_id) ON publicsite_lawmaker.id = publicsite_event_beneficiary.lawmaker_id WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='') AND ((publicsite_crp_lobbying.realcode)='m1000')) GROUP BY publicsite_event_beneficiary.lawmaker_id, publicsite_lawmaker.name, publicsite_lawmaker.crp_id ORDER BY Count(publicsite_event_beneficiary.event_id) DESC LIMIT 12;"
+    cursor.execute(query)
+    polset = cursor.fetchall()
+
+    """get list of committees sat on by party beneficiaries"""
+    query = "SELECT publicsite_committee.title, Count(a.lawmaker_id) AS CountOflawmaker_id FROM publicsite_committee INNER JOIN ((SELECT publicsite_event_beneficiary.event_id, publicsite_event_beneficiary.lawmaker_id FROM (((publicsite_host INNER JOIN publicsite_crp_lobbying ON publicsite_host.crp_id = publicsite_crp_lobbying.datekey) INNER JOIN publicsite_event_hosts ON publicsite_host.id = publicsite_event_hosts.host_id) INNER JOIN publicsite_event ON publicsite_event_hosts.event_id = publicsite_event.id) INNER JOIN publicsite_event_beneficiary ON publicsite_event.id = publicsite_event_beneficiary.event_id WHERE (((publicsite_event.status) Is Null Or (publicsite_event.status)='') AND ((publicsite_crp_lobbying.realcode)='x3000'))) a INNER JOIN publicsite_committee_members ON a.lawmaker_id = publicsite_committee_members.lawmaker_id) ON publicsite_committee.short = publicsite_committee_members.committee_id GROUP BY publicsite_committee.title ORDER BY Count(a.lawmaker_id) DESC LIMIT 12;"
+    cursor.execute(query)
+    cmteset = cursor.fetchall()
+
+
+    docset = Event.objects.filter(hosts__crp_lobbying__category=category, status='').order_by('-start_date')
+
+    return render_to_response('publicsite/lobbydetail.html', {"snapshot_image_name":"recent", "docset":docset, "lobset": corps, "polset": polset, "cmteset": cmteset, "category": cat })
+
 
 def lobbydetailcorp(request, name):
     #hostset = Host.objects.filter(crp_lobbying__category=category)
     lobset = Crp_lobbying.objects.filter(org=name)
-    docset = Event.objects.filter(hosts__crp_lobbying__org=name, status='')
+    docset = Event.objects.filter(hosts__crp_lobbying__org=name, status='').order_by('-start_date')
     return render_to_response('publicsite/lobbydetailcorp.html', {"snapshot_image_name":"recent", "docset":docset, "lobset": lobset, "name": name })
 
 
