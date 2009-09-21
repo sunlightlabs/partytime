@@ -48,12 +48,10 @@ class EventAdmin(EventAdminWid):
         'entertainment': ('entertainment_type', ),
     }
 
-    def __call__(self, request, url):
-        if url is None:
-            pass
-        elif url == 'search':
-            return self.search(request)
-        return super(EventAdmin, self).__call__(request, url)
+    def get_urls(self):
+        urls = super(EventAdmin,self).get_urls()
+        search_url = patterns('', (r'^search/$', self.search))
+        return search_url + urls
 
     def search(self, request):
         """
