@@ -58,6 +58,8 @@ urlpatterns = patterns('',
     (r'^lobby/corp/(?P<name>.*)/$', 'partytime.publicsite.views.lobbydetailcorp'),
     (r'^lobby/(?P<level>.*)/$', 'partytime.publicsite.views.lobby'),
 
+    (r'^ajax/', include('ajax_select.urls')),
+
 )
 
 
