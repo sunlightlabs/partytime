@@ -119,12 +119,12 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 	"""
 	class Media:
 		css = {
-			'all': ('%s/jquery.autocomplete.css' % settings.MEDIA_URL,)
+			'all': ('%s/jquery-autocomplete/jquery.autocomplete.css' % settings.MEDIA_URL,)
 		}
 		js = (
 			'%s/jquery.js' % settings.MEDIA_URL,
-			'%s/jquery.autocomplete.js' % settings.MEDIA_URL,
-			'%s/AutocompleteObjectLookups.js' % settings.MEDIA_URL
+			'%s/jquery-autocomplete/jquery.autocomplete.js' % settings.MEDIA_URL,
+			'%s/autocomplete/AutocompleteObjectLookups.js' % settings.MEDIA_URL
 		)
 
 
