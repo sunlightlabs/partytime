@@ -5,4 +5,5 @@ Django==1.1
 python-sunlightapi
 -e git://github.com/sunlightlabs/django-mediasync.git#egg=django-mediasync          
 boto
-ajax_select
+-e svn+http://django-ajax-selects.googlecode.com/svn/trunk/#egg=ajax-select
+

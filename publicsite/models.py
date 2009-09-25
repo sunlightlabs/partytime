@@ -14,7 +14,7 @@ NONBLOCK_ELEMENTS = ('li',)
 NONBLOCK_ELEMENT_RE = re.compile(r"(%s)" % "|".join([r">(\s*?)<(%s)" % e for e in NONBLOCK_ELEMENTS]),re.S)
 
 
-""" TESTING LOBBYING STUFF """
+
 class Crp_category(models.Model):
     realcode = models.CharField(max_length=5, primary_key=True)
     catname = models.CharField(blank=True, max_length=255,null=True) 
@@ -26,7 +26,7 @@ class Crp_lobbying(models.Model):
     category = models.ForeignKey(Crp_category, to_field='realcode', db_column='realcode')
 
 
-""" """
+
 
 class Author(models.Model):
     user_name = models.CharField(max_length=255, db_column='user_nicename')
@@ -181,29 +181,22 @@ class Lawmaker(models.Model):
     class Meta:
         db_table = u'publicsite_lawmaker'
     def __unicode__(self):
-	if self.district=="":
-	    districtStr = ""
-	else:
-	    districtStr ="-"+self.district
-	
+        if self.district=="":
+            districtStr = ""
+        else:
+            districtStr ="-"+self.district	
         if self.party=="":
-	    partyStr = ""
-	else:
-	    partyStr =self.party+", "
-
+            partyStr = ""
+        else:
+            partyStr =self.party+", "
         if self.title=="":
-	    titleStr = ""
-	else:
-	    titleStr =self.title+" "
-
-	if self.district=="" and self.party=="" and self.state=="":
-	    info = ""
-	else:
-	    info =" ("+partyStr+self.state+districtStr+")"
-	
-	#districtStr = "" if self.district=="" else "-"+self.district
-	#partyStr = "" if self.party=="" else self.party+", "
-	#info =  "" if self.district=="" and self.party=="" and self.state=="" else " ("+partyStr+self.state+districtStr+")"
+            titleStr = ""
+        else:
+            titleStr =self.title+" "
+        if self.district=="" and self.party=="" and self.state=="":
+            info = ""
+        else:
+            info =" ("+partyStr+self.state+districtStr+")"
         return u"%s%s%s" % (titleStr, self.name,info) 
 
 class Committee(models.Model):
@@ -260,8 +253,8 @@ class Event(models.Model):
 
     hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts',null=True,blank=True)
     tags = models.ManyToManyField(Tag,db_table=u'publicsite_event_tags',null=True)
-    beneficiaries = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_beneficiary', null=True,blank=True) #related_name='publicsite_event_beneficiary',
-    other_members = models.ManyToManyField(Lawmaker,db_table=u'publicsite_event_omc', related_name='publicsite_event_omc',null=True,blank=True)
+    beneficiaries = models.ManyToManyField(Lawmaker, null=True,blank=True, related_name='pol_events',db_table=u'publicsite_event_beneficiary')
+    other_members = models.ManyToManyField(Lawmaker,null=True,blank=True, related_name='pol_appearances',db_table=u'publicsite_event_omc')
      
     start_date = models.DateField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)

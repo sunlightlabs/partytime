@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     (r'^party/(?P<docid>\d+)/$', 'partytime.publicsite.views.party'),
     (r'^contact/', include('contact_form.urls'), {"form_class": PartyTimeContactForm, "fail_silently": False}),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    (r'^admin/', include(admin.site.urls)),
+    (r'^admin/(.*)', admin.site.root),
     (r'^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
     (r'^convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.convention_list'),
     (r'^convention/$', 'partytime.publicsite.views.convention_list'),
@@ -51,14 +51,14 @@ urlpatterns = patterns('',
     (r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac'),
     (r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all'),
     (r'^ical/$', IcalFeed()),
-    #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT }),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
     (r'^accounts/uploadzip/$', 'partytime.publicsite.views.uploadzip'),
     (r'^lobby/ind/(?P<category>.{5})/$', 'partytime.publicsite.views.lobbydetail'),
     (r'^lobby/corp/(?P<name>.*)/$', 'partytime.publicsite.views.lobbydetailcorp'),
     (r'^lobby/(?P<level>.*)/$', 'partytime.publicsite.views.lobby'),
 
-    (r'^ajax/', include('ajax_select.urls')),
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
+
 
 )
 

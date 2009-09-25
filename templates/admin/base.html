@@ -19,6 +19,9 @@ function tryPDF() {
         showPDF(document.getElementById('id_pdf_document_link').value);
     }
 }
+function untrash() {
+    if (document.getElementById('id_status').value=='temp') { document.getElementById('id_status').value=''; }
+}
 </script>
 <style type="text/css">
 #id_entertainment{
@@ -38,7 +41,7 @@ width:400px;
 </head>
 {% load i18n %}
 
-<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" {%ifequal title 'Change event'%}onload="tryPDF()"{%endifequal%}>
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" {%ifequal title 'Change event'%}onload="tryPDF(); untrash()"{%endifequal%}>
 
 <!-- Container -->
 <div id="container">
