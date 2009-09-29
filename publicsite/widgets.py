@@ -27,7 +27,7 @@ class ForeignKeySearchInput(forms.HiddenInput):
 	"""
 	class Media:
 		css = {
-			'all': ('%s/jquery.autocomplete.css' % settings.MEDIA_URL,)
+			'all': ('%s/autocomplete/jquery.autocomplete.css' % settings.MEDIA_URL,)
 		}
 		js = (
 			'%s/js/jquery.js' % settings.MEDIA_URL,
@@ -119,7 +119,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 	"""
 	class Media:
 		css = {
-			'all': ('%s/jquery.autocomplete.css' % settings.MEDIA_URL,)
+			'all': ('%s/autocomplete/jquery.autocomplete.css' % settings.MEDIA_URL,)
 		}
 		js = (
 			'%s/js/jquery.js' % settings.MEDIA_URL,
