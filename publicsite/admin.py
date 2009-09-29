@@ -29,6 +29,10 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
         'other_members': ('name',),
     }
 
+    list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
+    list_filter = ('status',)
+
+
 
 
 

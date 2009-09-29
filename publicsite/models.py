@@ -224,6 +224,7 @@ class Venue(models.Model):
     latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6, db_index=True)
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
     def __unicode__(self):
+        return "s"
         if self.venue_name and self.venue_address:
             return u"%s (%s)" % (self.venue_name, self.venue_address)
         else:
@@ -280,6 +281,10 @@ class Event(models.Model):
     def __unicode__(self):
         if self.entertainment and self.venue:
             return self.entertainment.entertainment_type + " at " + self.venue.venue_name
+        elif self.venue:
+            return self.venue.venue_name
+        #elif self.start_date:
+        #    return self.start_date
         else:
             return 'Event'
 

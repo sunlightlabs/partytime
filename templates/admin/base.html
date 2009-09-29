@@ -22,6 +22,25 @@ function tryPDF() {
 function untrash() {
     if (document.getElementById('id_status').value=='temp') { document.getElementById('id_status').value=''; }
 }
+
+function checkdupes() {
+    //q = $( '#q' ).val();
+    date = document.getElementById('id_start_date').value;
+    venue = document.getElementById('id_venue').value;
+    bens = $('[name=beneficiaries]'); 
+    ben_ids = '';
+    for(b=0; b<bens.length; b++) {
+        ben_ids += bens[b].value+" ";
+    }    
+    $.post("/ajax/checkfordupes/", { d: date, v: venue, ben_ids: ben_ids, e: {{ object_id }} }, 
+        function(data) {
+			$("#dupesbar").html(data);
+		}, "text");
+    
+
+};
+
+
 </script>
 <style type="text/css">
 #id_entertainment{
@@ -42,7 +61,7 @@ width:400px;
 {% load i18n %}
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" {%ifequal title 'Change event'%}onload="tryPDF(); untrash()"{%endifequal%}>
-
+<div id="dupesbar"><a a href="javascript:checkdupes()">CHECK</a></div>
 <!-- Container -->
 <div id="container">
 
