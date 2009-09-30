@@ -32,12 +32,12 @@ function checkdupes() {
     for(b=0; b<bens.length; b++) {
         ben_ids += bens[b].value+" ";
     }    
-    $.post("/ajax/checkfordupes/", { d: date, v: venue, ben_ids: ben_ids }, 
-        function(data) {
-			$("#dupesbar").html(data);
-		}, "text");
-    
-
+    if( date!='' && venue!='' && bens.length>0 ) {
+        $.post("/ajax/checkfordupes/", { d: date, v: venue, ben_ids: ben_ids, e: {{ object_id }} }, 
+            function(data) {
+		    	$("#dupesbar").html(data);
+	    	}, "text");
+        }
 };
 
 
@@ -61,7 +61,7 @@ width:400px;
 {% load i18n %}
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" {%ifequal title 'Change event'%}onload="tryPDF(); untrash()"{%endifequal%}>
-<div id="dupesbar"><a a href="javascript:checkdupes()">CHECK</a></div>
+<div id="dupesbar"><a a href="javascript:checkdupes()">CHECK FOR DUPES</a></div>
 <!-- Container -->
 <div id="container">
 

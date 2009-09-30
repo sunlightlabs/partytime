@@ -224,16 +224,12 @@ class Venue(models.Model):
     latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6, db_index=True)
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
     def __unicode__(self):
-        return "s"
         if self.venue_name and self.venue_address:
             return u"%s (%s)" % (self.venue_name, self.venue_address)
         else:
             return u"%s" % (self.venue_name)
-    #def listname(self):    
-    #    return __unicode__(self)        
-    #listname.admin_order_field = 'venue_name'    
-    #class Meta:
-    #    ordering = ('listname',)
+    def listname(self):    
+        return __unicode__(self)        
 
 
 

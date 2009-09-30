@@ -23,7 +23,8 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
     )
     related_search_fields = { 
 		'hosts': ('name',),
-		'venue': ('venue_name',),
+		#'venue': ('listname',),
+        'venue': ('venue_name', 'venue_address'),
         'entertainment': ('entertainment_type',),   
         'beneficiaries': ('name',),
         'other_members': ('name',),

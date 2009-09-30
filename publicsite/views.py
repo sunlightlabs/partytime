@@ -352,22 +352,23 @@ def admin_checkfordupes(request):
     ben = request.POST['ben_ids'].split()
 
 
-    this_event = 10857
-    ben = [1235,]
-    date='2009-05-13'
-    venue=27
+    #this_event = 10857
+    #ben = [1235,]
+    #date='2009-05-13'
+    #venue=27
 
     e = Event.objects.filter(status='', venue__id=venue, start_date=date).exclude(pk=this_event) 
     q = Q()
     for b in ben:
         q = q | Q( beneficiaries=b)
     e = e.filter(q)
-    s='<b>Is this a duplicate of:</b> '
+    s='<a a href="javascript:checkdupes()">CHECK FOR DUPES</a> <b>Is this a duplicate of:</b> '
+    #s = 'venue='+str(venue)+'date='+date+'this='+str(this_event)+' ben='+request.POST['ben_ids']
     for ee in e:
         s+=' | <a href="/admin/publicsite/event/'+str(ee.id)+'/" target="_blank">'+str(ee.entertainment)+' ('+str(ee.start_time)+')</a> ('
-        for hh in ee.hosts.all()[0:5]:
+        for hh in ee.hosts.all()[0:4]:
             s+= hh.name + ", "
-        s+=')'
+        s+='..)'
     
     return HttpResponse(s)
 
