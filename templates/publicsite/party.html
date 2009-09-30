@@ -1,6 +1,6 @@
 {% extends "publicsite/base.html" %}
 {% block title %}
-{% if doc.entertainment.entertainment_type %}{{ doc.entertainment.entertainment_type }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}
+{% if doc.entertainment %}{{ doc.entertainment }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}
 - {% endblock %}
 {% block sidebar %}
 
@@ -57,7 +57,7 @@
 				
 				{% if doc.start_time or doc.end_time %}<li><span class="detail_head">When:</span> {{ doc.start_date }} ({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</a></li>{% endif %}
 				{% if doc.venue.venue_name %}<li><span class="detail_head">Where:</span> <a href="/search/Venue_Name/{{ doc.venue.venue_name }}">{{ doc.venue.venue_name }}</a> {% if doc.venue.venue_address %} - {{ doc.venue.venue_address }}{% endif %}</li>{% endif %}
-				{% if doc.entertainment.entertainment_type %}<li><span class="detail_head">Type of Event:</span> <a href="/search/Entertainment_Type/{{ doc.entertainment.entertainment_type }}">{{ doc.entertainment.entertainment_type }}</a></li>{% endif %}
+				{% if doc.entertainment %}<li><span class="detail_head">Type of Event:</span> <a href="/search/Entertainment_Type/{{ doc.entertainment }}">{{ doc.entertainment }}</a></li>{% endif %}
 				{% with doc.other_members.all as other_members %}
 				{% if other_members %}
 				<li><span class="detail_head">Other Lawmakers Mentioned:</span> {% for other_member in other_members %} <a href="/search/Other_Members_of_Congress/{{ other_member.name }}/">{{ other_member }}</a> {% endfor %}</li>

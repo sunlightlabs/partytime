@@ -16,7 +16,7 @@
                     </div>
                     <div class="event_listing_data_box">
                         <a href="/party/{{ doc.id }}" class="listings">
-                            {% if doc.entertainment.entertainment_type %}{{ doc.entertainment.entertainment_type }} {% endif %}{% if doc.venue.venue_name %}@ {{ doc.venue.venue_name }}{% endif %}<br />
+                            {% if doc.entertainment %}{{ doc.entertainment }} {% endif %}{% if doc.venue.venue_name %}@ {{ doc.venue.venue_name }}{% endif %}<br />
                             {% if beneficiaries %}For: {% for beneficiary in beneficiaries %}{{ beneficiary }} {%endfor%}<br />{% endif %}
                         </a>
                     </div>

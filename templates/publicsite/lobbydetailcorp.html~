@@ -8,14 +8,13 @@
 		<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
 	</a> 
 <h4>{{cmte.title}}</h4>
-
 </div>
 <div id="committee_members">
-	<p><strong>Lobbyists for {{ name }} hosting parties:</strong><ul>
+	<p><strong>Lobbyists for {{ name }} hosting parties:</strong>
 {% for l in lobset %}
-<li><a href="http://www.opensecrets.org/lobby/lobbyist.php?lname={{ l.datekey.name }}&id={{ l.datekey.crp_id }}&year=2008">{{ l.datekey.name }}</a></li>
+<a href="http://www.opensecrets.org/lobby/lobbyist.php?lname={{ l.datekey.name }}&id={{ l.datekey.crp_id }}&year=2008">{{ l.datekey.name }}</a> 
 {%endfor%}
-	</ul></p>
+</p>
 </div>
 
 

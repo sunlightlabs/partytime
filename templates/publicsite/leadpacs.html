@@ -29,7 +29,7 @@ strong { font-weight:bold;}
 {%for b in doc.beneficiaries.all%}
  {%if b.affiliate %}{{b.name}} {%endif%}
 {%endfor%}
- {{doc.entertainment.entertainment_type}} {%if doc.venue.venue_name%} @ {{doc.venue.venue_name}}{%endif%}</a></li>{% endfor %}	
+ {{doc.entertainment}} {%if doc.venue.venue_name%} @ {{doc.venue.venue_name}}{%endif%}</a></li>{% endfor %}	
 </ul>
 <div id="more">
 <ul>

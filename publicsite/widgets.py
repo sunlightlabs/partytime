@@ -384,3 +384,18 @@ class AutocompleteWidgetWrapper(RelatedFieldWidgetWrapper):
 				(related_url, name))
 			output.append(u'<img src="%simg/admin/icon_addlink.gif" width="10" height="10" alt="%s"/></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Add Another')))
 		return mark_safe(u''.join(output))
+
+
+
+
+
+
+class TimeWidget(forms.TextInput):
+    def render(self, name, value, attrs=None):
+        # Midnight, time(0, 0) is False. Check for that in addition to an *actual* missing value.
+        if value or value == time(0, 0):
+            value = value.strftime("%I:%M %p")
+             # Strip off leading 0's. Should be part of strftime, but whatever.
+            if value[0] == '0': value = value[1:]
+        return super(TimeWidget, self).render(name, value, attrs)
+

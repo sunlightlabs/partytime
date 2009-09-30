@@ -13,7 +13,7 @@
     	{% endwith %}
     	{% if obj.start_date %}<li><span class="detail_head">When:</span> {{ obj.start_date }} ({{ obj.start_time }} - {{ obj.end_time }})</a></li>{% endif %}
     	{% if obj.venue_name %}<li><span class="detail_head">Where:</span> <a href="http://www.politicalpartytime.org/search/Venue_Name/{{ obj.venue_name }}">{{ obj.venue_name }}</a> - {{ obj.venue_address }}</li>{% endif %}
-    	{% if obj.entertainment_type %}<li><span class="detail_head">Type of Event:</span> <a href="http://www.politicalpartytime.org/search/Entertainment_Type/{{ obj.entertainment_type }}">{{ obj.entertainment_type }}</a></li>{% endif %}
+    	{% if obj.entertainment %}<li><span class="detail_head">Type of Event:</span> <a href="http://www.politicalpartytime.org/search/Entertainment_Type/{{ obj.entertainment }}">{{ obj.entertainment }}</a></li>{% endif %}
     	{% with obj.other_members.all as other_members %}
     	    {% if other_members %}<li><span class="detail_head">Also in Attendance:</span> {% for other_member in other_members %} <a href="http://www.politicalpartytime.org/search/Other_Members_of_Congress/{{ other_member }}">{{ other_member }}</a> {% endfor %}</li>{% endif %}
     	{% endwith %}

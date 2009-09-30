@@ -5,7 +5,7 @@
 	<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png"  alt="Parties by Lobbyist Host"></a>
 <div id="cmte_detail">
 
-<h4>Parties hosted by lobbyists representing industry: {{category.catname}}</h4>
+<h4>Hosted by lobbyists representing industry: {{category.catname}}</h4>
 
 </div>
 <div id="committee_members">

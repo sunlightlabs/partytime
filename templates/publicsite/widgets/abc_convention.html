@@ -26,7 +26,7 @@
 		</div>
 		<div id="pt_event">
 			<a href="http://politicalpartytime.org/party/{{ doc.id }}" class="listings">
-				{% if doc.entertainment.entertainment_type %}{{ doc.entertainment.entertainment_type }}{% endif %}
+				{% if doc.entertainment %}{{ doc.entertainment }}{% endif %}
 				{% if doc.venue.venue_name %}@ {{ doc.venue.venue_name }}{% endif %}
 				{% with doc.beneficiaries.all as beneficiaries %}
 				    {% if beneficiaries %}

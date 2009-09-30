@@ -4,6 +4,8 @@ import datetime
 import re
 from django.contrib import admin
 
+from publicsite.widgets import TimeWidget
+
 from sunlightapi import sunlight, SunlightApiError
 sunlight.apikey = '***REMOVED***'
 
@@ -129,7 +131,7 @@ class EventManager(models.Manager):
             elif field == 'venue_name':
                 events = events.filter(venue__venue_name__icontains=args)
             elif field == 'entertainment_type':
-                events = events.filter(entertainment__entertainment_type__icontains=args)
+                events = events.filter(entertainment__icontains=args)
             elif field == 'tags':
                 events = events.filter(tags__tag_name__icontains=args)
             else:
@@ -172,6 +174,9 @@ class Tag(models.Model):
 class Lawmaker(models.Model):
     title = models.CharField("Title (Senator, Representative", blank=True,max_length=25)
     name = models.CharField(blank=True,max_length=255, db_index=True)
+    first_name = models.CharField(blank=True,max_length=25)
+    middle_name = models.CharField(blank=True,max_length=25)
+    last_name = models.CharField(blank=True,max_length=25)
     party = models.CharField(blank=True,max_length=1)
     state = models.CharField(blank=True,max_length=2)
     district = models.CharField(blank=True,max_length=2)
@@ -238,6 +243,9 @@ class Venue(models.Model):
 
 
 class Event(models.Model):
+    from django import forms
+    import widgets
+
     objects = EventManager()
 
     entertainment = models.CharField(blank=True, max_length=205, null=True)    
@@ -258,7 +266,6 @@ class Event(models.Model):
 
     committee_id = models.CharField(blank=True, max_length=255,null=True)    
     rsvp_info = models.CharField(null=True,blank=True, max_length=255)
-    event_paid_for_by = models.CharField(blank=True, max_length=255,null=True)
     distribution_paid_for_by = models.CharField(blank=True, max_length=255,null=True)
     make_checks_payable_to = models.CharField(blank=True, max_length=255,null=True)
     checks_payable_to_address = models.CharField(blank=True, max_length=255,null=True)
@@ -268,7 +275,7 @@ class Event(models.Model):
  
         
     class Meta:
-        db_table = u'publicsite_event'
+        db_table = u'publicsite_event_2'
     def __unicode__(self):
         if self.entertainment and self.venue:
             return self.entertainment + " at " + self.venue.venue_name

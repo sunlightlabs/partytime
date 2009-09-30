@@ -14,7 +14,7 @@
 Matching lawmakers:
 {% for doc in lm %}
 <a href="/pol/{{ doc.crp_id }}">{{doc}}</a> 
-{%endfor%}<br/>
+{%endfor%}<br/><br/>
 {%endif%}
 
 {% for doc in docset %}

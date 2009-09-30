@@ -51,7 +51,7 @@
 				
 				{% with doc.hosts.all as hosts %}
 				{% if hosts %}
-					<li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a><a href="/search/Host/{{ host }}">{{ host }}</a> {% endfor %}</li>
+					<li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}">{{ host }}</a> {% endfor %}</li>
 				{% endif %}
 				{% endwith %}
 				

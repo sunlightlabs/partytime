@@ -27,7 +27,7 @@
 <div id="parties">
 <ul>
 {% for doc in docset %}
-<li><a href="http://www.politicalpartytime.org/party/{{ doc.id }}" class="linky">{{ doc.entertainment.entertainment_type|truncatewords:9 }}</a></li>
+<li><a href="http://www.politicalpartytime.org/party/{{ doc.id }}" class="linky">{{ doc.entertainment|truncatewords:9 }}</a></li>
 {% endfor %}
 
 

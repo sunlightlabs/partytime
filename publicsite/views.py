@@ -15,8 +15,6 @@ from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
 
 
-from sunlightapi import sunlight, SunlightApiError
-sunlight.apikey = '***REMOVED***'
 #
 # view methods
 #
@@ -218,6 +216,8 @@ def cmtedetail(request, cmteid):
 
 
 def updatecmtes(request,chamber):
+    from sunlightapi import sunlight, SunlightApiError
+    sunlight.apikey = '***REMOVED***'
     newnames=''
     Cmtes = sunlight.committees.getList(chamber)   
     for cn in Cmtes:
@@ -310,10 +310,7 @@ def uploadzip(request):
     from django.contrib.auth.decorators import login_required
     import datetime
 
-    #if not request.user.is_authenticated():
-    #    views.redirect_to_login('accounts/login')
     login_required(uploadzip)
-
 
     if request.FILES:
             f = request.FILES['file'] #.read()

@@ -24,7 +24,7 @@
         <div id="summary_data">
             <ul>
                 <li>
-                    {% if doc.entertainment.entertainment_type %}<span class="detail_head">{{ doc.entertainment.entertainment_type }}</span>{% endif %}
+                    {% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
                     {% with doc.beneficiaries.all as beneficiaries %}
                         {% if beneficiaries %}for {% for ben in beneficiaries %}<a href="/search/Beneficiary/{{ben.name}}">{{ ben }}</a>  {% endfor %}{% endif %} {% if doc.venue.venue_name %}at <a href="/search/Venue_Name/{{ doc.venue.venue_name }}">{{ doc.venue.venue_name }}</a>{% endif %}
                     {% endwith %}

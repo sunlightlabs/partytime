@@ -19,8 +19,6 @@ feeds = {
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^partytime/', include('partytime.foo.urls')),
     (r'^$', 'partytime.publicsite.views.index'),
     (r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search'),
     (r'^search_embed/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed'),
@@ -53,9 +51,9 @@ urlpatterns = patterns('',
     (r'^ical/$', IcalFeed()),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
     (r'^accounts/uploadzip/$', 'partytime.publicsite.views.uploadzip'),
-    (r'^lobby/ind/(?P<category>.{5})/$', 'partytime.publicsite.views.lobbydetail'),
-    (r'^lobby/corp/(?P<name>.*)/$', 'partytime.publicsite.views.lobbydetailcorp'),
-    (r'^lobby/(?P<level>.*)/$', 'partytime.publicsite.views.lobby'),
+    #(r'^lobby/ind/(?P<category>.{5})/$', 'partytime.publicsite.views.lobbydetail'),
+    #(r'^lobby/corp/(?P<name>.*)/$', 'partytime.publicsite.views.lobbydetailcorp'),
+    #(r'^lobby/(?P<level>.*)/$', 'partytime.publicsite.views.lobby'),
     (r'^ajax/checkfordupes/$', 'partytime.publicsite.views.admin_checkfordupes'),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
 

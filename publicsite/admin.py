@@ -1,7 +1,7 @@
 from django.contrib import admin
 from publicsite.models import *
-
 import widgets
+
 
 class EventAdmin(widgets.AutocompleteModelAdmin):
     fieldsets = (
@@ -32,8 +32,6 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
     list_filter = ('status',)
-
-
 
 
 

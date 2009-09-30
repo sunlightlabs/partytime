@@ -29,9 +29,9 @@
 			</div>
 			<div id="summary_data">
 				<ul>
-					{% if doc.entertainment.entertainment_type or doc.venue.venue_name %}
+					{% if doc.entertainment or doc.venue.venue_name %}
 						<li>
-							{% if doc.entertainment.entertainment_type %}<span class="detail_head">{{ doc.entertainment.entertainment_type }}</span>{% endif %}
+							{% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
 							{% if doc.venue.venue_name %}@ <a href="/search/Venue_Name/{{ doc.venue.venue_name }}/">{{ doc.venue.venue_name }}</a>{% endif %}
 						</li>
 					{% endif %}
