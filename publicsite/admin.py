@@ -14,7 +14,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
         (None, {
             'fields': (
                 'rsvp_info',
-                ('event_paid_for_by', 'distribution_paid_for_by'),
+                ('distribution_paid_for_by'),
                 ('make_checks_payable_to', 'checks_payable_to_address'),
                 'contributions_info',
                 ('data_entry_problems', 'status', 'user_initials')
@@ -25,7 +25,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 		'hosts': ('name',),
 		#'venue': ('listname',),
         'venue': ('venue_name', 'venue_address'),
-        'entertainment': ('entertainment_type',),   
+        #'entertainment': ('entertainment_type',),   
         'beneficiaries': ('name',),
         'other_members': ('name',),
     }
@@ -41,5 +41,5 @@ admin.site.register(Event, EventAdmin)
 admin.site.register(Venue)
 admin.site.register(Host)
 admin.site.register(Lawmaker)
-admin.site.register(Entertainment)
+
 

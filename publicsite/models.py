@@ -236,19 +236,11 @@ class Venue(models.Model):
 
 
 
-class Entertainment(models.Model):
-    entertainment_type = models.CharField(max_length=255)
-    class Meta:
-        db_table = u'publicsite_entertainment'
-    def __unicode__(self):
-        return u"%s" % (self.entertainment_type)
-    class Meta:
-        ordering = ('entertainment_type',)
 
 class Event(models.Model):
     objects = EventManager()
 
-    entertainment = models.ForeignKey(Entertainment,null=True,blank=True)
+    entertainment = models.CharField(blank=True, max_length=205, null=True)    
     venue = models.ForeignKey(Venue,null=True,blank=True)
 
     hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts',null=True,blank=True)
@@ -279,7 +271,7 @@ class Event(models.Model):
         db_table = u'publicsite_event'
     def __unicode__(self):
         if self.entertainment and self.venue:
-            return self.entertainment.entertainment_type + " at " + self.venue.venue_name
+            return self.entertainment + " at " + self.venue.venue_name
         elif self.venue:
             return self.venue.venue_name
         #elif self.start_date:
