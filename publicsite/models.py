@@ -225,7 +225,10 @@ class Venue(models.Model):
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
     def __unicode__(self):
         if self.venue_name and self.venue_address:
-            return u"%s (%s)" % (self.venue_name, self.venue_address)
+            address = self.venue_address.replace('Washington, DC', '')
+            address = address.replace('Washington DC', '')
+            address = address.replace('\n', '')
+            return u"%s (%s)" % (self.venue_name, address)
         else:
             return u"%s" % (self.venue_name)
     def listname(self):    
