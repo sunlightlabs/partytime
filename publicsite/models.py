@@ -234,6 +234,8 @@ class Venue(models.Model):
             address = address.replace('Washington DC', '')
             address = address.replace('\n', '')
             return u"%s (%s)" % (self.venue_name, address)
+        elif self.venue_address and (not self.venue_name or self.venue_name==''):
+            return u"%s" % (self.venue_address)
         else:
             return u"%s" % (self.venue_name)
     def listname(self):    
