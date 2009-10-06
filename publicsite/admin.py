@@ -23,15 +23,22 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
     )
     related_search_fields = { 
 		'hosts': ('name',),
-		#'venue': ('listname',),
         'venue': ('venue_name', 'venue_address'),
-        #'entertainment': ('entertainment_type',),   
         'beneficiaries': ('name',),
         'other_members': ('name',),
     }
 
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
     list_filter = ('status',)
+
+    def changelist_view(self, request, extra_context=None):
+        if not request.GET.has_key('status'):
+            q = request.GET.copy()
+            q['status'] = 'temp'
+            request.GET = q
+            request.META['QUERY_STRING'] = request.GET.urlencode()
+        return super(EventAdmin,self).changelist_view(request, extra_context=extra_context)
+
 
 
 
