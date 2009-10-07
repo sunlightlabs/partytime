@@ -127,6 +127,7 @@ width:400px;
         <br class="clear" />
     </div>
     <!-- END Content --></div>
+{%ifequal title 'Change venue'%}<form method="post" action="/accounts/replacevenue/{{ object_id }}"><label for="replacement">Replace all instances of this venue with the following venue (provide venue ID#):</label><input type="input" name="replaceid" length="5"><input type="submit" value="Replace and delete this venue"></form>{%endifequal%}
 
 {%ifequal title 'Select event to change'%}<form enctype="multipart/form-data" method="post" action="/accounts/uploadzip/"><label for="file">Upload ZIP file of processed PDFs and add to list (Nancy)</label><input type="file" name="file"><input type="submit"></form>{%endifequal%}
 

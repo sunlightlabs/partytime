@@ -380,7 +380,7 @@ class AutocompleteWidgetWrapper(RelatedFieldWidgetWrapper):
 		if rel_to in self.admin_site._registry: # If the related object has an admin interface:
 			# TODO: "id_" is hard-coded here. This should instead use the correct
 			# API to determine the ID dynamically.
-			output.append(u'<a href="%sadd/" class="add-another" id="add_id_%s" onclick="return showAutocompletePopup(this);"> ' % \
+			output.append(u'<a href="%sadd/" class="add-another" id="add_id_%s" onclick="return showAutocompletePopup(this); return false;"> ' % \
 				(related_url, name))
 			output.append(u'<img src="%simg/admin/icon_addlink.gif" width="10" height="10" alt="%s"/></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Add Another')))
 		return mark_safe(u''.join(output))

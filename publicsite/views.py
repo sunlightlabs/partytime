@@ -305,12 +305,12 @@ def lobbydetailcorp(request, name):
 
 
 
-def uploadzip(request):    
+def admin_uploadzip(request):    
     import os, zipfile
     from django.contrib.auth.decorators import login_required
     import datetime
 
-    login_required(uploadzip)
+    login_required(admin_uploadzip)
 
     if request.FILES:
             f = request.FILES['file'] #.read()
@@ -348,12 +348,6 @@ def admin_checkfordupes(request):
     this_event = request.POST['e']
     ben = request.POST['ben_ids'].split()
 
-
-    #this_event = 10857
-    #ben = [1235,]
-    #date='2009-05-13'
-    #venue=27
-
     e = Event.objects.filter(status='', venue__id=venue, start_date=date).exclude(pk=this_event) 
     q = Q()
     for b in ben:
@@ -369,3 +363,26 @@ def admin_checkfordupes(request):
     
     return HttpResponse(s)
 
+
+def admin_mergevenue(request, original):    
+    from django.contrib.auth.decorators import login_required
+    from django.db import connection, transaction 
+    cursor = connection.cursor()
+    login_required(admin_mergevenue)
+    if request.POST['replaceid']:
+        replacement = request.POST['replaceid']
+    else:
+        return HttpResponseRedirect('/admin/publicsite/venue/'+str(original))
+    orig = Venue.objects.get(pk=original)
+    replace = Venue.objects.get(pk=replacement)
+    return HttpResponse("Venue " + replace.__str__() + " will replace " + orig.__str__() + " in " + str(orig.event_set.count()) + " parties. <a href=\"/accounts/replacevenue/"+str(original)+"/"+str(replacement)+"\">Click here to proceed</a>.")
+
+def admin_mergevenue_confirmed(request, original, replacement):    
+    from django.contrib.auth.decorators import login_required
+    from django.db import connection, transaction 
+    cursor = connection.cursor()
+    login_required(admin_mergevenue_confirmed)
+    query = "UPDATE publicsite_event SET venue_id="+str(replacement)+" WHERE venue_id="+str(original);
+    cursor.execute(query)
+    orig = Venue.objects.get(pk=original).delete()
+    return HttpResponseRedirect('/admin/publicsite/venue/')
