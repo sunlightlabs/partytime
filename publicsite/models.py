@@ -4,7 +4,7 @@ import datetime
 import re
 from django.contrib import admin
 
-from publicsite.widgets import TimeWidget
+#from publicsite.widgets import TimeWidget
 
 from sunlightapi import sunlight, SunlightApiError
 sunlight.apikey = '***REMOVED***'
@@ -173,9 +173,9 @@ class Tag(models.Model):
 
 class Lawmaker(models.Model):
     title = models.CharField("Title (Senator, Representative", blank=True,max_length=25)
-    name = models.CharField(blank=True,max_length=255, db_index=True)
+    name = models.CharField(blank=True,max_length=255) #db_index=True
     first_name = models.CharField(blank=True,max_length=25)
-    middle_name = models.CharField(blank=True,max_length=25)
+    #middle_name = models.CharField(blank=True,max_length=25)
     last_name = models.CharField(blank=True,max_length=25)
     party = models.CharField(blank=True,max_length=1)
     state = models.CharField(blank=True,max_length=2)
@@ -225,21 +225,35 @@ class OtherInfo(models.Model):
 
 class Venue(models.Model):
     venue_name = models.CharField(blank=True,max_length=255)
-    venue_address = models.TextField(blank=True)
+    #venue_address = models.TextField(blank=True)
+    address1 = models.CharField(blank=True, max_length=70)
+    address2 = models.CharField(blank=True, max_length=70)
+    city = models.CharField(blank=True, max_length=50)
+    state = models.CharField(blank=True, max_length=6)
+    zipcode = models.CharField(blank=True, max_length=11)
     latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6, db_index=True)
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
+    website = models.CharField(blank=True,max_length=255)
     def __unicode__(self):
-        if self.venue_name and self.venue_address:
-            address = self.venue_address.replace('Washington, DC', '')
-            address = address.replace('Washington DC', '')
-            address = address.replace('\n', '')
-            return u"%s (%s)" % (self.venue_name, address)
-        elif self.venue_address and (not self.venue_name or self.venue_name==''):
-            return u"%s" % (self.venue_address)
+        address = self.venue_address()
+        if self.venue_name and address!='':
+            return u"%s (%s)" % (self.venue_name, address)  
+        elif self.venue_name:
+            return self.venue_name
         else:
-            return u"%s" % (self.venue_name)
-    def listname(self):    
-        return __unicode__(self)        
+            return address
+  
+    def venue_address(self):    
+        if self.address1 and self.address2:
+            return u"%s %s" % (self.address1, self.address2)   
+        elif self.address1 and self.city and self.city!='Washington':
+            return u"%s, %s" % (self.address1, self.city) 
+        elif self.address1:
+            return self.address1
+        elif self.city and self.state and self.state!='DC':
+            return u"%s, %s" % (self.city, self.state) 
+        else:
+            return ""   
 
 
 
@@ -283,10 +297,8 @@ class Event(models.Model):
             return self.entertainment + " at " + self.venue.venue_name
         elif self.venue:
             return self.venue.venue_name
-        #elif self.start_date:
-        #    return self.start_date
         else:
-            return 'Event'
+            return self.venue.venue_address()
 
 
 

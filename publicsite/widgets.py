@@ -387,15 +387,16 @@ class AutocompleteWidgetWrapper(RelatedFieldWidgetWrapper):
 
 
 
-
-
-
+"""
 class TimeWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
+        import datetime
         # Midnight, time(0, 0) is False. Check for that in addition to an *actual* missing value.
-        if value or value == time(0, 0):
-            value = value.strftime("%I:%M %p")
-             # Strip off leading 0's. Should be part of strftime, but whatever.
+        #if value or value == time(0, 0):
+        if value or value == datetime.time(0, 0):
+            #value = value.strftime("%I:%M %p")
+            value = datetime.strptime(value, "%I:%M %p")
+        #   # Strip off leading 0's. Should be part of strftime, but whatever.
             if value[0] == '0': value = value[1:]
         return super(TimeWidget, self).render(name, value, attrs)
-
+"""
