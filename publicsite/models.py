@@ -297,8 +297,10 @@ class Event(models.Model):
             return self.entertainment + " at " + self.venue.venue_name
         elif self.venue:
             return self.venue.venue_name
+        elif self.entertainment:
+           return self.entertainment
         else:
-            return self.venue.venue_address()
+            return "Event"    
 
 
 
