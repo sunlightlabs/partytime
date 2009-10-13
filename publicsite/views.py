@@ -379,10 +379,35 @@ def admin_mergevenue(request, original):
 
 def admin_mergevenue_confirmed(request, original, replacement):    
     from django.contrib.auth.decorators import login_required
-    from django.db import connection, transaction 
-    cursor = connection.cursor()
     login_required(admin_mergevenue_confirmed)
-    query = "UPDATE publicsite_event SET venue_id="+str(replacement)+" WHERE venue_id="+str(original);
-    cursor.execute(query)
+    Event.objects.filter(venue=original).update(venue=replacement)
     orig = Venue.objects.get(pk=original).delete()
     return HttpResponseRedirect('/admin/publicsite/venue/')
+
+
+def admin_mergelm(request, original):    
+    from django.contrib.auth.decorators import login_required
+    from django.db import connection, transaction 
+    cursor = connection.cursor()
+    login_required(admin_mergelm)
+    if request.POST['replaceid']:
+        replacement = request.POST['replaceid']
+    else:
+        return HttpResponseRedirect('/admin/publicsite/lawmaker/'+str(original))
+    e = Event.objects.filter(beneficiaries=original)
+    orig = Lawmaker.objects.get(pk=original)
+    replace = Lawmaker.objects.get(pk=replacement)
+    return HttpResponse("Lawmaker " + replace.__str__() + " will replace " + orig.__str__() + " in " + str(len(e)) + " parties. <a href=\"/accounts/replacelm/"+str(original)+"/"+str(replacement)+"\">Click here to proceed</a>.")
+
+def admin_mergelm_confirmed(request, original, replacement):    
+    from django.contrib.auth.decorators import login_required
+    login_required(admin_mergelm_confirmed)
+    from django.db import connection, transaction 
+    cursor = connection.cursor()
+
+    query = "UPDATE publicsite_event_beneficiary SET lawmaker_id="+str(replacement)+" WHERE lawmaker_id="+str(original)
+    cursor.execute(query)
+    query = "UPDATE publicsite_event_omc SET lawmaker_id="+str(replacement)+" WHERE lawmaker_id="+str(original)
+    cursor.execute(query)
+    orig = Lawmaker.objects.get(pk=original).delete()
+    return HttpResponseRedirect('/admin/publicsite/lawmaker/')
