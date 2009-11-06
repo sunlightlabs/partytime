@@ -186,10 +186,10 @@ class Lawmaker(models.Model):
     class Meta:
         db_table = u'publicsite_lawmaker'
     def __unicode__(self):
-        if self.district=="":
+        if !self.district:
             districtStr = ""
         else:
-            districtStr ="-"+self.district	
+            districtStr ="-" +self.district	
         if self.party=="":
             partyStr = ""
         else:
