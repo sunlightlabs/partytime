@@ -190,15 +190,15 @@ class Lawmaker(models.Model):
             districtStr ="-" +self.district	
         else:
             districtStr ="" 
-        if self.party=="":
-            partyStr = ""
-        else:
+        if self.party:
             partyStr =self.party+", "
-        if self.title=="":
-            titleStr = ""
         else:
+            partyStr = ""
+        if self.title:
             titleStr =self.title+" "
-        if self.district=="" and self.party=="" and self.state=="":
+        else:
+            titleStr = ""
+        if self.district==None and self.party==None and self.state==None:
             info = ""
         else:
             info =" ("+partyStr+self.state+districtStr+")"
