@@ -325,6 +325,8 @@ def admin_uploadzip(request):
                     m = datetime.date.today().month
                     if m<10:
                         strm = '0'+str(m)
+                    else:
+                        strm = str(m)
                     dirpath = str(datetime.date.today().year)+'/'+strm+'/'
                     if not os.path.isdir(syspath + dirpath):
                         os.makedirs(syspath + dirpath,0777)
