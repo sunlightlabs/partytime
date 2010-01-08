@@ -60,8 +60,7 @@ urlpatterns = patterns('',
     (r'^lobby/(?P<level>.*)/$', 'partytime.publicsite.views.lobby'),
     (r'^ajax/checkfordupes/$', 'partytime.publicsite.views.admin_checkfordupes'),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
-
-
+    (r'^json/(?P<CID>.+)/', 'partytime.publicsite.views.jsonCID')
 )
 
 

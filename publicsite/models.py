@@ -164,6 +164,10 @@ class Host(models.Model):
         else:    
             return Crp_lobbying.objects.filter(datekey=self.crp_id)
 
+    def natural_key(self):
+        return (self.name)
+
+
 class Tag(models.Model):
     tag_name = models.CharField(blank=True,max_length=255, db_index=True)
     class Meta:
@@ -203,6 +207,9 @@ class Lawmaker(models.Model):
         else:
             info =" ("+partyStr+self.state+districtStr+")"
         return u"%s%s%s" % (titleStr, self.name,info) 
+
+    def natural_key(self):
+        return (self.name)
 
 class Committee(models.Model):
     short = models.CharField(blank=False,max_length=4, primary_key=True)
@@ -254,6 +261,12 @@ class Venue(models.Model):
             return u"%s, %s" % (self.city, self.state) 
         else:
             return ""   
+
+    def natural_key(self):
+        return (self.venue_name)
+
+
+
 
 
 

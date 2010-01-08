@@ -143,6 +143,15 @@ def widget180_upcoming(request):
 	return render_to_response('publicsite/widgets/widget_180.html', {"docset":events})
 
 
+def jsonCID(request, CID):
+    from django.core import serializers
+    events = Event.objects.filter( beneficiaries__crp_id=CID, status='').order_by('start_date','start_time')
+    data = serializers.serialize("json", events, fields=('committee_id','start_date','start_time','entertainment','venue','contributions_info','hosts','beneficiaries','make_checks_payable_to'), use_natural_keys=True)
+    return HttpResponse(data)
+
+
+
+
 
 def leadpac_all(request):
     docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False).order_by('-start_date','-start_time')
@@ -306,18 +315,28 @@ def lobbydetailcorp(request, name):
 
 
 def admin_uploadzip(request):    
-    import os, zipfile
+    import os, zipfile, cStringIO
     from django.contrib.auth.decorators import login_required
     import datetime
 
     login_required(admin_uploadzip)
 
+    def getzip(filename, ignoreable=100): 
+        try: 
+            return zipfile.ZipFile(filename) 
+        except zipfile.BadZipfile: 
+            original = filename.read()
+            position = original.rindex(zipfile.stringEndArchive, 
+                                   -(22 + ignoreable), -20) 
+            coredata = cStringIO.StringIO(original[: 22 + position]) 
+            return zipfile.ZipFile(coredata) 
+
     if request.FILES:
-            f = request.FILES['file'] #.read()
-            zfile = zipfile.ZipFile(f,'r')
+            f = request.FILES['file']
+            zfile = getzip(f)
             for zfname in zfile.namelist():
                 if zfname[-4:]=='.pdf':
-                    newe = Event(status='tempLR')
+                    newe = Event(status='temp')
                     newe.save()
                     pk = newe.pk
                     localfilename = 'flyer_'+str(pk)+'.pdf'
