@@ -146,8 +146,9 @@ def widget180_upcoming(request):
 def jsonCID(request, CID):
     from django.core import serializers
     events = Event.objects.filter( beneficiaries__crp_id=CID, status='').order_by('start_date','start_time')
+    s = "[{'num_events': "+str(len(events))+"}], "
     data = serializers.serialize("json", events, fields=('committee_id','start_date','start_time','entertainment','venue','contributions_info','hosts','beneficiaries','make_checks_payable_to'), use_natural_keys=True)
-    return HttpResponse(data)
+    return HttpResponse(s + data)
 
 
 
