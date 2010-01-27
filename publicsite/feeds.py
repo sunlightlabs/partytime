@@ -31,7 +31,7 @@ class IcalFeed(ICalendarFeed):
         if item.end_time:
             end_time = item.end_time
         else:
-            end_time= item.item_start + timedelta(hours=1)
+            end_time= item.start_time #+ datetime.timedelta(hours=1)
         return datetime.datetime(*time.strptime(str(end_date) +" "+ str(end_time),"%Y-%m-%d %H:%M:%S")[0:5])
 
     def item_summary (self, item):

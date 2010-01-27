@@ -17,6 +17,7 @@
 		<link rel="shortcut icon" href="http://sunlightfoundation.com/favicon.ico" type="image/x-icon">
 		<script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
 		<link rel="shortcut icon" href="http://media.sunlightprojects.org/partytime/images/favicon.ico">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
 		<script type="text/javascript">
 		function toggleLayer( whichLayer )
 {
@@ -86,7 +87,6 @@
 <option value="Venue_Name" {% ifequal field "Venue_Name" %} selected {% endifequal %}>Venue Name</option>
 <option value="Entertainment_Type" {% ifequal field "Entertainment_Type" %} selected {% endifequal %}>Entertainment Type</option>
 <option value="Other_Members_of_Congress" {% ifequal field "Other_Members_of_Congress" %} selected {% endifequal %}>Other Lawmakers Mentioned</option>
-<option value="Blog" {% ifequal field "Blog" %} selected {% endifequal %}>Blog</option>
 </select>
 <input id="args" type="text" name="args" size="15"><input type="submit" value="Find a Party!">
 

@@ -95,7 +95,7 @@ class Post(models.Model):
         
 class EventManager(models.Manager):
     def ical(self):
-        events = Event.objects.filter(start_date__isnull=False,status='').order_by('-start_date','-start_time')
+        events = Event.objects.filter(start_date__gt=datetime.datetime.now(),status='').order_by('start_date','start_time')[:50]
         return events 
    
     def recent(self, limit=10):
@@ -232,7 +232,6 @@ class OtherInfo(models.Model):
 
 class Venue(models.Model):
     venue_name = models.CharField(blank=True,max_length=255)
-    #venue_address = models.TextField(blank=True)
     address1 = models.CharField(blank=True, max_length=70)
     address2 = models.CharField(blank=True, max_length=70)
     city = models.CharField(blank=True, max_length=50)
@@ -280,7 +279,7 @@ class Event(models.Model):
     entertainment = models.CharField(blank=True, max_length=205, null=True)    
     venue = models.ForeignKey(Venue,null=True,blank=True)
 
-    hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts',null=True,blank=True)
+    hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts',null=True,blank=True, db_column='host_id')
     tags = models.ManyToManyField(Tag,db_table=u'publicsite_event_tags',null=True)
     beneficiaries = models.ManyToManyField(Lawmaker, null=True,blank=True, related_name='pol_events',db_table=u'publicsite_event_beneficiary')
     other_members = models.ManyToManyField(Lawmaker,null=True,blank=True, related_name='pol_appearances',db_table=u'publicsite_event_omc')
