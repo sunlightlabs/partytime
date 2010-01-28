@@ -9,7 +9,7 @@ import random
 import simplejson
 import time
 import datetime
-
+from django.template import RequestContext
 
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
@@ -23,10 +23,13 @@ def index(request):
     now = datetime.datetime.now()
     if request.method == "POST":
         term = request.POST.get('term', None)
+    if request.method == "GET":
+        term = request.GET.get('term', None)
+    if term:        
         blog_posts = Post.objects.filter(post_type='post', post_status='publish', content__icontains=term).order_by('-post_date')[:10]
     else:
         blog_posts = Post.objects.filter(post_type='post', post_status='publish').order_by('-post_date')[:10]
-    return render_to_response('publicsite/index.html', {"blog_posts":blog_posts})
+    return render_to_response('publicsite/index.html', {"blog_posts":blog_posts}, context_instance=RequestContext(request))
 
 
     
@@ -39,14 +42,15 @@ def party(request, docid):
 
 def search_proxy(request):
     
-    if request.method == "POST":
-        
+    if request.method == "POST":        
         field = request.POST.get('field', None)
         args = request.POST.get('args', None)
-        
-        if field and args:
-            redirect_url = '/search/%s/%s/' % (field, args)
-            return HttpResponseRedirect(redirect_url)
+    if request.method == "GET":
+        field = request.GET.get('field', None)
+        args = request.GET.get('args', None)     
+    if field and args:
+        redirect_url = '/search/%s/%s/' % (field, args)
+        return HttpResponseRedirect(redirect_url)
 
     return HttpResponseRedirect('/')
     
@@ -61,15 +65,15 @@ def search(request, field, args):
         lm = lm.filter(affiliate=None).exclude(crp_id=None)
     events = Event.objects.by_field(field.lower(), args)
 
-    return render_to_response('publicsite/search_results.html', {"field":field, "args":args, "docset":events, "lm": lm})
+    return render_to_response('publicsite/search_results.html', {"field":field, "args":args, "docset":events, "lm": lm}, context_instance=RequestContext(request))
 
 def search_embed(request, field, args):
     events = Event.objects.by_field(field.lower(), args)
-    return render_to_response('publicsite/search_embed.html', {"field":field, "args":args, "docset":events})
+    return render_to_response('publicsite/search_embed.html', {"field":field, "args":args, "docset":events}, context_instance=RequestContext(request))
 
 def search_embed_flex(request, field, args):
         events = Event.objects.by_field(field.lower(), args).order_by('start_date')[:3]
-        return render_to_response('publicsite/search_embed_flex.html', {"field":field, "args":args, "docset":events})
+        return render_to_response('publicsite/search_embed_flex.html', {"field":field, "args":args, "docset":events}, context_instance=RequestContext(request))
 
 
 def convention_list(request, convention=''):

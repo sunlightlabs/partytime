@@ -80,7 +80,7 @@
 						</div>
 
 						<div class="partyfinder_box">				
-<form action="/search/" method="POST"><fieldset><legend>PARTYFINDER&#153;</legend><select name="field" id="field">
+<form action="/search/" method="GET">{% csrf_token %}<fieldset><legend>PARTYFINDER&#153;</legend><select name="field" id="field">
 <option value="Beneficiary" {% ifequal field "Beneficiary" %} selected {% endifequal %}>Beneficiary</option>
 <option value="Host" {% ifequal field "Host" %} selected {% endifequal %}>Host</option>
 <option value="Venue_Name" {% ifequal field "Venue_Name" %} selected {% endifequal %}>Venue Name</option>
