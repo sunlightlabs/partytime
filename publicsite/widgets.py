@@ -242,6 +242,154 @@ $(document).ready(function(){
 			'help_text':self.help_text
 		}
 
+
+class AutocompleteModelAdmin(admin.ModelAdmin):
+    def search(self, request):
+        
+        #   Searches in the fields of the given related model and returns the 
+        #   result as a simple string to be used by the jQuery Autocomplete plugin
+        
+        query = request.GET.get('q', None) 
+
+        app_label = request.GET.get('app_label', None)
+        model_name = request.GET.get('model_name', None)
+        search_fields = request.GET.get('search_fields', None)
+
+        #print '-----------------------'
+        #print search_fields, app_label, model_name, query
+         
+        if search_fields and app_label and model_name and query:
+            def construct_search(field_name):
+                # use different lookup methods depending on the notation
+                if field_name.startswith('^'):
+                    return "%s__istartswith" % field_name[1:]
+                elif field_name.startswith('='):
+                    return "%s__iexact" % field_name[1:]
+                elif field_name.startswith('@'):
+                    return "%s__search" % field_name[1:]
+                else:
+                    return "%s__icontains" % field_name
+
+            model = models.get_model(app_label, model_name)
+            q = None
+            for field_name in search_fields.split(','):
+                name = construct_search(field_name)
+                #print name,'=',query
+                if q:
+                    q = q | models.Q( **{str(name):query} )
+                else:
+                    q = models.Q( **{str(name):query} )
+            qs = model.objects.filter( q )
+            
+            data = ''.join([u'%s|%s\n' % (f, f.pk) for f in qs])
+            return HttpResponse(data)
+        return HttpResponseNotFound()
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        # For ForeignKey use a special Autocomplete widget.
+        if isinstance(db_field, models.ForeignKey) and db_field.name in self.related_search_fields:
+            kwargs['widget'] = ForeignKeySearchInput(db_field.rel,
+                                    self.related_search_fields[db_field.name])
+
+            # extra HTML to the end of the rendered output.
+            if 'request' in kwargs.keys():
+                kwargs.pop('request')
+                            
+            formfield = db_field.formfield(**kwargs)
+            # Don't wrap raw_id fields. Their add function is in the popup window.
+            if not db_field.name in self.raw_id_fields:
+                # formfield can be None if it came from a OneToOneField with
+                # parent_link=True
+                if formfield is not None:
+                    formfield.widget = AutocompleteWidgetWrapper(formfield.widget, db_field.rel, self.admin_site)
+            return formfield
+                    
+        # For ManyToManyField use a special Autocomplete widget.
+        if isinstance(db_field, models.ManyToManyField)and db_field.name in self.related_search_fields:
+            kwargs['widget'] = ManyToManySearchInput(db_field.rel,
+                                    self.related_search_fields[db_field.name])
+            db_field.help_text = ''
+
+            # extra HTML to the end of the rendered output.
+            if 'request' in kwargs.keys():
+                kwargs.pop('request')
+                            
+            formfield = db_field.formfield(**kwargs)
+            # Don't wrap raw_id fields. Their add function is in the popup window.
+            if not db_field.name in self.raw_id_fields:
+                # formfield can be None if it came from a OneToOneField with
+                # parent_link=True
+                if formfield is not None:
+                    formfield.widget = AutocompleteWidgetWrapper(formfield.widget, db_field.rel, self.admin_site)
+            return formfield
+        
+        
+        return super(AutocompleteModelAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+    
+    def response_add(self, request, obj, post_url_continue='../%s/'):
+        """
+        Determines the HttpResponse for the add_view stage.
+        """
+        opts = obj._meta
+        pk_value = obj._get_pk_val()
+        
+        msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
+        # Here, we distinguish between different save types by checking for
+        # the presence of keys in request.POST.
+        if request.POST.has_key("_continue"):
+            self.message_user(request, msg + ' ' + _("You may edit it again below."))
+            if request.POST.has_key("_popup"):
+                post_url_continue += "?_popup=%s" % request.POST.get('_popup')
+            return HttpResponseRedirect(post_url_continue % pk_value)
+        
+        if request.POST.has_key("_popup"):
+            #htturn response to Autocomplete PopUp
+            if request.POST.has_key("_popup"):
+                return HttpResponse('<script type="text/javascript">opener.dismissAutocompletePopup(window, "%s", "%s");</script>' % (escape(pk_value), escape(obj)))
+                        
+        elif request.POST.has_key("_addanother"):
+            self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+            return HttpResponseRedirect(request.path)
+        else:
+            self.message_user(request, msg)
+
+            # Figure out where to redirect. If the user has change permission,
+            # redirect to the change-list page for this object. Otherwise,
+            # redirect to the admin index.
+            if self.has_change_permission(request, None):
+                post_url = '../'
+            else:
+                post_url = '../../../'
+            return HttpResponseRedirect(post_url)
+
+    def get_urls(self):
+        from django.conf.urls.defaults import patterns,url 
+        urls = super(AutocompleteModelAdmin, self).get_urls()
+        my_urls = patterns('',
+            url(
+                r'search',
+                self.admin_site.admin_view(self.search),
+            ),
+        )
+        return my_urls + urls
+    
+class AutocompleteWidgetWrapper(RelatedFieldWidgetWrapper):
+    def render(self, name, value, *args, **kwargs):
+        rel_to = self.rel.to
+        related_url = '../../../%s/%s/' % (rel_to._meta.app_label, rel_to._meta.object_name.lower())
+        self.widget.choices = self.choices
+        output = [self.widget.render(name, value, *args, **kwargs)]
+        if rel_to in self.admin_site._registry: # If the related object has an admin interface:
+            # TODO: "id_" is hard-coded here. This should instead use the correct
+            # API to determine the ID dynamically.
+            output.append(u'<a href="%sadd/" class="add-another addlink" id="add_id_%s" onclick="return showAutocompletePopup(this);"> ' % \
+                (related_url, name))
+            output.append(u'%s</a>' % _('Add Another'))
+        return mark_safe(u''.join(output))
+
+
+
+"""
 class AutocompleteModelAdmin(admin.ModelAdmin):
 	def __call__(self, request, url):
 		if url is None:
@@ -336,9 +484,7 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
 		return super(AutocompleteModelAdmin, self).formfield_for_dbfield(db_field, **kwargs)
 	
 	def response_add(self, request, obj, post_url_continue='../%s/'):
-		"""
-		Determines the HttpResponse for the add_view stage.
-		"""
+		#Determines the HttpResponse for the add_view stage.
 		opts = obj._meta
 		pk_value = obj._get_pk_val()
 		
@@ -383,20 +529,7 @@ class AutocompleteWidgetWrapper(RelatedFieldWidgetWrapper):
 			output.append(u'<a href="%sadd/" class="add-another" id="add_id_%s" onclick="return showAutocompletePopup(this); return false;"> ' % \
 				(related_url, name))
 			output.append(u'<img src="%simg/admin/icon_addlink.gif" width="10" height="10" alt="%s"/></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Add Another')))
-		return mark_safe(u''.join(output))
+		return mark_safe(u''.join(output))"""
 
 
 
-"""
-class TimeWidget(forms.TextInput):
-    def render(self, name, value, attrs=None):
-        import datetime
-        # Midnight, time(0, 0) is False. Check for that in addition to an *actual* missing value.
-        #if value or value == time(0, 0):
-        if value or value == datetime.time(0, 0):
-            #value = value.strftime("%I:%M %p")
-            value = datetime.strptime(value, "%I:%M %p")
-        #   # Strip off leading 0's. Should be part of strftime, but whatever.
-            if value[0] == '0': value = value[1:]
-        return super(TimeWidget, self).render(name, value, attrs)
-"""
