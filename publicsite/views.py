@@ -197,7 +197,7 @@ def upload(request):
                 for chunk in uf.chunks():
                     destination.write(chunk)
                     return HttpResponseRedirect('/upload/thanks/')
-    return render_to_response('publicsite/upload.html')
+    return render_to_response('publicsite/upload.html', context_instance=RequestContext(request))
     
 def upload_thanks(request):
     return HttpResponse("thanks")
