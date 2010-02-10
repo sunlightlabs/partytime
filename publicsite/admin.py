@@ -23,7 +23,6 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
     )
     related_search_fields = { 
 		'hosts': ('name',),
-        #'venue': ('venue_name', 'venue_address'),
         'venue': ('venue_name', 'address1'),
         'beneficiaries': ('name',),
         'other_members': ('name',),
@@ -31,20 +30,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
     list_filter = ('status',)
-"""
-    def changelist_view(self, request, extra_context=None):
-        if not request.GET.has_key('status'):
-            q = request.GET.copy()
-            q['status'] = 'temp'
-            request.GET = q
-            request.META['QUERY_STRING'] = request.GET.urlencode()
-        return super(EventAdmin,self).changelist_view(request, extra_context=extra_context)
-"""
 
-    #formfield_overrides = {
-    #    models.TimeField: {'widget': TimeWidget},
-    #}
-    
 
 
 
@@ -58,11 +44,6 @@ class VenueAdmin(admin.ModelAdmin):
             )}
             ),
     )
-    #def formfield_for_dbfield(self, db_field, **kwargs):
-    #    field = super(VenueAdmin, self).formfield_for_dbfield(db_field, **kwargs)
-    #    if db_field.name == 'zipcode':
-    #        field.widget.attrs['size'] = '5'
-
 
 
 admin.site.register(Event, EventAdmin)
