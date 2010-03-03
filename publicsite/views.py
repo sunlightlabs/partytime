@@ -20,6 +20,7 @@ from django.utils.encoding import smart_str
 #
 
 def index(request):
+    term=None
     now = datetime.datetime.now()
     if request.method == "POST":
         term = request.POST.get('term', None)
@@ -150,7 +151,10 @@ def widget180_upcoming(request):
 def jsonCID(request, CID):
     from django.core import serializers
     events = Event.objects.filter( beneficiaries__crp_id=CID, status='').order_by('start_date','start_time')
-    data = serializers.serialize("json", events, fields=('committee_id','start_date','start_time','entertainment','venue','contributions_info','hosts','beneficiaries','make_checks_payable_to'), use_natural_keys=True)
+    try:
+        data = serializers.serialize("json", events, fields=('committee_id','start_date','start_time','entertainment','venue','contributions_info','hosts','beneficiaries','make_checks_payable_to'), use_natural_keys=True)
+    except:
+        data = ''    
     return HttpResponse(data)
 
 
