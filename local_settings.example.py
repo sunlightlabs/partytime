@@ -11,9 +11,4 @@ TEMPLATE_DIRS = (
 
 FILE_UPLOAD_PATH = "/dev/null" # no trailing slash
 
-COUCHDB_HOST = ''
-COUCHDB_PORT = 0
-
-PARTYTIME_DB = 'party_time_db'
-
 CACHE_BACKEND = 'locmem:///'
