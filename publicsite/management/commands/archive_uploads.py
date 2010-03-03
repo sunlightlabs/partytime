@@ -47,7 +47,7 @@ class Command(NoArgsCommand):
             subject = "Uploads from PoliticalPartyTime.org"
             body = "\n".join(archived_files) + "\n\n"
             sender = "partytime@sunlightfoundation.com"
-            recipient = ['jruihley@sunlightfoundation.com','jcarbaugh@sunlightfoundation.com']
+            recipient = ['jruihley@sunlightfoundation.com','jcarbaugh@sunlightfoundation.com', 'timball@sunlightfoundation.com', 'nwatzman@sunlightfoundation.com']
             reply_to = "bounce@sunlightfoundation.com"
             
             attachment = open(archive_path, 'rb').read()
