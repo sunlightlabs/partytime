@@ -1,12 +1,46 @@
 from django.contrib.syndication.feeds import Feed
 from django.core import urlresolvers
 from publicsite.models import Event, Lawmaker
-import time 
+import time
 import datetime
-from publicsite.management.icalendarfeed import ICalendarFeed
-from django.http import Http404
+from django.http import Http404, HttpResponse
+import vobject
 
-class IcalFeed(ICalendarFeed):
+EVENT_ITEMS = (
+    ('uid', 'uid'),
+    ('dtstart', 'start'),
+    ('dtend', 'end'),
+    ('summary', 'summary'),
+    ('location', 'location'),
+)
+
+def _date_time_to_datetime(date, time=None):
+    if not time:
+        time = datetime.time()
+    return datetime.datetime(date.year, date.month, date.day, time.hour, time.minute, time.second)
+
+class IcalFeed(object):
+
+    def __call__(self, *args, **kwargs):
+
+        cal = vobject.iCalendar()
+
+        for item in self.items():
+
+            event = cal.add('vevent')
+
+            for vkey, key in EVENT_ITEMS:
+                value = getattr(self, 'item_' + key)(item)
+                if value:
+                    event.add(vkey).value = value
+
+        response = HttpResponse(cal.serialize())
+        response['Content-Type'] = 'text/calendar'
+
+        return response
+
+    def item_location(self, item):
+        pass
 
     def items(self):
         return Event.objects.ical()
@@ -15,30 +49,26 @@ class IcalFeed(ICalendarFeed):
         return str(item.id)
 
     def item_start(self, item):
-        if item.start_time:
-            start_time = item.start_time
-        else:
-            start_time= "00:00:00"	
-        return datetime.datetime(*time.strptime(str(item.start_date) +" "+ str(start_time),"%Y-%m-%d %H:%M:%S")[0:5])
+        return _date_time_to_datetime(item.start_date, item.start_time)
 
     def item_end(self, item):
         if item.end_date:
             end_date = item.end_date
         else:
-	        #if there is no end date defined, the end date is the start date
-            end_date= item.start_date
+            end_date = item.start_date
 
         if item.end_time:
             end_time = item.end_time
         else:
-            end_time= item.start_time #+ datetime.timedelta(hours=1)
-        return datetime.datetime(*time.strptime(str(end_date) +" "+ str(end_time),"%Y-%m-%d %H:%M:%S")[0:5])
+            end_time = item.start_time
+
+        return _date_time_to_datetime(end_date, end_time)
 
     def item_summary (self, item):
         summaryStr=""
         if item.entertainment:
             summaryStr = summaryStr+unicode(str(item.entertainment), errors='ignore')
-        try:        
+        try:
             if item.venue:
                 summaryStr = summaryStr+" @ "+unicode(str(item.venue), errors='ignore')
         except:
@@ -47,8 +77,6 @@ class IcalFeed(ICalendarFeed):
             summaryStr = summaryStr+" For: "
             for beneficiary in item.beneficiaries.all():
                 summaryStr = summaryStr+unicode(str(beneficiary), errors='ignore')
-	    #print(item.id)	
-	    #print(summaryStr)
         summaryStr = summaryStr.replace('&','')
         return summaryStr
 
