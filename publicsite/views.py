@@ -448,12 +448,12 @@ class PartyTimeLayar(LayarView):
         radius /= 17717.0
         latitude_range = (str(latitude-radius), str(latitude+radius))
         longitude_range = (str(longitude-radius), str(longitude+radius))
-        venues = Venue.objects.filter(latitude__range=longitude_range,
-                                      longitude__range=latitude_range)
+        venues = Venue.objects.filter(latitude__range=latitude_range,
+                                      longitude__range=longitude_range)
         return venues
 
     def poi_from_partytime_item(self, item):
-        return POI(id=item.id, lon=item.latitude, lat=item.longitude,
+        return POI(id=item.id, lat=item.latitude, lon=item.longitude,
                    title=item.venue_name)
 
 partytime_layar = PartyTimeLayar()

@@ -80,7 +80,7 @@
 									    function initialize() {
 									      if (GBrowserIsCompatible()) {
 									        var map = new GMap2(document.getElementById("map_canvas"));
-									        map.setCenter(new GLatLng({{ doc.venue.longitude }}, {{ doc.venue.latitude }}), 13);
+									        map.setCenter(new GLatLng({{ doc.venue.latitude }}, {{ doc.venue.longitude }}), 13);
 											map.addControl(new GSmallMapControl());
 											map.addControl(new GMapTypeControl());
 											map.addOverlay(new GMarker(map.getCenter()));
