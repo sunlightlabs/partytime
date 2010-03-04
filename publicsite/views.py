@@ -458,9 +458,12 @@ class PartyTimeLayar(LayarView):
         return venues
 
     def poi_from_partytime_item(self, item):
-        venue_url = 'http://politicalpartytime.org/search/Venue_Name/%s/' % item.venue_name
-        actions = [{'label': item.venue_name, 'uri':venue_url}]
         latest_event = Event.objects.filter(venue=item.id).select_related().order_by('-start_date')[0]
+
+        venue_url = 'http://politicalpartytime.org/search/Venue_Name/%s/' % item.venue_name
+        party_url = 'http://politicalpartytime.org/party/%s/' % latest_event.id
+        actions = [{'label': 'See Venue', 'uri':venue_url},
+                   {'label': 'Latest Party', 'uri': venue_url}]
 
         line3 = ' '.join([str(l) for l in latest_event.beneficiaries.all()])
 
