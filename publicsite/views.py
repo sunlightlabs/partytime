@@ -445,14 +445,19 @@ def admin_mergelm_confirmed(request, original, replacement):
 class PartyTimeLayar(LayarView):
 
     def get_partytime_queryset(self, latitude, longitude, radius, **kwargs):
-        radius /= 17717.0
-        latitude_range = (str(latitude-radius), str(latitude+radius))
-        longitude_range = (str(longitude-radius), str(longitude+radius))
+        deg_in_m = 111045.0
+
+        width = radius / math.fabs(math.cos(math.radians(latitude))*deg_in_m)
+        height = (radius / deg_in_m)
+        latitude_range = (str(latitude-height), str(latitude+height))
+        longitude_range = (str(longitude-width), str(longitude+width))
         venues = Venue.objects.filter(latitude__range=latitude_range,
                                       longitude__range=longitude_range)
         return venues
 
     def poi_from_partytime_item(self, item):
+        venue_url = 'http://politicalpartytime.org/search/Venue_Name/%s/' % item.venue_name
+        actions = [{'label':venue_url}]
         return POI(id=item.id, lat=item.latitude, lon=item.longitude,
                    title=item.venue_name)
 
