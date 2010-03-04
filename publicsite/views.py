@@ -444,7 +444,7 @@ def admin_mergelm_confirmed(request, original, replacement):
 
 class PartyTimeLayar(LayarView):
 
-    def get_venue_queryset(self, latitude, longitude, radius, **kwargs):
+    def get_partytime_queryset(self, latitude, longitude, radius, **kwargs):
         radius /= 17717
         latitude_range = (latitude-radius, latitude+radius)
         longitude_range = (longitude-radius, longitude+radius)
@@ -452,7 +452,7 @@ class PartyTimeLayar(LayarView):
                                       longitude__range=longitude_range)
         return venues
 
-    def poi_from_venue_item(self, item):
+    def poi_from_partytime_item(self, item):
         return POI(id=item.id, lat=item.latitude, lon=item.longitude,
                    title=item.name)
 
