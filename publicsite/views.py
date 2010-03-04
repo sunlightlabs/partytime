@@ -459,8 +459,8 @@ class PartyTimeLayar(LayarView):
 
     def poi_from_partytime_item(self, item):
         venue_url = 'http://politicalpartytime.org/search/Venue_Name/%s/' % item.venue_name
-        actions = [{'label':venue_url}]
+        actions = [{'label': item.venue_name, 'uri':venue_url}]
         return POI(id=item.id, lat=item.latitude, lon=item.longitude,
-                   title=item.venue_name)
+                   title=item.venue_name, actions=actions)
 
 partytime_layar = PartyTimeLayar()
