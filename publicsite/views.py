@@ -13,6 +13,7 @@ from django.template import RequestContext
 
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
+from layar import LayarView, POI
 
 
 #
@@ -440,3 +441,19 @@ def admin_mergelm_confirmed(request, original, replacement):
     cursor.execute(query)
     orig = Lawmaker.objects.get(pk=original).delete()
     return HttpResponseRedirect('/admin/publicsite/lawmaker/')
+
+class PartyTimeLayar(LayarView):
+
+    def get_venue_queryset(self, latitude, longitude, radius, **kwargs):
+        radius /= 17717
+        latitude_range = (latitude-radius, latitude+radius)
+        longitude_range = (longitude-radius, longitude+radius)
+        venues = Venue.objects.filter(latitude__range=latitude_range,
+                                      longitude__range=longitude_range)
+        return venues
+
+    def poi_from_venue_item(self, item):
+        return POI(id=item.id, lat=item.latitude, lon=item.longitude,
+                   title=item.name)
+
+partytime_layar = PartyTimeLayar()
