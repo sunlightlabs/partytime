@@ -463,7 +463,7 @@ class PartyTimeLayar(LayarView):
         venue_url = 'http://politicalpartytime.org/search/Venue_Name/%s/' % item.venue_name
         party_url = 'http://politicalpartytime.org/party/%s/' % latest_event.id
         actions = [{'label': 'See Venue', 'uri':venue_url},
-                   {'label': 'Latest Party', 'uri': venue_url}]
+                   {'label': 'Latest Party', 'uri': party_url}]
 
         line3 = ' '.join([str(l) for l in latest_event.beneficiaries.all()])
 
