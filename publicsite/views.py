@@ -453,7 +453,7 @@ class PartyTimeLayar(LayarView):
         return venues
 
     def poi_from_partytime_item(self, item):
-        return POI(id=item.id, lon=float(item.latitude), lat=float(item.longitude),
+        return POI(id=item.id, lon=item.latitude, lat=item.longitude,
                    title=item.venue_name)
 
 partytime_layar = PartyTimeLayar()
