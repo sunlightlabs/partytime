@@ -446,7 +446,8 @@ def admin_mergelm_confirmed(request, original, replacement):
 
 class PartyTimeLayar(LayarView):
 
-    def get_partytime_queryset(self, latitude, longitude, radius, **kwargs):
+    def get_partytime_queryset(self, latitude, longitude, radius, search_query,
+                               **kwargs):
         deg_in_m = 111045.0
 
         width = radius / math.fabs(math.cos(math.radians(latitude))*deg_in_m)
@@ -455,6 +456,8 @@ class PartyTimeLayar(LayarView):
         longitude_range = (str(longitude-width), str(longitude+width))
         venues = Venue.objects.filter(latitude__range=latitude_range,
                                       longitude__range=longitude_range)
+        if search_query:
+            venues = venues.filter(name__icontains=search_query)
         return venues
 
     def poi_from_partytime_item(self, item):
