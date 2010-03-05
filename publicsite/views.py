@@ -457,7 +457,7 @@ class PartyTimeLayar(LayarView):
         venues = Venue.objects.filter(latitude__range=latitude_range,
                                       longitude__range=longitude_range)
         if search_query:
-            venues = venues.filter(name__icontains=search_query)
+            venues = venues.filter(venue_name__icontains=search_query)
         return venues
 
     def poi_from_partytime_item(self, item):
