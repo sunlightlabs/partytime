@@ -447,7 +447,7 @@ def admin_mergelm_confirmed(request, original, replacement):
 class PartyTimeLayar(LayarView):
 
     def get_partytime_queryset(self, latitude, longitude, radius, search_query,
-                               **kwargs):
+                               checkboxes, **kwargs):
         deg_in_m = 111045.0
 
         width = radius / math.fabs(math.cos(math.radians(latitude))*deg_in_m)
@@ -458,6 +458,13 @@ class PartyTimeLayar(LayarView):
                                       longitude__range=longitude_range)
         if search_query:
             venues = venues.filter(venue_name__icontains=search_query)
+        if checkboxes and len(checkboxes) == 1:
+            today = datetime.datetime.now()
+            if 'future' in checkboxes:
+                venues = venues.filter(start_date__gte=today)
+            elif 'past' in checkboxes:
+                venues = venues.filter(start_date__lt=today)
+
         return venues
 
     def poi_from_partytime_item(self, item):
