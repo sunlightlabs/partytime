@@ -160,8 +160,14 @@ def jsonCID(request, CID):
         data = ''    
     return HttpResponse(data)
 
-
-
+def widget_state(request, state):
+    from django.db.models import Q
+    q = Q()
+    cids = Lawmaker.objects.filter(crp_id__isnull=False, state=state).values('crp_id').distinct()
+    for cid in cids:
+        q = q | Q(beneficiaries__crp_id=cid['crp_id'])
+    docset = Event.objects.filter(status='', start_date__gte=datetime.datetime.now()).filter(q).order_by('start_date','start_time')[:6]
+    return render_to_response('publicsite/widgets/state.html', {"docset":docset, "state": state})
 
 
 def leadpac_all(request):
@@ -478,3 +484,44 @@ class PartyTimeLayar(LayarView):
                    actions=actions)
 
 partytime_layar = PartyTimeLayar()
+
+
+
+
+
+def stateemail(request):
+    import random
+    from django.core.mail import send_mail, EmailMultiAlternatives
+    states = Lawmaker.objects.filter(state__isnull=False).exclude(state='').values('state').distinct()
+    statelist = []
+    for tstate in states:
+        statelist.append(tstate['state'])
+    if request.GET:
+        if 'email' in request.GET and 'state' in request.GET:
+            if 'confirm' in request.GET:
+                try:
+                    c = StateMailingList.objects.get(email=request.GET['email'],state=request.GET['state'], confirmation=int(request.GET['confirm']))                  
+                    c.confirmed=True
+                    c.save()
+                    return HttpResponseRedirect('/')
+                except:
+                    return HttpResponse('Incorrect confirmation.')
+            elif 'remove' in request.GET:
+                try:
+                    c = StateMailingList.objects.get(email=request.GET['email'],state=request.GET['state'],confirmation=request.GET['remove'])
+                    c.confirmed=False
+                    c.save()
+                    return HttpResponseRedirect('/')
+                except:
+                    return HttpResponse('Incorrect confirmation.')
+            else:
+                if request.GET['state'] not in statelist:
+                    return HttpResponseRedirect('/')
+                confirm =  random.randint(1, 99999999)          
+                c = StateMailingList(email=request.GET['email'],state=request.GET['state'],confirmation=confirm) 
+                c.save()
+                body = '<html><a href="http://politicalpartytime.org/emailalerts/?email='+request.GET['email']+'&state='+request.GET['state']+'&confirm='+str(confirm)+'">Click here to receive an email from the Sunlight Foundation\'s PoliticalPartyTime.org each time we receive word that a Congressional candidate from '+request.GET['state']+' is the beneficiary of a fundraising event.</a> These are often hosted by lobbyists or business or labor groups seeking to influence a lawmaker, and they can also serve as early indicators of whether candidates have funds to mount viable campaigns--before quarterly reports are released by the FEC. (You can remove yourself from this list at any time.)</html>' 
+                email = EmailMultiAlternatives('Confirm email alert signup for '+request.GET['state']+' delegation fundraisers', body, 'bounce@politicalpartytime.org', [request.GET['email']])
+                email.attach_alternative(body, "text/html")
+                email.send()
+    return HttpResponseRedirect('/')

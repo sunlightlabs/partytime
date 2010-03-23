@@ -317,3 +317,61 @@ class Event(models.Model):
 
 
 
+
+    def sendemailalert(self):
+        from django.template.loader import get_template
+        from django.template import Context
+        from django.core.mail import send_mail, EmailMultiAlternatives
+        import datetime
+        if (self.status=='' or self.status==None): 
+            states = []    
+            bens = ''       
+            hosts = ''
+            for h in self.hosts.all():
+                if hosts=='':
+                    hosts = h.name
+                else:
+                    hosts = hosts + ', ' + h.name
+            for b in self.beneficiaries.all():
+                bens = bens + b.name + ", "
+                if b.state and b.state!='':
+                    if b.state not in states:
+                        states.append(b.state)
+                elif b.crp_id and b.affiliate:
+                    l = Lawmaker.objects.find(crp_id=b.crp_id, affiliate__isnull=True)
+                    for ll in l:
+                        if ll.state not in states and ll.state!='':
+                            states.append(ll.state)                    
+            for state in states:
+                emaillist = StateMailingList.objects.filter(state=state, confirmed=True)
+                for l in emaillist:    
+                    subject = "PoliticalPartyTime: " + bens[:-2] + " fundraiser " + self.start_date.strftime("%Y-%m-%d")
+                    if hosts!='':
+                        subject = subject + " for " + hosts
+                    t = get_template('feeds/party_description.html')
+                    html = t.render(Context({'obj': self}))
+                    body = '<p><a href="http://politicalpartytime.org/party/' + str(self.pk) + '">Click here to view invitation on the Sunlight Foundation\'s PoliticalPartytime.org.</a></p>'+ html + '<p>To unsubscribe from these alerts, <a href="http://politicalpartytime.org/emailalerts/?email='+l.email+'&state='+l.state+'&remove='+str(l.confirmation)+'">click here</a>.</p>'
+                    email = EmailMultiAlternatives(subject, body, 'bounce@politicalpartytime.org', [l.email])
+                    email.attach_alternative(body, "text/html")
+                    email.send()
+
+from django.dispatch import dispatcher
+from django.db.models import signals
+
+def change_watcher(sender, instance, raw, signal, created):
+    print 'got signal'
+    instance.sendemailalert()
+
+signals.post_save.connect(change_watcher, sender=Event)
+
+class StateMailingList(models.Model):
+
+    email = models.EmailField()
+    confirmation = models.IntegerField(max_length=36)
+    confirmed = models.BooleanField(default=False)
+    state = models.CharField(max_length=2)
+
+    def __unicode__(self):
+        return self.state + ": " + self.email
+
+

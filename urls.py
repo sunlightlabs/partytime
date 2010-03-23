@@ -42,6 +42,7 @@ urlpatterns = patterns('',
     (r'^widget/abc_convention/$', 'partytime.publicsite.views.abc_convention'),
     (r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming'),
     (r'^widget/leadpacs/$', 'partytime.publicsite.views.leadpacs'),
+    (r'^widget/(?P<state>\w{2})/$', 'partytime.publicsite.views.widget_state'),
     (r'^committee/(?P<cmteid>\w{4})/$', 'partytime.publicsite.views.cmtedetail' ),
     (r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes'),
     (r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
@@ -61,5 +62,6 @@ urlpatterns = patterns('',
     (r'^ajax/checkfordupes/$', 'partytime.publicsite.views.admin_checkfordupes'),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
     (r'^json/(?P<CID>.+)/', 'partytime.publicsite.views.jsonCID'),
-    (r'^layar/$', 'partytime.publicsite.views.partytime_layar')
+    (r'^layar/$', 'partytime.publicsite.views.partytime_layar'),
+    (r'^emailalerts/', 'partytime.publicsite.views.stateemail')
 )
