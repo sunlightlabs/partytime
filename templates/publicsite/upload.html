@@ -19,6 +19,7 @@
  
   <div id="upload_form">
   <form action="/upload/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 		<input type="file" name="pdf">
 		<input type="submit" value="Upload!">
 	</form>

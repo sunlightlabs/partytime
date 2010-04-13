@@ -347,7 +347,7 @@ class Event(models.Model):
                 for l in emaillist:    
                     subject = "PoliticalPartyTime: " + bens[:-2] + " fundraiser " + self.start_date.strftime("%Y-%m-%d")
                     if hosts!='':
-                        subject = subject + " for " + hosts
+                        subject = subject + " hosted by " + hosts
                     t = get_template('feeds/party_description.html')
                     html = t.render(Context({'obj': self}))
                     body = '<p><a href="http://politicalpartytime.org/party/' + str(self.pk) + '">Click here to view invitation on the Sunlight Foundation\'s PoliticalPartytime.org.</a></p>'+ html + '<p>To unsubscribe from these alerts, <a href="http://politicalpartytime.org/emailalerts/?email='+l.email+'&state='+l.state+'&remove='+str(l.confirmation)+'">click here</a>.</p>'
@@ -358,8 +358,7 @@ class Event(models.Model):
 from django.dispatch import dispatcher
 from django.db.models import signals
 
-def change_watcher(sender, instance, raw, signal, created):
-    print 'got signal'
+def change_watcher(sender, instance, raw, signal, created, **kwargs):
     instance.sendemailalert()
 
 signals.post_save.connect(change_watcher, sender=Event)
