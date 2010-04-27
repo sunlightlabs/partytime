@@ -31,7 +31,7 @@ class Crp_lobbying(models.Model):
 
 
 class Author(models.Model):
-    user_name = models.CharField(max_length=255, db_column='user_nicename')
+    user_name = models.CharField(max_length=255, db_column='display_name')
 
     class Meta:
         db_table = 'wp_users'
