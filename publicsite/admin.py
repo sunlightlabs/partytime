@@ -10,7 +10,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
         }),
         (None, {
             'fields': ('hosts', 'beneficiaries', 'other_members')
-    }),
+        }),
         (None, {
             'fields': (
                 'rsvp_info',
@@ -19,8 +19,9 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
                 'contributions_info',
                 ('data_entry_problems', 'status', 'user_initials')
             )}
-            )
+        )
     )
+
     related_search_fields = { 
 		'hosts': ('name',),
         'venue': ('venue_name', 'address1'),
@@ -29,9 +30,10 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
     }
 
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
+
     list_filter = ('status',)
 
-
+    search_fields = ['venue__venue_name', 'beneficiaries__name', ]
 
 
 class VenueAdmin(admin.ModelAdmin):
@@ -45,10 +47,20 @@ class VenueAdmin(admin.ModelAdmin):
             ),
     )
 
+    list_display = ('venue_name', 'city', 'state', )
+
+    search_fields = ['venue_name', ]
+
+
+class HostAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'crp_id', ]
+
+
+class LawmakerAdmin(admin.ModelAdmin):
+    pass
+
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(Venue, VenueAdmin)
-admin.site.register(Host)
-admin.site.register(Lawmaker)
-
-
+admin.site.register(Host, HostAdmin)
+admin.site.register(Lawmaker, LawmakerAdmin)
