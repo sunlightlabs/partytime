@@ -12,7 +12,7 @@
 </div>
 <div id="committee_members">
 	<p><strong>Committee Members:</strong>
-{% for mem in members %}<a href="/search/Beneficiary/{{mem.name}}/">{{mem.name}}</a>{% for s in summary %}{%ifequal s.0 mem.id%} ({{s.2}}){%endifequal%}{%endfor%}{%if not forloop.last%}, {%endif%}{%endfor%}
+    {% for mem in members %}<a href="/search/Beneficiary/{{mem.name}}/">{{mem.name}}</a>{% if mem.events_since_year.count %} ({{ mem.events_since_year.count }}){% endif %}{%if not forloop.last%}, {% endif %}{% endfor %}
 	</p>
 </div>
 

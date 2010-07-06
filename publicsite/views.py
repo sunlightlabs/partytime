@@ -18,80 +18,111 @@ from partytime.publicsite.models import *
 from layar import LayarView, POI
 
 
-#
-# view methods
-#
-
 def index(request):
-    term=None
+    term = None
     now = datetime.datetime.now()
+
     if request.method == "POST":
         term = request.POST.get('term', None)
+
     if request.method == "GET":
         term = request.GET.get('term', None)
+
     if term:        
         blog_posts = Post.objects.filter(post_type='post', post_status='publish', content__icontains=term).order_by('-post_date')[:10]
     else:
         blog_posts = Post.objects.filter(post_type='post', post_status='publish').order_by('-post_date')[:10]
-    return render_to_response('publicsite/index.html', {"blog_posts":blog_posts}, context_instance=RequestContext(request))
+
+    return render_to_response(
+            'publicsite/index.html', 
+            {'blog_posts': blog_posts, }, 
+            context_instance = RequestContext(request)
+            )
 
 
-    
 def party(request, docid): 
     try:
         doc = Event.objects.get(pk=docid)
     except:
         return HttpResponseRedirect('/')
+
     return render_to_response('publicsite/party.html', {"doc": doc}) 
 
+
 def search_proxy(request):
-    
-    if request.method == "POST":        
-        field = request.POST.get('field', None)
-        args = request.POST.get('args', None)
-    if request.method == "GET":
-        field = request.GET.get('field', None)
-        args = request.GET.get('args', None)     
+    field = request.REQUEST.get('field', None)
+    args = request.REQUEST.get('args', None)
+
     if field and args:
         redirect_url = '/search/%s/%s/' % (field, args)
         return HttpResponseRedirect(redirect_url)
 
     return HttpResponseRedirect('/')
-    
+
+
 def search(request, field, args):
     lm = None
+
     if field == 'Beneficiary':
         lm = Lawmaker.objects.filter(name__icontains=args)
         if len(lm)==1:
             if lm[0].crp_id and lm[0].affiliate==None:
                 return HttpResponseRedirect('/pol/'+lm[0].crp_id)               
-    if lm!=None:
+
+    if lm is not None:
         lm = lm.filter(affiliate=None).exclude(crp_id=None)
+
     events = Event.objects.by_field(field.lower(), args)
 
-    return render_to_response('publicsite/search_results.html', {"field":field, "args":args, "docset":events, "lm": lm}, context_instance=RequestContext(request))
+    return render_to_response(
+            'publicsite/search_results.html',
+            {'field': field,
+             'args': args,
+             'docset': events,
+             'lm': lm, },
+            context_instance = RequestContext(request)
+            )
+
 
 def search_embed(request, field, args):
     events = Event.objects.by_field(field.lower(), args)
-    return render_to_response('publicsite/search_embed.html', {"field":field, "args":args, "docset":events}, context_instance=RequestContext(request))
+    return render_to_response(
+            'publicsite/search_embed.html',
+            {'field': field, 
+             'args':args, 
+             'docset':events, }, 
+            context_instance = RequestContext(request)
+            )
+
 
 def search_embed_flex(request, field, args):
-        events = Event.objects.by_field(field.lower(), args).order_by('start_date')[:3]
-        return render_to_response('publicsite/search_embed_flex.html', {"field":field, "args":args, "docset":events}, context_instance=RequestContext(request))
+    events = Event.objects.by_field(field.lower(), args).order_by('start_date')[:3]
+    return render_to_response(
+            'publicsite/search_embed_flex.html', 
+            {'field': field, 'args': args, 'docset': events, }, 
+            context_instance = RequestContext(request)
+            )
 
 
 def convention_list(request, convention=''):
+    conventions = {
+        'republican': 'GOP convention',
+        'democratic': 'Democratic convention',
+    }
+
+    args = convetions.get(convetion, 'convention')
     
-    if convention == 'republican':
-        args = 'GOP convention'
-    elif convention == 'democratic':
-        args = 'Democratic convention'
-    else:
-        args = 'convention'
-        
-    events = Event.objects.filter(status='', tags__tag_name__icontains=args).exclude(start_date__isnull=True).order_by('start_date','start_time')
+    events = Event.objects.filter(status='', tags__tag_name__icontains=args) \
+                          .exclude(start_date__isnull=True) \
+                          .order_by('start_date', 'start_time')
     
-    return render_to_response('publicsite/search_results.html', {"field":"Tags", "args":args, "docset":events})
+    return render_to_response(
+            'publicsite/search_results.html', 
+            {'field': 'Tags',
+             'args': args, 
+             'docset': events, }
+            )
+
 
 #
 # upcoming and recent events
@@ -99,30 +130,54 @@ def convention_list(request, convention=''):
 
 def recent(request):
     docset = Event.objects.recent(15)
-    return render_to_response('publicsite/snapshot.html', {"snapshot_image_name":"recent", "docset":docset})
+    return render_to_response(
+            'publicsite/snapshot.html', 
+            {'snapshot_image_name': 'recent', 
+             'docset': docset, }
+            )
+
 
 def upcoming(request):
     docset = Event.objects.upcoming(15)
-    return render_to_response('publicsite/snapshot.html', {"snapshot_image_name":"upcoming", "docset":docset})
+    return render_to_response(
+            'publicsite/snapshot.html',
+            {'snapshot_image_name': 'upcoming', 
+             'docset': docset, }
+            )
+
 
 def upcoming_embed(request):
-        docset = Event.objects.upcoming(5)
-        return render_to_response('publicsite/upcoming_embed.html', {"snapshot_image_name":"upcoming", "docset":docset})
+    docset = Event.objects.upcoming(5)
+    return render_to_response(
+            'publicsite/upcoming_embed.html',
+            {'snapshot_image_name': 'upcoming',
+                'docset': docset, }
+            )
+
 
 def upcoming_embed2(request):
-        docset = Event.objects.upcoming(5)
-        return render_to_response('publicsite/upcoming_embed_2.html', {"snapshot_image_name":"upcoming", "docset":docset})
+    docset = Event.objects.upcoming(5)
+    return render_to_response(
+            'publicsite/upcoming_embed_2.html', 
+            {'snapshot_image_name': 'upcoming', 
+             'docset':docset, }
+            )
+
 
 def bydate(request,start,end):
-    docset = Event.objects.daterange(start,end)
-    return render_to_response('publicsite/snapshot.html', {"snapshot_image_name":"", "docset":docset})
+    docset = Event.objects.daterange(start, end)
+    return render_to_response(
+                'publicsite/snapshot.html', 
+                {'snapshot_image_name': '', 
+                 'docset':docset, }
+                )
+
 
 #
 # widgets
 #
 
 def abc_convention(request, convention=''):
-    
     conventions = {
         'republican': 'gop convention',
         'democratic': 'democratic convention',
@@ -131,71 +186,130 @@ def abc_convention(request, convention=''):
     arg = conventions.get(convention, None)
     
     if arg:
-    
-        events = Event.objects.filter(status='', tags__tag_name=arg)
+        events = Event.objects.filter(
+                status='',
+                tags__tag_name=arg)
         event_count = events.count()
         
         if event_count > 0:
-            
             randdocnum = random.randint(0, event_count - 1)
             event = events[randdocnum]
             
-            return render_to_response("publicsite/widgets/abc_convention.html",
-                {"field":"Tags", "args": arg, "doc":event, "convention": convention})
+            return render_to_response(
+                    'publicsite/widgets/abc_convention.html',
+                    {'field': 'Tags', 
+                     'args': arg, 
+                     'doc': event, 
+                     'convention': convention, }
+                    )
 
 
 def widget180_upcoming(request):
-	events = Event.objects.filter(
-					start_date__gte=datetime.datetime.now(),
-					status='').exclude(entertainment="").order_by('start_date','start_time')[:3]
-	return render_to_response('publicsite/widgets/widget_180.html', {"docset":events})
+    events = Event.objects.filter(start_date__gte=datetime.datetime.now(), status='') \
+                          .exclude(entertainment="") \
+                          .order_by('start_date', 'start_time')[:3]
+
+    return render_to_response(
+            'publicsite/widgets/widget_180.html',
+            {'docset': events, }
+            )
 
 
 def jsonCID(request, CID):
     from django.core import serializers
-    events = Event.objects.filter( beneficiaries__crp_id=CID, status='').order_by('start_date','start_time')
+
+    events = Event.objects.filter(beneficiaries__crp_id=CID, status='') \
+                          .order_by('start_date', 'start_time')
+
     try:
-        data = serializers.serialize("json", events, fields=('committee_id','start_date','start_time','entertainment','venue','contributions_info','hosts','beneficiaries','make_checks_payable_to'), use_natural_keys=True)
+        data = serializers.serialize('json', 
+                                     events, 
+                                     fields=('committee_id',
+                                             'start_date',
+                                             'start_time',
+                                             'entertainment',
+                                             'venue',
+                                             'contributions_info',
+                                             'hosts',
+                                             'beneficiaries',
+                                             'make_checks_payable_to'), 
+                                     use_natural_keys=True)
     except:
         data = ''    
+
     return HttpResponse(data)
+
 
 def widget_state(request, state):
     from django.db.models import Q
+
     q = Q()
-    cids = Lawmaker.objects.filter(crp_id__isnull=False, state=state).values('crp_id').distinct()
+    cids = Lawmaker.objects.filter(crp_id__isnull=False, state=state) \
+                           .values('crp_id') \
+                           .distinct()
+
     for cid in cids:
         q = q | Q(beneficiaries__crp_id=cid['crp_id'])
-    docset = Event.objects.filter(status='', start_date__gte=datetime.datetime.now()).filter(q).order_by('start_date','start_time')[:6]
-    return render_to_response('publicsite/widgets/state.html', {"docset":docset, "state": state})
+
+    docset = Event.objects.filter(status='', start_date__gte=datetime.datetime.now()) \
+                          .filter(q) \
+                          .order_by('start_date', 'start_time')[:6]
+
+    return render_to_response(
+            'publicsite/widgets/state.html',
+            {'docset':docset, 
+             'state': state, }
+            )
 
 
 def leadpac_all(request):
-    docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False).order_by('-start_date','-start_time')
-    return render_to_response('publicsite/snapshot.html', {"snapshot_image_name":"", "docset":docset})
+    docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False) \
+                          .order_by('-start_date', '-start_time')
+
+    return render_to_response(
+            'publicsite/snapshot.html', 
+            {'snapshot_image_name': '', 'docset': docset, }
+            )
+
 
 def leadpacs(request):
-    docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False).order_by('-start_date','-start_time')[0:6]       
-    return render_to_response('publicsite/leadpacs.html', {"docset":docset})
+    docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False) \
+                          .order_by('-start_date', '-start_time')[0:6]
+
+    return render_to_response(
+            'publicsite/leadpacs.html', 
+            {'docset': docset, })
 
 
-#added 7/29 for lawmaker search including leadpac
 def polwithpac(request, cid):
-    lm=None
-    pacname=None
-    polname=None
-    l = Lawmaker.objects.filter(crp_id=cid).distinct()
-    if len(l)==0:
+    lm = None
+    pacname = None
+    polname = None
+
+    l = Lawmaker.objects.filter(crp_id=cid) \
+                        .distinct()
+
+    if l.count() == 0:
         return HttpResponseRedirect('/')     
+
     for ll in l:
         if ll.affiliate:
             pacname = ll.name
         else:
             lm = ll
       
-    eventlist = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date','-start_time')
-    return render_to_response('publicsite/polwithpac.html', {"eventlist":eventlist, "lm": lm, "pacname": pacname, "snapshot_image_name": '' })
-    
+    eventlist = Event.objects.filter(status='', beneficiaries__crp_id=cid) \
+                             .order_by('-start_date', '-start_time')
+
+    return render_to_response(
+            'publicsite/polwithpac.html',
+            {'eventlist': eventlist,
+             'lm': lm,
+             'pacname': pacname,
+             'snapshot_image_name': '', }
+            )
+
+
 #
 # file uploading
 #
@@ -203,44 +317,51 @@ def polwithpac(request, cid):
 def upload(request):
     if request.method == 'POST' and request.FILES:
         uf = request.FILES.get('pdf', None)
+
         if uf:
-            if uf.name.endswith(".pdf") and uf.size < 1024 * 1024 * 100:    # size < 100MB
+            if uf.name.endswith(".pdf") and uf.size < 1024 * 1024 * 100:  # size < 100MB
                 path = "%s/upload/%s.pdf" % (settings.FILE_UPLOAD_PATH, random.randint(100000,999999))
                 destination = open(path, 'wb')
+
                 for chunk in uf.chunks():
                     destination.write(chunk)
                     return HttpResponseRedirect('/upload/thanks/')
-    return render_to_response('publicsite/upload.html', context_instance=RequestContext(request))
+
+    return render_to_response(
+            'publicsite/upload.html', 
+            context_instance = RequestContext(request)
+            )
     
+
 def upload_thanks(request):
     return HttpResponse("thanks")
 
 
-#committees .... added by luke rosiak 5/27
+#
+# committees
+#
 def cmtes(request, chamber='House'):
-    clist = Committee.objects.filter(chamber=chamber)
-    res = clist
-   
-    from django.db import connection, transaction 
-    cursor = connection.cursor()
-    cursor.execute("SELECT i.cn, count(i.co) FROM (SELECT DISTINCT cm.committee_id cn, e.id co FROM publicsite_event e INNER JOIN publicsite_event_beneficiary b ON (e.id=b.event_id) INNER JOIN publicsite_lawmaker l ON (l.id=b.lawmaker_id) INNER JOIN publicsite_committee_members cm ON (l.id=cm.lawmaker_id) WHERE (e.status is null or e.status='') AND YEAR(e.start_date)>=2009 GROUP BY cm.committee_id, e.id) i GROUP BY cn;")
-    summary = cursor.fetchall()
-     
-    return render_to_response('publicsite/cmte.html', {"res": res, "chamber": chamber, "summary": summary }) #res = list of {"cmte": cmte, "events": ev, "nummems": len(SunLeg) } 
+    return render_to_response(
+            'publicsite/cmte.html', 
+            {'res': Committee.objects.filter(chamber=chamber), 
+             'chamber': chamber, }
+            )
 
 
 def cmtedetail(request, cmteid):
     res = Event.objects.by_cmte(cmteid)
     docset = res['events']
 
-    from django.db import connection, transaction 
-    cursor = connection.cursor()
-    cursor.execute("SELECT lq.id, lq.name, count(ev)  FROM (SELECT l.id, l.name, e.id ev FROM publicsite_event e INNER JOIN publicsite_event_beneficiary b ON (e.id=b.event_id) INNER JOIN publicsite_lawmaker l ON (l.id=b.lawmaker_id) INNER JOIN publicsite_committee_members cm ON (l.id=cm.lawmaker_id AND cm.committee_id='"+cmteid+"') WHERE (e.status is null or e.status='') AND YEAR(e.start_date)>=2009 GROUP BY l.id, l.name, ev) lq GROUP BY lq.id, lq.name;")
-    summary = cursor.fetchall()
+    return render_to_response(
+            'publicsite/cmtedetail.html', 
+            {'cmte': res['cmte'], 
+             'docset': res['events'], 
+             'members': res['members'], 
+             'since_year': res['since_year'], }
+            )
 
-    return render_to_response('publicsite/cmtedetail.html', {"cmte": res['cmte'], "docset":res['events'], "members": res['members'], "summary": summary, "since_year": res['since_year'] })
 
-
+# Marked as temporary in urls.py; not sure if this is still being used.
 def updatecmtes(request,chamber):
     from sunlightapi import sunlight, SunlightApiError
     sunlight.apikey = '***REMOVED***'

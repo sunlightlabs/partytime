@@ -131,7 +131,7 @@ class EventManager(models.Manager):
     def by_cmte(self, cmteid):
         since_year = 2009 #beginning of election cycle
         cmte = Committee.objects.get(short=cmteid)
-        ev = Event.objects.filter(status='', start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__committee = cmte).order_by('-start_date','-start_time').distinct()
+        ev = Event.objects.filter(status='', start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__committee__short = cmteid).order_by('-start_date','-start_time').distinct()
         retu = {"cmte": cmte, "events": ev, "members": cmte.members.all(), "since_year": since_year } 
         return retu
 
@@ -172,6 +172,7 @@ class Lawmaker(models.Model):
 
     class Meta:
         db_table = u'publicsite_lawmaker'
+
     def __unicode__(self):
         if self.district:
             districtStr ="-" +self.district	
@@ -194,13 +195,25 @@ class Lawmaker(models.Model):
     def natural_key(self):
         return (self.name)
 
+    def events_since_year(self, year=2009):
+        return self.pol_events.filter(start_date__gte=datetime.date(year, 01, 01))
+
+
 class Committee(models.Model):
     short = models.CharField(blank=False,max_length=4, primary_key=True)
     title = models.CharField(blank=False,max_length=100)
     members = models.ManyToManyField(Lawmaker)
     chamber = models.CharField(blank=False,max_length=10)
+
     def __unicode__(self):
         return self.title
+
+    def events(self):
+        return Event.objects.filter(
+                            beneficiaries__in=self.members.all(),
+                            start_date__gte=datetime.date(2009, 01, 01)
+                        ).distinct()
+
 
 class OtherInfo(models.Model):
     event_id = models.IntegerField(null=True, blank=True)
