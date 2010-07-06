@@ -357,7 +357,9 @@ def cmtedetail(request, cmteid):
             {'cmte': res['cmte'], 
              'docset': res['events'], 
              'members': res['members'], 
-             'since_year': res['since_year'], }
+             'since_year': res['since_year'], 
+             'snapshot_image_name': '',
+             }
             )
 
 

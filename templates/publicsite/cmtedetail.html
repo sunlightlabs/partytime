@@ -2,7 +2,7 @@
 
 {% block content %}
 
-	<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">
+    {% ifnotequal snapshot_image_name "" %}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{% endifnotequal %}
 <div id="cmte_detail">
 	<a href="/committee/">
 		<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
