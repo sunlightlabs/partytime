@@ -17,19 +17,6 @@ NONBLOCK_ELEMENT_RE = re.compile(r"(%s)" % "|".join([r">(\s*?)<(%s)" % e for e i
 
 
 
-class Crp_category(models.Model):
-    realcode = models.CharField(max_length=5, primary_key=True)
-    catname = models.CharField(blank=True, max_length=255,null=True) 
-    sector = models.CharField(blank=True, max_length=255,null=True) 
-
-class Crp_lobbying(models.Model):
-    datekey = models.ForeignKey('Host', to_field='crp_id', primary_key=True, db_column='datekey')
-    org = models.CharField(blank=True, max_length=255,null=True) 
-    category = models.ForeignKey(Crp_category, to_field='realcode', db_column='realcode')
-
-
-
-
 class Author(models.Model):
     user_name = models.CharField(max_length=255, db_column='display_name')
 
@@ -152,17 +139,13 @@ class EventManager(models.Manager):
 
 class Host(models.Model):
     name = models.CharField(blank=True,max_length=255, db_index=True)
-    crp_id = models.CharField(blank=True, max_length=18)
-    #crp_id = models.ForeignKey(Crp_lobbying, to_field='datekey', db_column='crp_id')
+    crp_id = models.CharField(blank=True, max_length=18, unique=True)
+
     class Meta:
         db_table = u'publicsite_host'
+
     def __unicode__(self):
         return self.name
-    def lobby(self):
-        if self.crp_id==None:
-            return None
-        else:    
-            return Crp_lobbying.objects.filter(datekey=self.crp_id)
 
     def natural_key(self):
         return (self.name)
