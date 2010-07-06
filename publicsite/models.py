@@ -341,7 +341,7 @@ class Event(models.Model):
 from django.dispatch import dispatcher
 from django.db.models import signals
 
-def change_watcher(sender, instance, raw, signal, created):
+def change_watcher(sender, **kwargs):
     print 'got signal'
     instance.sendemailalert()
 
