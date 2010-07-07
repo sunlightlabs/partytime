@@ -314,13 +314,11 @@ class Event(models.Model):
     data_entry_problems = models.CharField(blank=True, max_length=255, null=True)
 
     canceled = models.BooleanField(u'This event has been canceled', 
-                                   help_text=u'(Checking this box will cause this event to not show up on the site.)',
                                    blank=True, 
                                    default=False)
     postponed = models.BooleanField(u'This event has been postponed',
                                     blank=True,
-                                    default=False,
-                                   help_text=u'(Checking this box will cause this event to not show up on the site.)')
+                                    default=False)
     """
     replacement_event = models.ForeignKey('Event', 
                                           blank=True,

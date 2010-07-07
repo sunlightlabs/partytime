@@ -5,7 +5,7 @@ import widgets
 
 class EventAdmin(widgets.AutocompleteModelAdmin):
 
-    fieldsets = (
+    fieldsets = [
         (None, {
             'fields': (('start_date', 'start_time'), ('end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link')
         }),
@@ -21,17 +21,13 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
                 ('data_entry_problems', 'status', 'user_initials')
             )}
         ),
-        (None, {
+        ('Cancellations/Postponements', {
             'fields': (
                 ('postponed'),
-            )}
-        ),
-        (None, {
-            'fields': (
                 ('canceled'),
             )}
         ),
-    )
+    ]
 
     related_search_fields = { 
 		'hosts': ('name',),
@@ -45,6 +41,17 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
     list_filter = ('status',)
 
     search_fields = ['venue__venue_name', 'beneficiaries__name', ]
+
+    def add_view(self, request, form_url='', extra_context=None):
+        """Remove cancellation/postponement option on add pages;
+        should only show up on change pages.
+        """
+        for i, fieldset in enumerate(self.fieldsets):
+            if fieldset[0] == 'Cancellations/Postponements':
+                del(self.fieldsets[i])
+                break
+
+        return super(EventAdmin, self).add_view(request, form_url, extra_context)
 
     """
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
