@@ -113,7 +113,7 @@ def convention_list(request, convention=''):
         'democratic': 'Democratic convention',
     }
 
-    args = convetions.get(convetion, 'convention')
+    args = conventions.get(convention, 'convention')
     
     events = Event.objects.filter(status='', tags__tag_name__icontains=args) \
                           .exclude(start_date__isnull=True) \

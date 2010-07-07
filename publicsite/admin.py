@@ -4,6 +4,7 @@ import widgets
 
 
 class EventAdmin(widgets.AutocompleteModelAdmin):
+
     fieldsets = (
         (None, {
             'fields': (('start_date', 'start_time'), ('end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link')

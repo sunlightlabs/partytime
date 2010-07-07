@@ -9,11 +9,11 @@ from sunlightapi import sunlight, SunlightApiError
 sunlight.apikey = '***REMOVED***'
 
 
-BLOCK_ELEMENTS = ('blockquote','ol','ul')
-BLOCK_ELEMENT_RE = re.compile(r"(%s)" % "|".join([r"<%s>(.*?)</%s>" % (e, e) for e in BLOCK_ELEMENTS]))
+BLOCK_ELEMENTS = ('blockquote', 'ol', 'ul')
+BLOCK_ELEMENT_RE = re.compile(r'(%s)' % '|'.join([r'<%s>(.*?)</%s>' % (e, e) for e in BLOCK_ELEMENTS]))
 
 NONBLOCK_ELEMENTS = ('li',)
-NONBLOCK_ELEMENT_RE = re.compile(r"(%s)" % "|".join([r">(\s*?)<(%s)" % e for e in NONBLOCK_ELEMENTS]),re.S)
+NONBLOCK_ELEMENT_RE = re.compile(r'(%s)' % '|'.join([r'>(\s*?)<(%s)' % e for e in NONBLOCK_ELEMENTS]),re.S)
 
 
 class Author(models.Model):
@@ -139,15 +139,14 @@ class EventManager(models.Manager):
         except:
             pass
 
-
     def by_cmte(self, cmteid):
         since_year = 2009 #beginning of election cycle
         cmte = Committee.objects.get(short=cmteid)
         ev = Event.objects.filter(status='',
-                                  start_date__gte=datetime.datetime(since_year,1,1),
+                                  start_date__gte=datetime.datetime(since_year, 1, 1),
                                   beneficiaries__committee__short = cmteid
                                  ).order_by('-start_date','-start_time').distinct()
-        return {'cmte': cmte, 'events': ev, 'members': cmte.members.all(), 'since_year': since_year }
+        return {'cmte': cmte, 'events': ev, 'members': cmte.members.all(), 'since_year': since_year}
 
 
 class Host(models.Model):
@@ -177,8 +176,6 @@ class Tag(models.Model):
 class Lawmaker(models.Model):
     title = models.CharField(help_text=u'(e.g., Senator, Representative)', blank=True,max_length=25)
     name = models.CharField(blank=True, max_length=255)
-    #first_name = models.CharField(blank=True, max_length=25)
-    #last_name = models.CharField(blank=True, max_length=25)
     party = models.CharField(blank=True, max_length=1)
     state = models.CharField(blank=True, max_length=2)
     district = models.CharField(blank=True, max_length=2)
@@ -191,30 +188,23 @@ class Lawmaker(models.Model):
     def __unicode__(self):
         if self.district:
             district_str = '-%s' % self.district
-            #districtStr = '-' + self.district
         else:
             district_str = ''
-            #districtStr =""
 
         if self.party:
             party_str = '%s, ' % self.party
-            #partyStr =self.party+", "
         else:
             party_str = ''
-            #partyStr = ""
 
         if self.title:
             title_str = '%s ' % self.title
-            #titleStr =self.title+" "
         else:
             title_str = ''
-            #titleStr = ""
 
         if not self.district and not self.party and not self.state:
             info = ''
         else:
             info = ' (%s%s%s)' % (party_str, self.state, district_str)
-            #info =' ('+partyStr+self.state+districtStr+')'
 
         return u'%s%s%s' % (title_str, self.name, info)
 
