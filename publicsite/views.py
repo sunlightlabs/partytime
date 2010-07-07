@@ -1,6 +1,9 @@
 import math
 import random
-import simplejson
+try:
+    import json
+except ImportError:
+    import simplejson
 import time
 import datetime
 

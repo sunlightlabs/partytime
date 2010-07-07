@@ -19,7 +19,17 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
                 'contributions_info',
                 ('data_entry_problems', 'status', 'user_initials')
             )}
-        )
+        ),
+        (None, {
+            'fields': (
+                ('postponed'),
+            )}
+        ),
+        (None, {
+            'fields': (
+                ('canceled'),
+            )}
+        ),
     )
 
     related_search_fields = { 
@@ -34,6 +44,15 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
     list_filter = ('status',)
 
     search_fields = ['venue__venue_name', 'beneficiaries__name', ]
+
+    """
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        import datetime
+        if db_field.name == 'replacement_event':
+            kwargs['queryset'] = Event.objects.filter(start_date__gte=datetime.date.today())
+            return db_field.formfield(**kwargs)
+        return super(EventAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+    """
 
 
 class VenueAdmin(admin.ModelAdmin):
