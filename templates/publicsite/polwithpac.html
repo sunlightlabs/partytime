@@ -2,15 +2,15 @@
 
 {% block content %}
 
-	{%ifnotequal snapshot_image_name ""%}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{%endifnotequal%}
+	{% ifnotequal snapshot_image_name "" %}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{% endifnotequal %}
 
-    <h2>{{lm.title}} {{ lm.name }} ({{lm.party}}, {{lm.state}})      
-<a href="/feeds/pol/{{lm.crp_id}}/"><img src="http://media.sunlightprojects.org/partytime/images/feed-icon-14x14.png" border="0"></a></h2>
+    <h2>{{ lm.title }} {{ lm.name }} ({{ lm.party }}, {{ lm.state }})
+<a href="/feeds/pol/{{ lm.crp_id }}/"><img src="http://media.sunlightprojects.org/partytime/images/feed-icon-14x14.png" border="0"></a></h2>
 
-    <b>{{eventlist|length}}</b> parties benefitting the campaign committee 
-    {%if pacname %} and leadership PAC, <b>{{ pacname }}</b>{%endif%}
+    <b>{{ eventlist|length }}</b> parties benefitting the campaign committee
+    {% if pacname %} and leadership PAC, <b>{{ pacname }}</b>{%endif%}
 
-{%if lm.committee_set%}<p>Committee seats: {% for c in lm.committee_set.all %}<a href="/committee/{{c.short}}">{{c.title}}</a>{%if not forloop.last%}, {%endif%} {%endfor%}</p>{%endif%}
+    {% if lm.committee_set %}<p>Committee seats: {% for c in lm.committee_set.all %}<a href="{% url partytime_committee_detail c.short %}">{{c.title}}</a>{% if not forloop.last %}, {% endif %} {% endfor %}</p>{% endif %}
 
 	{% for doc in eventlist %}
 		<div id="summary_container">
@@ -21,10 +21,10 @@
 					<span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
 				</div>
 				<div id="summary_invite">
-					<a href="/party/{{ doc.id }}/">
+                    <a href="{% url partytime_party_detail doc.id %}">
 						<img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
 					</a>
-					<a href="/party/{{ doc.id }}/">View Invitation</a>
+                    <a href="{% url partytime_party_detail doc.id %}">View Invitation</a>
 				</div>
 			</div>
 			<div id="summary_data">
@@ -32,7 +32,7 @@
 					{% if doc.entertainment or doc.venue.venue_name %}
 						<li>
 							{% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
-							{% if doc.venue.venue_name %}@ <a href="/search/Venue_Name/{{ doc.venue.venue_name }}/">{{ doc.venue.venue_name }}</a>{% endif %}
+                            {% if doc.venue.venue_name %}@ <a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a>{% endif %}
 						</li>
 					{% endif %}
 					
@@ -40,14 +40,14 @@
 					{% if beneficiaries %}
 					    <li>
     					        <span class="detail_head">For:</span>
-    					        {% for ben in beneficiaries %}<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a>  {% endfor %}	    
+                                {% for ben in beneficiaries %}<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}">{{ ben }}</a>{% endfor %}
     					</li>
     				{% endif %}
     				{% endwith %}
     				
     				{% with doc.hosts.all as hosts %}
 					{% if hosts %}
-						<li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}/">{{ host }}</a> {% endfor %}</li>
+                        <li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}</li>
 					{% endif %}
 					{% endwith %}
 					
@@ -55,8 +55,6 @@
 			</div>
 		</div>
 		{% endfor %}
-
-
 
 
 {% endblock %}

@@ -4,15 +4,15 @@
 
     {% ifnotequal snapshot_image_name "" %}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{% endifnotequal %}
 <div id="cmte_detail">
-	<a href="/committee/">
+    <a href="{% url partytime_committee_list %}">
 		<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
 	</a> 
-<h4>{{cmte.title}}</h4>
-<h5>({{docset|length}} parties since {{since_year}})</h5>
+<h4>{{ cmte.title }}</h4>
+<h5>({{ docset|length }} parties since {{since_year}})</h5>
 </div>
 <div id="committee_members">
 	<p><strong>Committee Members:</strong>
-    {% for mem in members %}<a href="/search/Beneficiary/{{mem.name}}/">{{mem.name}}</a>{% if mem.events_since_year.count %} ({{ mem.events_since_year.count }}){% endif %}{%if not forloop.last%}, {% endif %}{% endfor %}
+    {% for mem in members %}<a href="{% url partytime_pol_detail mem.crp_id %}">{{mem.name}}</a>{% if mem.events_since_year.count %} ({{ mem.events_since_year.count }}){% endif %}{%if not forloop.last%}, {% endif %}{% endfor %}
 	</p>
 </div>
 
@@ -27,10 +27,10 @@
 					<span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
 				</div>
 				<div id="summary_invite">
-					<a href="/party/{{ doc.id }}/">
+                    <a href="{% url partytime_party_detail doc.id %}">
 						<img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
 					</a>
-					<a href="/party/{{ doc.id }}/">View Invitation</a>
+                    <a href="{% url partytime_party_detail doc.id %}">View Invitation</a>
 				</div>
 			</div>
 			<div id="summary_data">
@@ -38,7 +38,7 @@
 					{% if doc.entertainment or doc.venue.venue_name %}
 						<li>
 							{% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
-							{% if doc.venue.venue_name %}@ <a href="/search/Venue_Name/{{ doc.venue.venue_name }}/">{{ doc.venue.venue_name }}</a>{% endif %}
+                            {% if doc.venue.venue_name %}@ <a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a>{% endif %}
 						</li>
 					{% endif %}
 					
@@ -46,14 +46,14 @@
 					{% if beneficiaries %}
 					    <li>
     					        <span class="detail_head">For:</span>
-    					        {% for ben in beneficiaries %}<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a>  {% endfor %}	    
+                                {% for ben in beneficiaries %}<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{% endif %}">{{ ben }}</a>  {% endfor %}	    
     					</li>
     				{% endif %}
     				{% endwith %}
     				
     				{% with doc.hosts.all as hosts %}
 					{% if hosts %}
-						<li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}/">{{ host }}</a> {% endfor %}</li>
+                    <li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}</li>
 					{% endif %}
 					{% endwith %}
 					

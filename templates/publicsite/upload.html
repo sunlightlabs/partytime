@@ -7,24 +7,24 @@
 <p>Right now, all across the country, teenagers are texting each other about where the hot parties are going to be this weekend. Channel your inner teenager now by sending us invitations you receive to congressional parties.</p>
 
 
-<p>Simply upload the invitation using the &#8220;browse&#8221; function. Please feel free to submit your invitation in any format&ndash;as a Word document, pdf, image and so forth. If you would prefer to get us the invitation in some other way, or you have so many invitations that you need a different method to get them to us, please send an email using the <a href="/contact/">contact form</a>.</p>
+<p>Simply upload the invitation using the &#8220;browse&#8221; function. Please feel free to submit your invitation in any format&ndash;as a Word document, pdf, image and so forth. If you would prefer to get us the invitation in some other way, or you have so many invitations that you need a different method to get them to us, please send an email using the <a href="{% url partytime_contact %}">contact form</a>.</p>
 
-	<p>We promise anonymity&mdash;your name will not be attached to the invitation, and we will not share that you sent it to us. To ensure your privacy, it is helpful if you remove any personally identifiable information, such as an email header. However, we also do a check to remove such information before posting invitations.</p>
+    <p>We promise anonymity&mdash;your name will not be attached to the invitation, and we will not share that you sent it to us. To ensure your privacy, it is helpful if you remove any personally identifiable information, such as an email header. However, we also do a check to remove such information before posting invitations.</p>
 
 
-  <div id="upload_box">	
-  
-  	
+  <div id="upload_box">
+ 
+
 
  
   <div id="upload_form">
-  <form action="/upload/" method="post" enctype="multipart/form-data">
-		<input type="file" name="pdf">
-		<input type="submit" value="Upload!">
-	</form>
-	</div>
-	</div>
- 
+      <form action="{% url partytime_upload %}" method="post" enctype="multipart/form-data">
+        <input type="file" name="pdf">
+        <input type="submit" value="Upload!">
+    </form>
+    </div>
+    </div>
 
-	
+
+
 {% endblock %}

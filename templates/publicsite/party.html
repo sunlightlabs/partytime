@@ -37,9 +37,9 @@
 					<li><span class="detail_head">For:</span> {% for ben in beneficiaries %}
 
 {%if ben.affiliate %}
-<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a> (<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.affiliate}}{%endif%}/">{{ ben.affiliate }}</a>) 
+<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}">{{ ben }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}">{{ ben.affiliate }}</a>)
 {%else%}
-<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a>
+<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{% endif %}">{{ ben }}</a>
 {%endif%}  
 
 {% endfor %}</li>
@@ -51,16 +51,16 @@
 				
 				{% with doc.hosts.all as hosts %}
 				{% if hosts %}
-					<li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}">{{ host }}</a> {% endfor %}</li>
+                <li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}</li>
 				{% endif %}
 				{% endwith %}
 				
 				{% if doc.start_time or doc.end_time %}<li><span class="detail_head">When:</span> {{ doc.start_date }} ({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</a></li>{% endif %}
-				{% if doc.venue.venue_name %}<li><span class="detail_head">Where:</span> <a href="/search/Venue_Name/{{ doc.venue.venue_name }}">{{ doc.venue.venue_name }}</a> {% if doc.venue.venue_address %} - {{ doc.venue.venue_address }}{% endif %}</li>{% endif %}
-				{% if doc.entertainment %}<li><span class="detail_head">Type of Event:</span> <a href="/search/Entertainment_Type/{{ doc.entertainment }}">{{ doc.entertainment }}</a></li>{% endif %}
+            {% if doc.venue.venue_name %}<li><span class="detail_head">Where:</span> <a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a> {% if doc.venue.venue_address %} - {{ doc.venue.venue_address }}{% endif %}</li>{% endif %}
+            {% if doc.entertainment %}<li><span class="detail_head">Type of Event:</span> <a href="{% url partytime_search 'Entertainment_Type' doc.entertainment|urlencode %}">{{ doc.entertainment }}</a></li>{% endif %}
 				{% with doc.other_members.all as other_members %}
 				{% if other_members %}
-				<li><span class="detail_head">Other Lawmakers Mentioned:</span> {% for other_member in other_members %} <a href="/search/Other_Members_of_Congress/{{ other_member.name }}/">{{ other_member }}</a> {% endfor %}</li>
+                <li><span class="detail_head">Other Lawmakers Mentioned:</span> {% for other_member in other_members %} <a href="{% url partytime_search 'Other_Members_of_Congress' other_member.name|urlencode %}">{{ other_member }}</a>{% endfor %}</li>
 				{% endif %}
 				{% endwith %}
 				

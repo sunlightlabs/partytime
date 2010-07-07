@@ -10,16 +10,16 @@
 <img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
 <div id="committee_tab">
 	<ul>
-        {% ifnotequal chamber 'House' %}<li><a href="/committee/House">House Committees</a> </li>{% else %} <li>House Committees</li>{% endifnotequal %}
-        {% ifnotequal chamber 'Senate' %}<li><a href="/committee/Senate">Senate Committees</a></li> {% else %} <li>Senate Committees</li>{% endifnotequal %}
-        {% ifnotequal chamber 'Joint' %}<li><a href="/committee/Joint">Joint Committees</a></li> {% else %} <li>Joint Committees</li>{% endifnotequal %}
+        {% ifnotequal chamber 'House' %}<li><a href="{% url partytime_chamber_committees 'House' %}">House Committees</a> </li>{% else %} <li>House Committees</li>{% endifnotequal %}
+        {% ifnotequal chamber 'Senate' %}<li><a href="{% url partytime_chamber_committees 'Senate' %}">Senate Committees</a></li> {% else %} <li>Senate Committees</li>{% endifnotequal %}
+        {% ifnotequal chamber 'Joint' %}<li><a href="{% url partytime_chamber_committees 'Joint' %}">Joint Committees</a></li> {% else %} <li>Joint Committees</li>{% endifnotequal %}
 </ul>
 </div>
 <div id="committee_party_box">
 <ul id="committee_parties">
         {% for c in res %}
         <li>
-            <a href="/committee/{{ c.short }}">{{ c.title }}</a> ({{ c.members.count }} members, {{ c.events.count }} parties)
+        <a href="{% url partytime_committee_detail c.short %}">{{ c.title }}</a> ({{ c.members.count }} members, {{ c.events.count }} parties)
 		</li>
 
 
