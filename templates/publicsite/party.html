@@ -32,6 +32,10 @@
 
 		<div id="party_data">
 			<ul>
+                {% if doc.canceled or doc.postponed %}
+                <li><span style="color: #ff0000; font-weight: bold; font-size: 10pt;">Note: This event has been {% if doc.canceled %}canceled{% else %}postponed{% endif %}.</li>
+                {% endif %}
+
 				{% with doc.beneficiaries.all as beneficiaries %}
 				{% if beneficiaries %}
 					<li><span class="detail_head">For:</span> {% for ben in beneficiaries %}
