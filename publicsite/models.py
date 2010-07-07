@@ -319,11 +319,6 @@ class Event(models.Model):
     postponed = models.BooleanField(u'This event has been postponed',
                                     blank=True,
                                     default=False)
-    """
-    replacement_event = models.ForeignKey('Event', 
-                                          blank=True,
-                                          help_text=u'(Selecting a replacement event will cause the URL of this event to redirect to the new event page.)')
-    """
 
     class Meta:
         db_table = u'publicsite_event'
@@ -385,8 +380,7 @@ from django.dispatch import dispatcher
 from django.db.models import signals
 
 def change_watcher(sender, **kwargs):
-    print 'got signal'
-    instance.sendemailalert()
+    kwargs['instance'].sendemailalert()
 
 signals.post_save.connect(change_watcher, sender=Event)
 
