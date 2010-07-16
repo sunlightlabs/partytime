@@ -321,9 +321,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 
 			selected = selected + mark_safe(u"""
 
-				<div class="to_delete deletelink" 
-><input type="hidden" name="%(name)s" 
-value="%(value)s"/>%(label)s</div>""" 
+				<div class="to_delete deletelink" ><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
 
 				)%{
 
@@ -367,8 +365,7 @@ function addItem_id_%(name)s(id,name) {
 
 	// --- add new element from popup ---
 
-	$('<div class="to_delete deletelink"><input type="hidden" 
-name="%(name)s" value="'+id+'"/>'+name+'</div>')
+	$('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+id+'"/>'+name+'</div>')
 
 	.click(function () {$(this).remove();})
 
@@ -403,9 +400,7 @@ $(document).ready(function(){
 
 		// --- new element ---
 
-		$('<div class="to_delete deletelink"><input 
-type="hidden" name="%(name)s" 
-value="'+li.extra[0]+'"/>'+li.selectValue+'</div>')
+		$('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+li.extra[0]+'"/>'+li.selectValue+'</div>')
 
 		.click(function () {$(this).remove();})
 
