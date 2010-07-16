@@ -38,7 +38,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
 
-    list_filter = ('status', 'canceled', 'postponed',)
+    list_filter = ('status', 'start_date', 'canceled', 'postponed', )
 
     search_fields = ['venue__venue_name', 'beneficiaries__name', ]
 
