@@ -87,7 +87,7 @@ class HostAdmin(admin.ModelAdmin):
 
 
 class LawmakerAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['name', ]
 
 
 admin.site.register(Event, EventAdmin)
