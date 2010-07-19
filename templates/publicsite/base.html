@@ -87,7 +87,7 @@
 <option value="Entertainment_Type" {% ifequal field "Entertainment_Type" %} selected {% endifequal %}>Entertainment Type</option>
 <option value="Other_Members_of_Congress" {% ifequal field "Other_Members_of_Congress" %} selected {% endifequal %}>Other Lawmakers Mentioned</option>
 </select>
-<input id="args" type="text" name="args" size="15"><input type="submit" value="Find a Party!">
+<input id="args" type="text" name="args" size="15" value="{% if args %}{{ args }}{% endif %}"><input type="submit" value="Find a Party!">
 
 
 </fieldset></form>
