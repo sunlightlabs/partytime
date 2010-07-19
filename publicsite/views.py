@@ -263,6 +263,7 @@ def widget_state(request, state):
 
 def leadpac_all(request):
     docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False) \
+			  .exclude(beneficiaries__affiliate='') \
                           .order_by('-start_date', '-start_time')
 
     return render_to_response(
