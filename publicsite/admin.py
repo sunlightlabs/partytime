@@ -38,9 +38,12 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
 
-    list_filter = ('status', 'canceled', 'postponed',)
+    list_filter = ('status', 'start_date', 'canceled', 'postponed', )
 
     search_fields = ['venue__venue_name', 'beneficiaries__name', ]
+
+    date_hierarchy = 'start_date'
+
 
     def add_view(self, request, form_url='', extra_context=None):
         """Remove cancellation/postponement option on add pages;
