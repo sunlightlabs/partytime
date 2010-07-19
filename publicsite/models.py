@@ -354,7 +354,7 @@ class Event(models.Model):
                 if b.state and b.state not in states:
                     states.append(b.state)
                 elif b.crp_id and b.affiliate:
-                    l = Lawmaker.objects.find(crp_id=b.crp_id, affiliate__isnull=True)
+                    l = Lawmaker.objects.filter(crp_id=b.crp_id, affiliate__isnull=True)
                     for ll in l:
                         if ll.state and ll.state not in states:
                             states.append(ll.state)
@@ -382,7 +382,7 @@ from django.db.models import signals
 def change_watcher(sender, **kwargs):
     kwargs['instance'].sendemailalert()
 
-signals.post_save.connect(change_watcher, sender=Event)
+#signals.post_save.connect(change_watcher, sender=Event)
 
 
 class StateMailingList(models.Model):
