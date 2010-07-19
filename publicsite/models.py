@@ -151,7 +151,7 @@ class EventManager(models.Manager):
 
 class Host(models.Model):
     name = models.CharField(blank=True, max_length=255, db_index=True)
-    crp_id = models.CharField(blank=True, max_length=18)
+    crp_id = models.CharField(u'CRP ID', blank=True, max_length=18)
 
     class Meta:
         db_table = u'publicsite_host'
