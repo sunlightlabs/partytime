@@ -178,7 +178,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 		for id in value:
 			obj = self.rel.to.objects.get(pk=id)
 			selected = selected + mark_safe(u"""
-				<div class="to_delete deletelink" ><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
+				<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
 				) % {'label': getattr(obj,rel_name),
 					 'name': name,
 					 'value': obj.id,
@@ -241,7 +241,7 @@ $(document).ready(function(){
 		onItemSelect:selectItem_%(name)s
 	}); 
 
-// --ete").click(function () {$(this).remove();});
+   $(".to_delete").click(function () {$(this).remove();});
 
 });
 
