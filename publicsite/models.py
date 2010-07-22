@@ -4,6 +4,11 @@ import re
 from django.contrib import admin
 from django.db import connection
 from django.db import models
+from django.contrib.sites.models import Site
+
+import scribd
+
+from settings import SCRIBD_KEY, SCRIBD_SECRET
 
 from sunlightapi import sunlight, SunlightApiError
 sunlight.apikey = '***REMOVED***'
@@ -320,6 +325,12 @@ class Event(models.Model):
                                     blank=True,
                                     default=False)
 
+    scribd_upload = models.BooleanField(u'Upload PDF to Scribd',
+                                        blank=True,
+                                        default=False)
+    scribd_id = models.IntegerField()
+    scribd_url = models.URLField(u'Scribd URL', verify_exists=False, blank=True)
+
     class Meta:
         db_table = u'publicsite_event'
 
@@ -332,6 +343,124 @@ class Event(models.Model):
            return self.entertainment
         else:
             return 'Event'
+
+    def save(self):
+        if self.scribd_upload:
+            self.upload_to_scribd()
+        elif self.scribd_upload is not True and self.scribd_id:
+            self.delete_from_scribd()
+
+        super(Event, self).save()
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('partytime_party_detail', [str(self.id), ])
+
+    def event_title(self):
+        title = ''
+        if self.entertainment:
+            title += self.entertainment
+        if self.beneficiaries.all():
+            title += ' for %s ' % ', '.join([x.name for x in self.beneficiaries.all()])
+        return title
+
+
+    def upload_to_scribd(self):
+        """Upload an event PDF to Scribd.
+        """
+        scribd.config(SCRIBD_KEY, SCRIBD_SECRET)
+
+        pdf_url = 'http://files.politicalpartytime.org/pdfs%s' % self.pdf_document_link
+
+        # If this invitation has already been uploaded
+        # to Scribd, update it rather than uploading again.
+        if self.scribd_id:
+            doc = scribd.api_user.get(self.scribd_id)
+        else:
+            doc = scribd.api_user.upload_from_url(pdf_url,
+                                                  access='private')
+
+        event_url = 'http://%s%s' % (Site.objects.get_current().domain,
+                                     self.get_absolute_url())
+
+        description = ("This is an invitation for a political fundraiser on %s. "
+                       "Get details at Sunlight Foundation's "
+                       "<a href=\"%s\">Party Time</a>"
+                       ) % (self.start_date.strftime('%B %d, %Y'), event_url)
+
+        params = {'title': self.event_title(),
+                  'publisher': "Sunlight Foundation's Party Time",
+                  'description': description,
+                  # The link_back_url will work only for Scribd Qualified Publishers.
+                  'link_back_url': event_url,
+                  'tags': self.make_scribd_tags(),
+                  'category': 'Government Docs',
+                  'access': 'public',
+                  }
+
+        scribd.update([doc,], **params)
+
+        self.scribd_id = doc.id
+        self.scribd_url = doc.get_scribd_url()
+
+        return doc
+
+
+    def delete_from_scribd(self):
+        """Remove a PDF from scribd.
+        """
+
+        if not self.scribd_id:
+            return False
+
+        scribd.config(SCRIBD_KEY, SCRIBD_SECRET)
+
+        try:
+            doc = scribd.api_user.get(self.scribd_id)
+        except scribd.ResponseError:
+            self.scribd_id = 0
+            self.scribd = False
+            self.scribd_url = ''
+            return False
+
+        doc.delete()
+
+        self.scribd_id = 0
+        self.upload_to_scribd = False
+        self.scribd_url = ''
+
+
+    def make_scribd_tags(self):
+        """Generate a list of tags for Scribd for
+        the given event.
+
+        The Scribd API requires the tag list to be
+        in CSV format and does not allow quoting,
+        so we remove any commas that may be part of tags.
+
+        The tag list generated here is made up of the
+        names of the hosts, beneficiaries, and other
+        members for the event.
+        """
+        tags = []
+
+        hosts = self.hosts.all()
+        if hosts:
+            tags += [host.name.replace(',', '') for host in hosts]
+
+        beneficiaries = self.beneficiaries.all()
+        if beneficiaries:
+            tags += [beneficiary.name.replace(',', '')
+                    for beneficiary in beneficiaries]
+
+        others = self.other_members.all()
+        if others:
+            tags += [member.name.replace(',', '') for member in others]
+
+        tags += ['politics', 'campaign', 'invitation', 'party', ]
+
+        return ','.join(sorted(tags))
+
 
     def sendemailalert(self):
         from django.template.loader import get_template
