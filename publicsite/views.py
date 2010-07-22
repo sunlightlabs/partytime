@@ -409,7 +409,7 @@ def admin_uploadzip(request):
             zfile = getzip(f)
             for zfname in zfile.namelist():
                 if zfname[-4:]=='.pdf':
-                    newe = Event(status='temp')
+                    newe = Event(status='temp', scribd_id=0)
                     newe.save()
                     pk = newe.pk
                     localfilename = 'flyer_'+str(pk)+'.pdf'
