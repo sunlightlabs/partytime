@@ -12,7 +12,7 @@
  <div id="contact_form">
 <fieldset>
 <legend>Send us an Email</legend>
-    <form action="." method="post" id="contactus">
+    <form action="." method="post" id="contactus">{% csrf_token %}
         {{ form.as_ul }}
         <p class="submit"><input type="submit" value="Send Your Messsage"></p>
     </form>

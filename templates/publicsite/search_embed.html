@@ -2,12 +2,12 @@
 
 {% block content %}
 
-<h2 class="results_head"><a href="http://politicalpartytime.org/search/{{ field }}/{{ args}}/" target="_top" class="embed_header">PoliticalPartytime.org</a> results for "{{ args }}" within {{ field }}</h2>
+<h2 class="results_head"><a href="{% url partytime_search field args %}" target="_top" class="embed_header">PoliticalPartytime.org</a> results for "{{ args }}" within {{ field }}</h2>
 <span class="search_embed"><a href="javascript:toggleLayer('partyfinder_embed');">Embed these results on your site/blog</a></span>
 <div id="partyfinder_embed">
 <form>
 	<input name="embed_results" type="text" size="70" value='
-	<iframe src="http://politicalpartytime.org/search_embed/{{ field }}/{{ args}}/"width="520" height="500" frameborder="0" border="0"></iframe>'</input>
+<iframe src="http://politicalpartytime.org{% url partytime_search_embed field args %}" width="520" height="500" frameborder="0" border="0"></iframe>'</input>
 </form>
 </div>
 
@@ -20,10 +20,10 @@
                 {% if doc.start_time or doc.end_time %}<span class="summary_time">({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</span>{% endif %}
             </div>
             <div id="summary_invite">
-                <a href="http://politicalpartytime.org/party/{{ doc.id }}/"  target="_top">
+                <a href="{% url partytime_party_detail doc.id %}"  target="_top">
                     <img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
                 </a>
-                <a href="http://politicalpartytime.org/party/{{ doc.id }}/" target="_top" style="font-size:11px;">View</a>
+                <a href="{% url partytime_party_detail doc.id %}" target="_top" style="font-size:11px;">View</a>
             </div>
         </div>
         <div id="summary_data">
@@ -31,12 +31,12 @@
                 <li>
                     {% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
                     {% with doc.beneficiaries.all as beneficiaries %}
-                        {% if beneficiaries %}for {% for ben in beneficiaries %}<a href="/search/Beneficiary/{{ben.name}}"  target="_top">{{ ben }}</a>  {% endfor %}{% endif %} {% if doc.venue.venue_name %}at <a href="http://politicalpartytime.org/search/Venue_Name/{{ doc.venue.venue_name }}"  target="_top">{{ doc.venue.venue_name }}</a>{% endif %}
+                        {% if beneficiaries %}for {% for ben in beneficiaries %}<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}"  target="_top">{{ ben }}</a>  {% endfor %}{% endif %} {% if doc.venue.venue_name %}at <a href="{% url partytime_search 'Venue_name' doc.venue.venue_name|urlencode %}""  target="_top">{{ doc.venue.venue_name }}</a>{% endif %}
                     {% endwith %}
                 </li>
                 {% with doc.hosts.all as hosts %}
                 {% if hosts %}
-                    <li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="http://politicalpartytime.org/search/Host/{{ host }}"  target="_top">{{ host }}</a> {% endfor %}</li>
+                <li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}" target="_top">{{ host }}</a> {% endfor %}</li>
                 {% endif %}
                 {% endwith %}
             </ul>

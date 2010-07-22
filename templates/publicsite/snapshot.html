@@ -2,58 +2,58 @@
 
 {% block content %}
 
-	{%ifnotequal snapshot_image_name ""%}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{%endifnotequal%}
+    {% ifnotequal snapshot_image_name ""%}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{% endifnotequal %}
 
-	{% for doc in docset %}
-		<div id="summary_container">
-			<div id="summary_topbar">
-				<div id="summary_date">
-					<img src="http://media.sunlightprojects.org/partytime/images/date.png">
-					<span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
-					<span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
-				</div>
-				<div id="summary_invite">
-					<a href="/party/{{ doc.id }}/">
-						<img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
-					</a>
-					<a href="/party/{{ doc.id }}/">View Invitation</a>
-				</div>
-			</div>
-			<div id="summary_data">
-				<ul>
-					{% if doc.entertainment or doc.venue.venue_name %}
-						<li>
-							{% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
-							{% if doc.venue.venue_name %}@ <a href="/search/Venue_Name/{{ doc.venue.venue_name }}/">{{ doc.venue.venue_name }}</a>{% endif %}
-						</li>
-					{% endif %}
-					
-					{% with doc.beneficiaries.all as beneficiaries %}
-					{% if beneficiaries %}
-					    <li>
-    					        <span class="detail_head">For:</span>
-    					        {% for ben in beneficiaries %}
+    {% for doc in docset %}
+        <div id="summary_container">
+            <div id="summary_topbar">
+                <div id="summary_date">
+                    <img src="http://media.sunlightprojects.org/partytime/images/date.png">
+                    <span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
+                    <span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
+                </div>
+                <div id="summary_invite">
+                    <a href="{% url partytime_party_detail doc.id %}">
+                        <img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
+                    </a>
+                    <a href="{% url partytime_party_detail doc.id %}">View Invitation</a>
+                </div>
+            </div>
+            <div id="summary_data">
+                <ul>
+                    {% if doc.entertainment or doc.venue.venue_name %}
+                        <li>
+                            {% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
+                            {% if doc.venue.venue_name %}@ <a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a>{% endif %}
+                        </li>
+                    {% endif %}
+                    
+                    {% with doc.beneficiaries.all as beneficiaries %}
+                    {% if beneficiaries %}
+                        <li>
+                                <span class="detail_head">For:</span>
+                                {% for ben in beneficiaries %}
 
-{%if ben.affiliate %}
-<a href="/search/Beneficiary/{{ ben.name }}/">{{ ben }}</a> (<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.affiliate}}{%endif%}/">{{ ben.affiliate }}</a>) 
-{%else%}
-<a href="{%if ben.crp_id%}/pol/{{ ben.crp_id }}{%else%}/search/Beneficiary/{{ben.name}}{%endif%}/">{{ ben }}</a>
-{%endif%}  
-{% endfor %}	    
+{% if ben.affiliate %}
+<a href="{% url partytime_search 'Beneficiary' ben.name %}">{{ ben }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}">{{ ben.affiliate }}</a>)
+{% else %}
+<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{% endif %}">{{ ben }}</a>
+{% endif %}  
+{% endfor %}        
 
 
-    					</li>
-    				{% endif %}
-    				{% endwith %}
-    				
-    				{% with doc.hosts.all as hosts %}
-					{% if hosts %}
-						<li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="/search/Host/{{ host }}/">{{ host }}</a> {% endfor %}</li>
-					{% endif %}
-					{% endwith %}
-					
-				</ul>
-			</div>
-		</div>
-		{% endfor %}
+                        </li>
+                    {% endif %}
+                    {% endwith %}
+                    
+                    {% with doc.hosts.all as hosts %}
+                    {% if hosts %}
+                        <li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}</li>
+                    {% endif %}
+                    {% endwith %}
+                    
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
 {% endblock %}

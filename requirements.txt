@@ -1,9 +1,10 @@
 pip
 python-memcached
-python-dateutil==1.4.1
+python-dateutil==1.5
 icalendar==2.1
 vobject==0.8.1c
 boto
+django-debug-toolbar==0.8.3
 
 python-sunlightapi
 
@@ -13,4 +14,4 @@ python-sunlightapi
 -e git://github.com/sunlightlabs/django-mediasync.git#egg=django-mediasync
 -e git://github.com/sunlightlabs/django-layar.git#egg=django-layar
 
-django-debug-toolbar
+http://python-scribd.googlecode.com/files/python-scribd-1.1.0.tar.gz

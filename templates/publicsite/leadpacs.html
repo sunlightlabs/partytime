@@ -21,11 +21,11 @@ strong { font-weight:bold;}
 #more a:link, a:visited, a:active { color:#000; text-decoration:none;}
 #more a:hover { color:#953931;}
 </style>	
-</head><body><div id="pp_header"><a href="http://politicalpartytime.org" target="_top"><img src="http://media.sunlightprojects.org/partytime/external/widget/pp_header_250.png" border="0"></a></div>
+</head><body><div id="pp_header"><a href="{% url partytime_home %}" target="_top"><img src="http://media.sunlightprojects.org/partytime/external/widget/pp_header_250.png" border="0"></a></div>
 <div id="identity_bar">Upcoming Leadership PAC Parties</div>
 <div id="pp_upcoming"><ul id="pp_list">
 	{% for doc in docset %}
-	<li><a href="http://www.politicalpartytime.org/party/{{ doc.5 }}" class="linky" target="_top"><strong>{{ doc.start_date|date:"N j" }}</strong>
+	<li><a href="http://www.politicalpartytime.org/party/{{ doc.pk }}" class="linky" target="_top"><strong>{{ doc.start_date|date:"N j" }}</strong>
 {%for b in doc.beneficiaries.all%}
  {%if b.affiliate %}{{b.name}} {%endif%}
 {%endfor%}
@@ -33,7 +33,7 @@ strong { font-weight:bold;}
 </ul>
 <div id="more">
 <ul>
-<li><a href="http://www.politicalpartytime.org" target="_top">Source: PoliticalPartyTime.org</a></li>
+<li><a href="{% url partytime_home %}" target="_top">Source: PoliticalPartyTime.org</a></li>
 <li><a href="http://www.opensecrets.org" target="_top">LeadPAC info from OpenSecrets.org</a></li>
 </ul>
 </div>

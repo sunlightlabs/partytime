@@ -1,33 +1,24 @@
-from django.db import models
-from django.db import connection
 import datetime
 import re
-from django.contrib import admin
 
-#from publicsite.widgets import TimeWidget
+from django.contrib import admin
+from django.db import connection
+from django.db import models
+from django.contrib.sites.models import Site
+
+import scribd
+
+from settings import SCRIBD_KEY, SCRIBD_SECRET
 
 from sunlightapi import sunlight, SunlightApiError
 sunlight.apikey = '***REMOVED***'
 
-BLOCK_ELEMENTS = ('blockquote','ol','ul')
-BLOCK_ELEMENT_RE = re.compile(r"(%s)" % "|".join([r"<%s>(.*?)</%s>" % (e, e) for e in BLOCK_ELEMENTS]))
+
+BLOCK_ELEMENTS = ('blockquote', 'ol', 'ul')
+BLOCK_ELEMENT_RE = re.compile(r'(%s)' % '|'.join([r'<%s>(.*?)</%s>' % (e, e) for e in BLOCK_ELEMENTS]))
 
 NONBLOCK_ELEMENTS = ('li',)
-NONBLOCK_ELEMENT_RE = re.compile(r"(%s)" % "|".join([r">(\s*?)<(%s)" % e for e in NONBLOCK_ELEMENTS]),re.S)
-
-
-
-class Crp_category(models.Model):
-    realcode = models.CharField(max_length=5, primary_key=True)
-    catname = models.CharField(blank=True, max_length=255,null=True) 
-    sector = models.CharField(blank=True, max_length=255,null=True) 
-
-class Crp_lobbying(models.Model):
-    datekey = models.ForeignKey('Host', to_field='crp_id', primary_key=True, db_column='datekey')
-    org = models.CharField(blank=True, max_length=255,null=True) 
-    category = models.ForeignKey(Crp_category, to_field='realcode', db_column='realcode')
-
-
+NONBLOCK_ELEMENT_RE = re.compile(r'(%s)' % '|'.join([r'>(\s*?)<(%s)' % e for e in NONBLOCK_ELEMENTS]),re.S)
 
 
 class Author(models.Model):
@@ -35,16 +26,17 @@ class Author(models.Model):
 
     class Meta:
         db_table = 'wp_users'
-    
+
     def __unicode__(self):
         return self.user_name
-        
+
     def save(self):
         pass
-        
+
     def delete(self):
         pass
-    
+
+
 class Post(models.Model):
     title = models.CharField(max_length=255, db_column='post_title')
     content = models.TextField(db_column='post_content')
@@ -54,70 +46,82 @@ class Post(models.Model):
     post_type = models.CharField(max_length=255)
     author = models.ForeignKey(Author, related_name='posts', db_column='post_author')
     comment_count = models.IntegerField()
-    
+
     category_cache = None
     tag_cache = None
-	
+
     class Meta:
     	db_table = 'wp_posts'
-    	
+
     def __unicode__(self):
         return self.title
-        
+
     def clean_content(self):
         content = BLOCK_ELEMENT_RE.sub(r"\n\1\n", self.content).strip()
        	content = NONBLOCK_ELEMENT_RE.sub(r"><\3",content)
        	return content
-        
+
     def categories(self):
         if not self.category_cache:
             taxonomy = "category"
             self.category_cache = self._get_terms(taxonomy)
         return self.category_cache
-        
+
     def tags(self):
         if not self.tag_cache:
             taxonomy = "post_tag"
             self.tag_cache = self._get_terms(taxonomy)
         return self.tag_cache
-        
+
     def _get_terms(self, taxonomy):
-        sql = """SELECT t.name, t.slug FROM wp_terms t INNER JOIN wp_term_taxonomy tt ON t.term_id = tt.term_id INNER JOIN wp_term_relationships tr ON tt.term_taxonomy_id = tr.term_taxonomy_id WHERE tt.taxonomy = %s AND tr.object_id = %s ORDER BY tr.term_order"""
+        sql = """SELECT t.name,
+                        t.slug
+                    FROM wp_terms t
+                    INNER JOIN wp_term_taxonomy tt
+                        ON t.term_id = tt.term_id
+                    INNER JOIN wp_term_relationships tr
+                        ON tt.term_taxonomy_id = tr.term_taxonomy_id
+                    WHERE tt.taxonomy = %s
+                        AND
+                          tr.object_id = %s
+                  ORDER BY tr.term_order"""
         cursor = connection.cursor()
         cursor.execute(sql, [taxonomy, self.id])
         return [{'name': row[0], 'slug': row[1]} for row in cursor.fetchall()]
-        
+
     def save(self):
         pass
-        
+
     def delete(self):
         pass
-        
+
+
 class EventManager(models.Manager):
+
     def ical(self):
-        events = Event.objects.filter(start_date__gt=datetime.datetime.now(),status='').order_by('start_date','start_time')[:50]
-        return events 
-   
+        events = Event.objects.filter(start_date__gt=datetime.datetime.now(),status='') \
+                               .order_by('start_date', 'start_time')[:50]
+        return events
+
     def recent(self, limit=10):
         events = Event.objects.filter(
                     start_date__lt=datetime.datetime.now(),
-                    status='').order_by('-start_date','-start_time')[:limit]
+                    status='').order_by('-start_date', '-start_time')[:limit]
         return events
-        
+
     def upcoming(self, limit=10):
         events = Event.objects.filter(
                     start_date__gte=datetime.datetime.now(),
-                    status='').order_by('start_date','start_time')[:limit]
-        return events
-        
-    def daterange(self, start, end):
-        startdate = datetime.datetime(int(start[0:4]),int(start[4:6]),int(start[6:8]))
-        enddate = datetime.datetime(int(end[0:4]),int(end[4:6]),int(end[6:8]))
-        events = Event.objects.filter(
-                    start_date__gte=startdate, start_date__lte=enddate,
-                    status='').order_by('start_date','start_time')
+                    status='').order_by('start_date', 'start_time')[:limit]
         return events
 
+    def daterange(self, start, end):
+        startdate = datetime.datetime(int(start[0:4]), int(start[4:6]), int(start[6:8]))
+        enddate = datetime.datetime(int(end[0:4]), int(end[4:6]), int(end[6:8]))
+        events = Event.objects.filter(
+                    start_date__gte=startdate, start_date__lte=enddate,
+                    status='').order_by('start_date', 'start_time')
+        return events
 
     def by_field(self, field, args, limit=10):
         try:
@@ -140,29 +144,25 @@ class EventManager(models.Manager):
         except:
             pass
 
-	
     def by_cmte(self, cmteid):
         since_year = 2009 #beginning of election cycle
         cmte = Committee.objects.get(short=cmteid)
-        ev = Event.objects.filter(status='', start_date__gte=datetime.datetime(since_year,1,1) ).filter(beneficiaries__committee = cmte).order_by('-start_date','-start_time').distinct()
-        retu = {"cmte": cmte, "events": ev, "members": cmte.members.all(), "since_year": since_year } 
-        return retu
-
+        ev = Event.objects.filter(status='',
+                                  start_date__gte=datetime.datetime(since_year, 1, 1),
+                                  beneficiaries__committee__short = cmteid
+                                 ).order_by('-start_date','-start_time').distinct()
+        return {'cmte': cmte, 'events': ev, 'members': cmte.members.all(), 'since_year': since_year}
 
 
 class Host(models.Model):
-    name = models.CharField(blank=True,max_length=255, db_index=True)
-    crp_id = models.CharField(blank=True, max_length=18)
-    #crp_id = models.ForeignKey(Crp_lobbying, to_field='datekey', db_column='crp_id')
+    name = models.CharField(blank=True, max_length=255, db_index=True)
+    crp_id = models.CharField(u'CRP ID', blank=True, max_length=18)
+
     class Meta:
         db_table = u'publicsite_host'
+
     def __unicode__(self):
         return self.name
-    def lobby(self):
-        if self.crp_id==None:
-            return None
-        else:    
-            return Crp_lobbying.objects.filter(datekey=self.crp_id)
 
     def natural_key(self):
         return (self.name)
@@ -170,54 +170,71 @@ class Host(models.Model):
 
 class Tag(models.Model):
     tag_name = models.CharField(blank=True,max_length=255, db_index=True)
+
     class Meta:
         db_table = u'publicsite_tags'
+
     def __unicode__(self):
         return self.tag_name
 
+
 class Lawmaker(models.Model):
-    title = models.CharField("Title (Senator, Representative", blank=True,max_length=25)
-    name = models.CharField(blank=True,max_length=255) #db_index=True
-    first_name = models.CharField(blank=True,max_length=25)
-    #middle_name = models.CharField(blank=True,max_length=25)
-    last_name = models.CharField(blank=True,max_length=25)
-    party = models.CharField(blank=True,max_length=1)
-    state = models.CharField(blank=True,max_length=2)
-    district = models.CharField(blank=True,max_length=2)
-    crp_id =  models.CharField(blank=True,max_length=15)
-    affiliate =  models.CharField("If this is a leadership PAC, this 'affiliate' field is the lawmaker's name", blank=True,max_length=200)
+    title = models.CharField(help_text=u'(e.g., Senator, Representative)', blank=True,max_length=25)
+    name = models.CharField(blank=True, max_length=255)
+    party = models.CharField(blank=True, max_length=1)
+    state = models.CharField(blank=True, max_length=2)
+    district = models.CharField(blank=True, max_length=2)
+    crp_id =  models.CharField(u'CRP ID', blank=True, max_length=15)
+    affiliate =  models.CharField(help_text=u"If this is a leadership PAC, this field is the lawmaker's name", blank=True,max_length=200)
 
     class Meta:
         db_table = u'publicsite_lawmaker'
+
     def __unicode__(self):
         if self.district:
-            districtStr ="-" +self.district	
+            district_str = '-%s' % self.district
         else:
-            districtStr ="" 
+            district_str = ''
+
         if self.party:
-            partyStr =self.party+", "
+            party_str = '%s, ' % self.party
         else:
-            partyStr = ""
+            party_str = ''
+
         if self.title:
-            titleStr =self.title+" "
+            title_str = '%s ' % self.title
         else:
-            titleStr = ""
-        if self.district==None and self.party==None and self.state==None:
-            info = ""
+            title_str = ''
+
+        if not self.district and not self.party and not self.state:
+            info = ''
         else:
-            info =" ("+partyStr+self.state+districtStr+")"
-        return u"%s%s%s" % (titleStr, self.name,info) 
+            info = ' (%s%s%s)' % (party_str, self.state, district_str)
+
+        return u'%s%s%s' % (title_str, self.name, info)
 
     def natural_key(self):
         return (self.name)
 
+    def events_since_year(self, year=2009):
+        return self.pol_events.filter(start_date__gte=datetime.date(year, 01, 01))
+
+
 class Committee(models.Model):
-    short = models.CharField(blank=False,max_length=4, primary_key=True)
-    title = models.CharField(blank=False,max_length=100)
+    short = models.CharField(blank=False, max_length=4, primary_key=True)
+    title = models.CharField(blank=False, max_length=100)
     members = models.ManyToManyField(Lawmaker)
-    chamber = models.CharField(blank=False,max_length=10)
+    chamber = models.CharField(blank=False, max_length=10)
+
     def __unicode__(self):
         return self.title
+
+    def events(self):
+        return Event.objects.filter(
+                            beneficiaries__in = self.members.all(),
+                            start_date__gte = datetime.date(2009, 01, 01)
+                        ).distinct()
+
 
 class OtherInfo(models.Model):
     event_id = models.IntegerField(null=True, blank=True)
@@ -225,10 +242,13 @@ class OtherInfo(models.Model):
     moc_type = models.IntegerField(null=True, blank=True)
     host_id = models.IntegerField(null=True, blank=True)
     other_info = models.TextField(blank=True)
+
     class Meta:
         db_table = u'publicsite_other_info'
+
     def __unicode__(self):
         return self.other_info
+
 
 class Venue(models.Model):
     venue_name = models.CharField(blank=True,max_length=255)
@@ -240,34 +260,31 @@ class Venue(models.Model):
     latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6, db_index=True)
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
     website = models.CharField(blank=True,max_length=255)
+
     def __unicode__(self):
         address = self.venue_address()
-        if self.venue_name and address!='':
-            return u"%s (%s)" % (self.venue_name, address)  
+
+        if self.venue_name and address is not None:
+            return u'%s (%s)' % (self.venue_name, address)
         elif self.venue_name:
             return self.venue_name
         else:
             return address
-  
-    def venue_address(self):    
+
+    def venue_address(self):
         if self.address1 and self.address2:
-            return u"%s %s" % (self.address1, self.address2)   
-        elif self.address1 and self.city and self.city!='Washington':
-            return u"%s, %s" % (self.address1, self.city) 
+            return u'%s %s' % (self.address1, self.address2)
+        elif self.address1 and self.city and self.city != 'Washington':
+            return u'%s, %s' % (self.address1, self.city)
         elif self.address1:
             return self.address1
-        elif self.city and self.state and self.state!='DC':
-            return u"%s, %s" % (self.city, self.state) 
+        elif self.city and self.state and self.state != 'DC':
+            return u'%s, %s' % (self.city, self.state)
         else:
-            return ""   
+            return ''
 
     def natural_key(self):
         return (self.venue_name)
-
-
-
-
-
 
 
 class Event(models.Model):
@@ -276,78 +293,210 @@ class Event(models.Model):
 
     objects = EventManager()
 
-    entertainment = models.CharField(blank=True, max_length=205, null=True)    
-    venue = models.ForeignKey(Venue,null=True,blank=True)
+    entertainment = models.CharField(blank=True, max_length=205, null=True)
+    venue = models.ForeignKey(Venue, null=True, blank=True)
 
-    hosts = models.ManyToManyField(Host,db_table=u'publicsite_event_hosts',null=True,blank=True, db_column='host_id')
-    tags = models.ManyToManyField(Tag,db_table=u'publicsite_event_tags',null=True)
-    beneficiaries = models.ManyToManyField(Lawmaker, null=True,blank=True, related_name='pol_events',db_table=u'publicsite_event_beneficiary')
-    other_members = models.ManyToManyField(Lawmaker,null=True,blank=True, related_name='pol_appearances',db_table=u'publicsite_event_omc')
-     
+    hosts = models.ManyToManyField(Host, db_table=u'publicsite_event_hosts', null=True, blank=True, db_column='host_id')
+    tags = models.ManyToManyField(Tag, db_table=u'publicsite_event_tags', null=True)
+    beneficiaries = models.ManyToManyField(Lawmaker, null=True, blank=True, related_name='pol_events', db_table=u'publicsite_event_beneficiary')
+    other_members = models.ManyToManyField(Lawmaker, null=True,blank=True, related_name='pol_appearances', db_table=u'publicsite_event_omc')
+
     start_date = models.DateField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
 
-    status = models.CharField(blank=True, max_length=255, db_index=True,null=True)    
+    status = models.CharField(blank=True, max_length=255, db_index=True, null=True)
     pdf_document_link = models.CharField(blank=True, max_length=255, help_text='<a onclick="tryPDF()">Load PDF</a>')
 
-    committee_id = models.CharField(blank=True, max_length=255,null=True)    
-    rsvp_info = models.CharField(null=True,blank=True, max_length=255)
-    distribution_paid_for_by = models.CharField(blank=True, max_length=255,null=True)
-    make_checks_payable_to = models.CharField(blank=True, max_length=255,null=True)
-    checks_payable_to_address = models.CharField(blank=True, max_length=255,null=True)
-    contributions_info = models.CharField(blank=True, max_length=255,null=True)
-    user_initials = models.CharField(blank=True, max_length=5,null=True)
-    data_entry_problems = models.CharField(blank=True, max_length=255,null=True)
- 
-        
+    committee_id = models.CharField(blank=True, max_length=255,null=True)
+    rsvp_info = models.CharField(u'RSVP info', null=True,blank=True, max_length=255)
+    distribution_paid_for_by = models.CharField(blank=True, max_length=255, null=True)
+    make_checks_payable_to = models.CharField(blank=True, max_length=255, null=True)
+    checks_payable_to_address = models.CharField(blank=True, max_length=255, null=True)
+    contributions_info = models.CharField(blank=True, max_length=255, null=True)
+    user_initials = models.CharField(blank=True, max_length=5, null=True)
+    data_entry_problems = models.CharField(blank=True, max_length=255, null=True)
+
+    canceled = models.BooleanField(u'This event has been canceled', 
+                                   blank=True, 
+                                   default=False)
+    postponed = models.BooleanField(u'This event has been postponed',
+                                    blank=True,
+                                    default=False)
+
+    scribd_upload = models.BooleanField(u'Upload PDF to Scribd',
+                                        blank=True,
+                                        default=False)
+    scribd_id = models.IntegerField()
+    scribd_url = models.URLField(u'Scribd URL', verify_exists=False, blank=True)
+
     class Meta:
         db_table = u'publicsite_event'
+
     def __unicode__(self):
         if self.entertainment and self.venue:
-            return self.entertainment + " at " + self.venue.venue_name
+            return '%s at %s' % (self.entertainment, self.venue.venue_name)
         elif self.venue:
             return self.venue.venue_name
         elif self.entertainment:
            return self.entertainment
         else:
-            return "Event"    
+            return 'Event'
+
+    def save(self):
+        if self.scribd_upload:
+            self.upload_to_scribd()
+        elif self.scribd_upload is not True and self.scribd_id:
+            self.delete_from_scribd()
+
+        super(Event, self).save()
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('partytime_party_detail', [str(self.id), ])
+
+    def event_title(self):
+        title = ''
+        if self.entertainment:
+            title += self.entertainment
+        if self.beneficiaries.all():
+            title += ' for %s ' % ', '.join([x.name for x in self.beneficiaries.all()])
+        return title
 
 
+    def upload_to_scribd(self):
+        """Upload an event PDF to Scribd.
+        """
+        scribd.config(SCRIBD_KEY, SCRIBD_SECRET)
 
+        pdf_url = 'http://files.politicalpartytime.org/pdfs%s' % self.pdf_document_link
+
+        # If this invitation has already been uploaded
+        # to Scribd, update it rather than uploading again.
+        if self.scribd_id:
+            doc = scribd.api_user.get(self.scribd_id)
+        else:
+            doc = scribd.api_user.upload_from_url(pdf_url,
+                                                  access='private')
+
+        event_url = 'http://%s%s' % (Site.objects.get_current().domain,
+                                     self.get_absolute_url())
+
+        description = ("This is an invitation for a political fundraiser on %s. "
+                       "Get details at Sunlight Foundation's "
+                       "<a href=\"%s\">Party Time</a>"
+                       ) % (self.start_date.strftime('%B %d, %Y'), event_url)
+
+        params = {'title': self.event_title(),
+                  'publisher': "Sunlight Foundation's Party Time",
+                  'description': description,
+                  # The link_back_url will work only for Scribd Qualified Publishers.
+                  'link_back_url': event_url,
+                  'tags': self.make_scribd_tags(),
+                  'category': 'Government Docs',
+                  'access': 'public',
+                  }
+
+        scribd.update([doc,], **params)
+
+        self.scribd_id = doc.id
+        self.scribd_url = doc.get_scribd_url()
+
+        return doc
+
+
+    def delete_from_scribd(self):
+        """Remove a PDF from scribd.
+        """
+
+        if not self.scribd_id:
+            return False
+
+        scribd.config(SCRIBD_KEY, SCRIBD_SECRET)
+
+        try:
+            doc = scribd.api_user.get(self.scribd_id)
+        except scribd.ResponseError:
+            self.scribd_id = 0
+            self.scribd = False
+            self.scribd_url = ''
+            return False
+
+        doc.delete()
+
+        self.scribd_id = 0
+        self.upload_to_scribd = False
+        self.scribd_url = ''
+
+
+    def make_scribd_tags(self):
+        """Generate a list of tags for Scribd for
+        the given event.
+
+        The Scribd API requires the tag list to be
+        in CSV format and does not allow quoting,
+        so we remove any commas that may be part of tags.
+
+        The tag list generated here is made up of the
+        names of the hosts, beneficiaries, and other
+        members for the event.
+        """
+        tags = []
+
+        hosts = self.hosts.all()
+        if hosts:
+            tags += [host.name.replace(',', '') for host in hosts]
+
+        beneficiaries = self.beneficiaries.all()
+        if beneficiaries:
+            tags += [beneficiary.name.replace(',', '')
+                    for beneficiary in beneficiaries]
+
+        others = self.other_members.all()
+        if others:
+            tags += [member.name.replace(',', '') for member in others]
+
+        tags += ['politics', 'campaign', 'invitation', 'party', ]
+
+        return ','.join(sorted(tags))
 
 
     def sendemailalert(self):
         from django.template.loader import get_template
         from django.template import Context
         from django.core.mail import send_mail, EmailMultiAlternatives
-        import datetime
-        if (self.status=='' or self.status==None): 
-            states = []    
-            bens = ''       
+
+        if not self.status:
+            states = []
+            bens = ''
             hosts = ''
+
             for h in self.hosts.all():
-                if hosts=='':
+                if not hosts:
                     hosts = h.name
                 else:
                     hosts = hosts + ', ' + h.name
+
             for b in self.beneficiaries.all():
                 bens = bens + b.name + ", "
-                if b.state and b.state!='':
-                    if b.state not in states:
-                        states.append(b.state)
+                if b.state and b.state not in states:
+                    states.append(b.state)
                 elif b.crp_id and b.affiliate:
-                    l = Lawmaker.objects.find(crp_id=b.crp_id, affiliate__isnull=True)
+                    l = Lawmaker.objects.filter(crp_id=b.crp_id, affiliate__isnull=True)
                     for ll in l:
-                        if ll.state not in states and ll.state!='':
-                            states.append(ll.state)                    
+                        if ll.state and ll.state not in states:
+                            states.append(ll.state)
+
             for state in states:
                 emaillist = StateMailingList.objects.filter(state=state, confirmed=True)
-                for l in emaillist:    
+
+                for l in emaillist:
                     subject = "PoliticalPartyTime: " + bens[:-2] + " fundraiser " + self.start_date.strftime("%Y-%m-%d")
-                    if hosts!='':
-                        subject = subject + " hosted by " + hosts
+
+                    if not hosts:
+                        subject = subject + " for " + hosts
+
                     t = get_template('feeds/party_description.html')
                     html = t.render(Context({'obj': self}))
                     body = '<p><a href="http://politicalpartytime.org/party/' + str(self.pk) + '">Click here to view invitation on the Sunlight Foundation\'s PoliticalPartytime.org.</a></p>'+ html + '<p>To unsubscribe from these alerts, <a href="http://politicalpartytime.org/emailalerts/?email='+l.email+'&state='+l.state+'&remove='+str(l.confirmation)+'">click here</a>.</p>'
@@ -355,16 +504,17 @@ class Event(models.Model):
                     email.attach_alternative(body, "text/html")
                     email.send()
 
+
 from django.dispatch import dispatcher
 from django.db.models import signals
 
-def change_watcher(sender, instance, raw, signal, created, **kwargs):
-    instance.sendemailalert()
+def change_watcher(sender, **kwargs):
+    kwargs['instance'].sendemailalert()
 
-signals.post_save.connect(change_watcher, sender=Event)
+#signals.post_save.connect(change_watcher, sender=Event)
+
 
 class StateMailingList(models.Model):
-
     email = models.EmailField()
     confirmation = models.IntegerField(max_length=36)
     confirmed = models.BooleanField(default=False)
@@ -372,5 +522,3 @@ class StateMailingList(models.Model):
 
     def __unicode__(self):
         return self.state + ": " + self.email
-
-

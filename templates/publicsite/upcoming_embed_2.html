@@ -17,8 +17,8 @@ body { background-color:#ebe6e2; margin:0; padding:0;}
 #pp_list a:active { text-decoration:none; color:#000000;}
 strong { font-weight:bold;}
 </style>	
-</head><body><div id="pp_header"><a href="http://politicalpartytime.org" target="_top"><img src="http://media.sunlightprojects.org/partytime/external/widget/pp_header_250.png" border="0"></a></div>
+</head><body><div id="pp_header"><a href="{% url partytime_home %}" target="_top"><img src="http://media.sunlightprojects.org/partytime/external/widget/pp_header_250.png" border="0"></a></div>
 <div id="pp_upcoming">{% for doc in docset %}{% with doc.beneficiaries.all as beneficiaries %}<ul id="pp_list"><li>
-<a href="http://politicalpartytime.org/party/{{ doc.id }}" target="_top"><strong>{{ doc.start_date|date:"N j" }}</strong> - 
+<a href="{% url partytime_party_detail doc.id %}" target="_top"><strong>{{ doc.start_date|date:"N j" }}</strong> - 
 {% if doc.entertainment %}{{ doc.entertainment }} {% endif %}{% if doc.venue.venue_name %}@ {{ doc.venue.venue_name }}{% endif %}{% if beneficiaries %} for {% for beneficiary in beneficiaries %}{{ beneficiary }} {%endfor%}{% endif %}
 </a></li></ul>{% endwith %}{% endfor %}</div></body></html>{% endblock %}

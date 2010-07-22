@@ -12,8 +12,8 @@
 		<link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/screen.css" type="text/css" media="screen, projection">
 		<!--[if IE]><link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
 		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/style.css"> 
-		<link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="http://politicalpartytime.org/feed/upcoming/">
-		<link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="http://politicalpartytime.org/feed/recent/">
+        <link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="{% url partytime_feeds 'upcoming' %}">
+        <link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="{% url partytime_feeds 'recent' %}">
 		<link rel="shortcut icon" href="http://sunlightfoundation.com/favicon.ico" type="image/x-icon">
 		<script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
 		<link rel="shortcut icon" href="http://media.sunlightprojects.org/partytime/images/favicon.ico">
@@ -56,7 +56,7 @@
 					</div>
 
 					<div id="mast_title" class="clear">
-						<a href="/"><img src="http://media.sunlightprojects.org/partytime/images/mast_title.png"></a>
+                        <a href="{% url partytime_home %}"><img src="http://media.sunlightprojects.org/partytime/images/mast_title.png"></a>
 					</div>
 					
 					<div id="mast_nav">
@@ -87,7 +87,7 @@
 <option value="Entertainment_Type" {% ifequal field "Entertainment_Type" %} selected {% endifequal %}>Entertainment Type</option>
 <option value="Other_Members_of_Congress" {% ifequal field "Other_Members_of_Congress" %} selected {% endifequal %}>Other Lawmakers Mentioned</option>
 </select>
-<input id="args" type="text" name="args" size="15"><input type="submit" value="Find a Party!">
+<input id="args" type="text" name="args" size="15" value="{% if args %}{{ args }}{% endif %}"><input type="submit" value="Find a Party!">
 
 
 </fieldset></form>
@@ -97,10 +97,10 @@
 					</div> <!--end partyfinder_bar -->
 					<div id="subnav_bar">
 						<ul id="subnav">
-						<li><a href="/upcoming/">Upcoming Events</a></li>
-						<li><a href="/recent/">Recent Events</a></li>
-						<li><a href="/committee/">Events By Committee</a></li>
-						<li><a href="/leadpacs/">Leadership PAC Events</a></li>
+                        <li><a href="{% url partytime_upcoming %}">Upcoming Events</a></li>
+                        <li><a href="{% url partytime_recent %}">Recent Events</a></li>
+                        <li><a href="{% url partytime_committee_list %}">Events By Committee</a></li>
+                        <li><a href="{% url partytime_leadpacs %}">Leadership PAC Events</a></li>
 						<li><a href="/calendar/">Event Calendar</a></li>
 						<li><a href="/data/all/">Bulk Data</a></li>
 						</ul>
@@ -135,7 +135,7 @@
 						
 						{% cache 7200 events %}
 						    {% upcoming_events %}
-    						<div id="got_invites"><a href="/upload/"><img src="http://media.sunlightprojects.org/partytime/images/got_invites.png" border="0"></a></div>
+                            <div id="got_invites"><a href="{% url partytime_upload %}"><img src="http://media.sunlightprojects.org/partytime/images/got_invites.png" border="0"></a></div>
     						{% recent_events %}
                         {% endcache %}
                         
