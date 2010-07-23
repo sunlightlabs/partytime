@@ -65,7 +65,7 @@ def search(request, field, args):
     if field == 'Beneficiary':
         lm = Lawmaker.objects.filter(name__icontains=args)
         if len(lm)==1:
-            if lm[0].crp_id and lm[0].affiliate==None:
+            if lm[0].crp_id and not lm[0].affiliate:
                 return HttpResponseRedirect('/pol/'+lm[0].crp_id)               
 
     if lm is not None:
