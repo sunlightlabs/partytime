@@ -23,11 +23,11 @@ def main():
     writer = csv.writer(fbuffer)
 
     try:
-        cursor.execute("SELECT pe.id _id,IFNULL(start_date,'') Start_Date,IFNULL(end_date,'') End_Date,IFNULL(Start_Time,'') Start_Time,IFNULL(end_time,'') End_Time, entertainment,venue_id,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By FROM publicsite_event pe WHERE (pe.status='' or pe.status is null)")
+        cursor.execute("SELECT pe.id _id,IFNULL(start_date,'') Start_Date,IFNULL(end_date,'') End_Date,IFNULL(Start_Time,'') Start_Time,IFNULL(end_time,'') End_Time, entertainment,venue_id,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By,canceled,postponed FROM publicsite_event pe WHERE (pe.status='' or pe.status is null)")
     except:
         pass
     rows = cursor.fetchall()
-    newrow =["_id","Start_Date","End_Date","Start_Time","End_Time","Entertainment","Venue_id","Contributions_Info","Make_Checks_Payable_To","Checks_Payable_To_Address","Committee_Id","RSVP_Info","Distribution_Paid_for_By"]																																																																																																																																																																								
+    newrow =["_id","Start_Date","End_Date","Start_Time","End_Time","Entertainment","Venue_id","Contributions_Info","Make_Checks_Payable_To","Checks_Payable_To_Address","Committee_Id","RSVP_Info","Distribution_Paid_for_By","Canceled","Postponed"]																																																																																																																																																																								
     writer.writerow(newrow)
     for row in rows:
         newrow = []
@@ -43,11 +43,11 @@ def main():
     fbuffer2 = StringIO()
     writer = csv.writer(fbuffer2)
     try:
-        cursor.execute("SELECT eb.event_id,l.id beneficiary_id, ifnull(name,'') Beneficiary_Name,ifnull(party,'') party, ifnull(state,'') state, ifnull(district,'') district, oi.other_info, crp_id FROM publicsite_event_beneficiary eb left join publicsite_lawmaker l on (l.id = eb.lawmaker_id)  left join publicsite_other_info oi on (oi.event_id = eb.event_id and oi.lawmaker_id = eb.lawmaker_id and oi.moc_type=1) left join publicsite_event ev ON (eb.event_id=ev.id AND (ev.status is null or ev.status='')) order by eb.event_id")
+        cursor.execute("SELECT eb.event_id,l.id beneficiary_id, ifnull(name,'') Beneficiary_Name,ifnull(party,'') party, ifnull(state,'') state, ifnull(district,'') district, oi.other_info, crp_id, canceled, postponed FROM publicsite_event_beneficiary eb left join publicsite_lawmaker l on (l.id = eb.lawmaker_id)  left join publicsite_other_info oi on (oi.event_id = eb.event_id and oi.lawmaker_id = eb.lawmaker_id and oi.moc_type=1) left join publicsite_event ev ON (eb.event_id=ev.id AND (ev.status is null or ev.status='')) order by eb.event_id")
     except:
         pass
     rows = cursor.fetchall()
-    newrow = ["event_id","beneficiary_id","Beneficiary_Name","Party","State","District","Other_Info","CRP_id"]																																																																																																																																																																																								
+    newrow = ["event_id","beneficiary_id","Beneficiary_Name","Party","State","District","Other_Info","CRP_id","Canceled","Postponed"]																																																																																																																																																																																								
     writer.writerow(newrow)
     for row in rows:
         newrow = []
@@ -63,11 +63,11 @@ def main():
     fbuffer3 = StringIO()
     writer = csv.writer(fbuffer3)
     try:
-        cursor.execute("SELECT eh.event_id,h.id host_id, ifnull(name,'') Host_Name,ifnull(other_info,'') Other_Info FROM publicsite_event_hosts eh left join publicsite_host h on (h.id = eh.host_id)  left join publicsite_other_info oi on (oi.event_id = eh.event_id and oi.host_id = eh.host_id) left join publicsite_event ev ON (eh.event_id=ev.id AND (ev.status is null or ev.status='')) order by eh.event_id")
+        cursor.execute("SELECT eh.event_id,h.id host_id, ifnull(name,'') Host_Name,ifnull(other_info,'') Other_Info, canceled, postponed FROM publicsite_event_hosts eh left join publicsite_host h on (h.id = eh.host_id)  left join publicsite_other_info oi on (oi.event_id = eh.event_id and oi.host_id = eh.host_id) left join publicsite_event ev ON (eh.event_id=ev.id AND (ev.status is null or ev.status='')) order by eh.event_id")
     except:
         pass
     rows = cursor.fetchall()
-    newrow =   ["event_id","host_id","Host_Name","Other_Info"]																																																																																																																																																																																																																																			
+    newrow =   ["event_id","host_id","Host_Name","Other_Info","Canceled","Postponed"]																																																																																																																																																																																																																																			
     writer.writerow(newrow)
     for row in rows:
         newrow = []
@@ -83,11 +83,11 @@ def main():
     fbuffer4 = StringIO()
     writer = csv.writer(fbuffer4)
     try:
-        cursor.execute("SELECT eb.event_id,l.id omc_id, ifnull(name,'') OMC_Name,ifnull(party,'') party, ifnull(state,'') state, ifnull(district,'') district,ifnull(other_info,'') Other_Info,crp_id FROM publicsite_event_omc  eb left join publicsite_lawmaker l on (l.id = eb.lawmaker_id) left join publicsite_other_info oi on (oi.event_id = eb.event_id and oi.lawmaker_id = eb.lawmaker_id and oi.moc_type=2) left join publicsite_event ev ON (eb.event_id=ev.id AND (ev.status is null or ev.status=''))  order by eb.event_id")
+        cursor.execute("SELECT eb.event_id,l.id omc_id, ifnull(name,'') OMC_Name,ifnull(party,'') party, ifnull(state,'') state, ifnull(district,'') district,ifnull(other_info,'') Other_Info,crp_id, canceled, postponed FROM publicsite_event_omc  eb left join publicsite_lawmaker l on (l.id = eb.lawmaker_id) left join publicsite_other_info oi on (oi.event_id = eb.event_id and oi.lawmaker_id = eb.lawmaker_id and oi.moc_type=2) left join publicsite_event ev ON (eb.event_id=ev.id AND (ev.status is null or ev.status=''))  order by eb.event_id")
     except:
         pass
     rows = cursor.fetchall()
-    newrow = ["event_id","omc_id","OMC_Name","Party","State","District","Other_Info","CRP_id"]																																																																																																																																																																																																																																			
+    newrow = ["event_id","omc_id","OMC_Name","Party","State","District","Other_Info","CRP_id","Canceled","Postponed"]																																																																																																																																																																																																																																			
     writer.writerow(newrow)
     for row in rows:
         newrow = []
@@ -135,13 +135,13 @@ def main():
     wri = csv.writer(f)    
 
     try:
-        cursor.execute("SELECT pe.id _id,ifnull(group_concat(distinct pb.name, IF(STRCMP(pb.party,''),' (',''),pb.party,IF(STRCMP(pb.state,''),', ',''),pb.state,IF(STRCMP(pb.district,''),concat('-',pb.district),'') , IF(STRCMP(pb.party,''),')','') separator ' || ' ),'') beneficiary,ifnull(group_concat(distinct thost.name separator ' || '),'') host,ifnull(group_concat(distinct  omcl.name, IF(STRCMP(omcl.party,''),' (',''),omcl.party,IF(STRCMP(omcl.state,''),', ',''),omcl.state,IF(STRCMP(omcl.district,''),concat('-',omcl.district),'') , IF(STRCMP(omcl.party,''),')','') separator ' || ' ),'') Other_Members_of_Congress, IFNULL(start_date,'') Start_Date,IFNULL(end_date,'') End_Date,IFNULL(Start_Time,'') Start_Time,IFNULL(end_time,'') End_Time,  entertainment,venue_name,address1,address2,city,v.state,zipcode,website,concat(ifnull(v.latitude,''),';',ifnull(v.longitude,'')) LatLong,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By FROM publicsite_event pe left join publicsite_event_beneficiary peb on (peb.event_id = pe.id) left join publicsite_lawmaker pb on (peb.lawmaker_id = pb.id) left join publicsite_venue v on (v.id = pe.venue_id) left join publicsite_event_omc tomc on (tomc.event_id = pe.id) left join publicsite_lawmaker omcl on (tomc.lawmaker_id = omcl.id) left join publicsite_event_hosts ev_hosts on (ev_hosts.event_id = pe.id) left join publicsite_host thost on (ev_hosts.host_id = thost.id)  WHERE (pe.status is null OR pe.status='') GROUP BY pe.id")
+        cursor.execute("SELECT pe.id _id,ifnull(group_concat(distinct pb.name, IF(STRCMP(pb.party,''),' (',''),pb.party,IF(STRCMP(pb.state,''),', ',''),pb.state,IF(STRCMP(pb.district,''),concat('-',pb.district),'') , IF(STRCMP(pb.party,''),')','') separator ' || ' ),'') beneficiary,ifnull(group_concat(distinct thost.name separator ' || '),'') host,ifnull(group_concat(distinct  omcl.name, IF(STRCMP(omcl.party,''),' (',''),omcl.party,IF(STRCMP(omcl.state,''),', ',''),omcl.state,IF(STRCMP(omcl.district,''),concat('-',omcl.district),'') , IF(STRCMP(omcl.party,''),')','') separator ' || ' ),'') Other_Members_of_Congress, IFNULL(start_date,'') Start_Date,IFNULL(end_date,'') End_Date,IFNULL(Start_Time,'') Start_Time,IFNULL(end_time,'') End_Time,  entertainment,venue_name,address1,address2,city,v.state,zipcode,website,concat(ifnull(v.latitude,''),';',ifnull(v.longitude,'')) LatLong,Contributions_Info,Make_Checks_Payable_To,Checks_Payable_To_Address,Committee_Id,RSVP_Info,Distribution_Paid_for_By, canceled, postponed FROM publicsite_event pe left join publicsite_event_beneficiary peb on (peb.event_id = pe.id) left join publicsite_lawmaker pb on (peb.lawmaker_id = pb.id) left join publicsite_venue v on (v.id = pe.venue_id) left join publicsite_event_omc tomc on (tomc.event_id = pe.id) left join publicsite_lawmaker omcl on (tomc.lawmaker_id = omcl.id) left join publicsite_event_hosts ev_hosts on (ev_hosts.event_id = pe.id) left join publicsite_host thost on (ev_hosts.host_id = thost.id)  WHERE (pe.status is null OR pe.status='') GROUP BY pe.id")
 
     except:
         pass
 
-    newrow = ['ID', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State', 'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 'RSVP_Info', 'Distribution_Paid_for_By'];		
-    newrowt = ['key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State', 'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 'RSVP_Info', 'Distribution_Paid_for_By'];																																																																																																																																																																																																																															
+    newrow = ['ID', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State', 'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 'RSVP_Info', 'Distribution_Paid_for_By', 'Canceled', 'Postponed'];		
+    newrowt = ['key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State', 'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 'RSVP_Info', 'Distribution_Paid_for_By', 'Canceled', 'Postponed'];																																																																																																																																																																																																																															
     wri.writerow(newrowt)
     rows = cursor.fetchall()
     for row in rows:
