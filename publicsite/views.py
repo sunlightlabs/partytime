@@ -11,7 +11,8 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.db.models.query import QuerySet
@@ -350,12 +351,18 @@ def cmtes(request, chamber='House'):
 
 def cmtedetail(request, cmteid):
     res = Event.objects.by_cmte(cmteid)
-    docset = res['events']
+    paginator = Paginator(res['events'], 50, orphans=5)
+
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
 
     return render_to_response(
             'publicsite/cmtedetail.html', 
             {'cmte': res['cmte'], 
-             'docset': res['events'], 
+             'page': page,
              'members': res['members'], 
              'since_year': res['since_year'], 
              'snapshot_image_name': '',

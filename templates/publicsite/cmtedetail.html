@@ -1,5 +1,7 @@
 {% extends "publicsite/base.html" %}
 
+{% load partytime %}
+
 {% block content %}
 
     {% ifnotequal snapshot_image_name "" %}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{% endifnotequal %}
@@ -8,17 +10,17 @@
 		<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
 	</a> 
 <h4>{{ cmte.title }}</h4>
-<h5>({{ docset|length }} parties since {{since_year}})</h5>
+<h5>({{ page.paginator.count }} parties since {{since_year}})</h5>
 </div>
 <div id="committee_members">
 	<p><strong>Committee Members:</strong>
-    {% for mem in members %}<a href="{% url partytime_pol_detail mem.crp_id %}">{{mem.name}}</a>{% if mem.events_since_year.count %} ({{ mem.events_since_year.count }}){% endif %}{%if not forloop.last%}, {% endif %}{% endfor %}
+    {% for mem in members %}<a href="{% url partytime_pol_detail mem.crp_id %}">{{mem.name}}</a>{{ mem|committee_position:cmte }}{%if not forloop.last%}, {% endif %}{% endfor %}
 	</p>
 </div>
 
 
 
-	{% for doc in docset %}
+	{% for doc in page.object_list %}
 		<div id="summary_container">
 			<div id="summary_topbar">
 				<div id="summary_date">
@@ -61,4 +63,17 @@
 			</div>
 		</div>
 		{% endfor %}
+
+        <p style="text-align: center;">
+        {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}">&lt;&lt; Previous</a>
+        &nbsp;&nbsp;
+        {% endif %}
+        Page {{ page.number }} of {{ page.paginator.num_pages }}
+        {% if page.has_next %}
+        &nbsp;&nbsp;
+        <a href="?page={{ page.next_page_number }}">Next &gt;&gt;</a>
+        {% endif %}
+        </p>
+
 {% endblock %}
