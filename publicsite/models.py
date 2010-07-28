@@ -373,6 +373,7 @@ class Event(models.Model):
     contributions_info = models.CharField(blank=True, max_length=255, null=True)
     user_initials = models.CharField(blank=True, max_length=5, null=True)
     data_entry_problems = models.CharField(blank=True, max_length=255, null=True)
+    notes = models.TextField(blank=True)
 
     canceled = models.BooleanField(u'This event has been canceled', 
                                    blank=True, 
