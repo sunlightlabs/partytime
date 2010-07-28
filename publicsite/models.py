@@ -276,9 +276,9 @@ class Committee(models.Model):
         return [x.member for x in self.committeemembership_set.filter(position__icontains='ranking')]
 
     def leadership_members(self):
-        return self.objects.filter(Q(beneficiaries__committeemembership__position='Chair') |
-                                   Q(beneficiaries__committeemembership__position='Vice Chair') |
-                                   Q(beneficiaries__committeemembership__position='Ranking Member'))
+        return self.committeemembership_set.filter(Q(position='Chair') |
+                                                   Q(position='Vice Chair') |
+                                                   Q(position='Ranking Member'))
 
     def non_leadership_members(self):
         return self.committeemembership_set.filter(position='Member')
