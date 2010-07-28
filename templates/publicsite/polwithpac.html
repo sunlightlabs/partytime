@@ -1,5 +1,7 @@
 {% extends "publicsite/base.html" %}
 
+{% load partytime %}
+
 {% block content %}
 
 	{% ifnotequal snapshot_image_name "" %}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{% endifnotequal %}
@@ -10,7 +12,7 @@
     <b>{{ eventlist|length }}</b> parties benefitting the campaign committee
     {% if pacname %} and leadership PAC, <b>{{ pacname }}</b>{%endif%}
 
-    {% if lm.committee_set %}<p>Committee seats: {% for c in lm.committee_set.all %}<a href="{% url partytime_committee_detail c.short %}">{{c.title}}</a>{% if not forloop.last %}, {% endif %} {% endfor %}</p>{% endif %}
+    {% if lm.committee_set %}<p>Committee seats: {% for c in lm.committee_set.all %}<a href="{% url partytime_committee_detail c.short %}">{{c.title}}</a>{{ lm|committee_position:c }}{% if not forloop.last %}, {% endif %} {% endfor %}</p>{% endif %}
 
 	{% for doc in eventlist %}
 		<div id="summary_container">

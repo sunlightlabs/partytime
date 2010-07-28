@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -369,6 +370,26 @@ def cmtedetail(request, cmteid):
              }
             )
 
+
+def leadership(request):
+    events = Event.objects.filter(Q(beneficiaries__committeemembership__position='Chair') |
+                                  Q(beneficiaries__committeemembership__position='Vice Chair') |
+                                  Q(beneficiaries__committeemembership__position='Ranking Member')) \
+                           .order_by('-start_date', 'start_time')
+
+    paginator = Paginator(events, 50, orphans=5)
+    pagenum = request.GET.get('page', 1)
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite/leadership.html',
+            {'page': page,
+            },
+        )
 
 # Marked as temporary in urls.py; not sure if this is still being used.
 def updatecmtes(request,chamber):

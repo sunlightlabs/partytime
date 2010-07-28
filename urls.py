@@ -47,6 +47,7 @@ urlpatterns = patterns('',
     url(r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes', name='partytime_chamber_committees'),
     url(r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
     url(r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'}, name='partytime_committee_list'),
+    url(r'^leadership/$', 'partytime.publicsite.views.leadership'),
     url(r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac', name='partytime_pol_detail'),
     url(r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all', name='partytime_leadpacs'),
     url(r'^ical/$', IcalFeed(), name='partytime_ical'),
@@ -60,5 +61,5 @@ urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
     url(r'^json/(?P<CID>.+)/', 'partytime.publicsite.views.jsonCID'),
     url(r'^layar/$', 'partytime.publicsite.views.partytime_layar', name='partytime_layar'),
-    url(r'^emailalerts/', 'partytime.publicsite.views.stateemail')
+    url(r'^emailalerts/', 'partytime.publicsite.views.stateemail'),
 )
