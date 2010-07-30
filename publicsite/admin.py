@@ -18,7 +18,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
                 ('distribution_paid_for_by'),
                 ('make_checks_payable_to', 'checks_payable_to_address'),
                 'contributions_info',
-                ('data_entry_problems', 'status', 'user_initials')
+                ('data_entry_problems', 'status', 'user_initials', 'notes')
             )}
         ),
         ('Cancellations/Postponements', {

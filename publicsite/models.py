@@ -4,6 +4,7 @@ import re
 from django.contrib import admin
 from django.db import connection
 from django.db import models
+from django.db.models import Q
 from django.contrib.sites.models import Site
 
 import scribd
@@ -219,21 +220,76 @@ class Lawmaker(models.Model):
     def events_since_year(self, year=2009):
         return self.pol_events.filter(start_date__gte=datetime.date(year, 01, 01))
 
+    def committee_position(self, committee):
+        """Get this lawmaker's position on the given committee.
+
+        Returns None if the lawmaker isn't on the given committee.
+        """
+        try:
+            return CommitteeMembership.objects.get(committee=committee, member=self).position
+        except CommitteeMembership.DoesNotExist:
+            return None
+
+    def leadership_positions(self):
+        return self.committeemembership_set.filter(Q(position='Chair') |
+                                                   Q(position='Vice Chair') |
+                                                   Q(position='Ranking Member'))
+
+
 
 class Committee(models.Model):
     short = models.CharField(blank=False, max_length=4, primary_key=True)
     title = models.CharField(blank=False, max_length=100)
-    members = models.ManyToManyField(Lawmaker)
+    members = models.ManyToManyField(Lawmaker, through='CommitteeMembership')
     chamber = models.CharField(blank=False, max_length=10)
 
     def __unicode__(self):
         return self.title
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('partytime_committee_detail', [str(self.short), ])
 
     def events(self):
         return Event.objects.filter(
                             beneficiaries__in = self.members.all(),
                             start_date__gte = datetime.date(2009, 01, 01)
                         ).distinct()
+
+    def chairman(self):
+        try:
+            return self.committeemembership_set.get(position='Chair').member
+        except CommitteeMembership.DoesNotExist:
+            return None
+
+    def vice_chairman(self):
+        try:
+            return self.committeemembership_set.get(position='Vice Chair').member
+        except CommitteeMembership.DoesNotExist:
+            return None
+
+    def ranking_members(self):
+        # In joint committees, there are two ranking members.
+        #
+        # Sometimes listed as 'Ranking Member' and 
+        # sometimes 'Ranking Minority Member'
+        return [x.member for x in self.committeemembership_set.filter(position__icontains='ranking')]
+
+    def leadership_members(self):
+        return self.committeemembership_set.filter(Q(position='Chair') |
+                                                   Q(position='Vice Chair') |
+                                                   Q(position='Ranking Member'))
+
+    def non_leadership_members(self):
+        return self.committeemembership_set.filter(position='Member')
+
+
+
+class CommitteeMembership(models.Model):
+    committee = models.ForeignKey(Committee)
+    member = models.ForeignKey(Lawmaker)
+    position = models.CharField(max_length=24)
+    as_of = models.DateField(auto_now=True)
 
 
 class OtherInfo(models.Model):
@@ -317,6 +373,7 @@ class Event(models.Model):
     contributions_info = models.CharField(blank=True, max_length=255, null=True)
     user_initials = models.CharField(blank=True, max_length=5, null=True)
     data_entry_problems = models.CharField(blank=True, max_length=255, null=True)
+    notes = models.TextField(blank=True)
 
     canceled = models.BooleanField(u'This event has been canceled', 
                                    blank=True, 
@@ -522,3 +579,22 @@ class StateMailingList(models.Model):
 
     def __unicode__(self):
         return self.state + ": " + self.email
+
+
+class CookRating(models.Model):
+    BODY_CHOICES = (
+        ('H', 'House'),
+        ('S', 'Senate'),
+    )
+
+    body = models.CharField(max_length=1, choices=BODY_CHOICES, blank=True, default='')
+    state = models.CharField(max_length=2)
+    district = models.CharField(max_length=3)
+    rating = models.CharField(max_length=100)
+    as_of = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together = (('body', 'state', 'district', 'as_of'), )
+
+    def __unicode__(self):
+        return self.rating
