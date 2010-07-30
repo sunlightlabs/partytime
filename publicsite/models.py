@@ -388,7 +388,7 @@ class Event(models.Model):
 
     scribd_upload = models.BooleanField(u'Upload PDF to Scribd',
                                         blank=True,
-                                        default=False)
+                                        default=True)
     scribd_id = models.IntegerField()
     scribd_url = models.URLField(u'Scribd URL', verify_exists=False, blank=True)
 
@@ -408,7 +408,7 @@ class Event(models.Model):
             return 'Event'
 
     def save(self):
-        if self.scribd_upload:
+        if self.scribd_upload and not self.status:
             self.upload_to_scribd()
         elif self.scribd_upload is not True and self.scribd_id:
             self.delete_from_scribd()

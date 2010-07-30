@@ -27,11 +27,6 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
                 ('canceled'),
             )}
         ),
-        ('Scribd', {
-            'fields': (
-                ('scribd_upload', 'scribd_url', ),
-            )}
-        ),
     ]
 
     related_search_fields = { 
