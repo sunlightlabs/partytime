@@ -1,11 +1,15 @@
+from collections import defaultdict
 import datetime
 import re
 
 from django.contrib import admin
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.db import connection
 from django.db import models
 from django.db.models import Q
-from django.contrib.sites.models import Site
+from django.template import Context
+from django.template.loader import get_template
 
 import scribd
 
@@ -271,7 +275,7 @@ class Committee(models.Model):
     def ranking_members(self):
         # In joint committees, there are two ranking members.
         #
-        # Sometimes listed as 'Ranking Member' and 
+        # Sometimes listed as 'Ranking Member' and
         # sometimes 'Ranking Minority Member'
         return [x.member for x in self.committeemembership_set.filter(position__icontains='ranking')]
 
@@ -375,8 +379,8 @@ class Event(models.Model):
     data_entry_problems = models.CharField(blank=True, max_length=255, null=True)
     notes = models.TextField(blank=True)
 
-    canceled = models.BooleanField(u'This event has been canceled', 
-                                   blank=True, 
+    canceled = models.BooleanField(u'This event has been canceled',
+                                   blank=True,
                                    default=False)
     postponed = models.BooleanField(u'This event has been postponed',
                                     blank=True,
@@ -384,9 +388,11 @@ class Event(models.Model):
 
     scribd_upload = models.BooleanField(u'Upload PDF to Scribd',
                                         blank=True,
-                                        default=False)
+                                        default=True)
     scribd_id = models.IntegerField()
     scribd_url = models.URLField(u'Scribd URL', verify_exists=False, blank=True)
+
+    added = models.DateTimeField(u'The date and time this event was added', auto_now_add=True)
 
     class Meta:
         db_table = u'publicsite_event'
@@ -402,7 +408,7 @@ class Event(models.Model):
             return 'Event'
 
     def save(self):
-        if self.scribd_upload:
+        if self.scribd_upload and not self.status:
             self.upload_to_scribd()
         elif self.scribd_upload is not True and self.scribd_id:
             self.delete_from_scribd()
@@ -562,11 +568,102 @@ class Event(models.Model):
                     email.send()
 
 
+    def send_state_email(self):
+        for beneficiary in self.beneficiaries.exclude(Q(state__isnull=True) | Q(state='')):
+            subject = 'PoliticalPartyTime: Fundraiser for %s on %s' % (unicode(beneficiary),
+                                                                       self.start_date.strftime('%B %d, %Y'))
+            template = get_template('feeds/party_description.html')
+            state = beneficiary.state
+            mailing_list = MailingList.objects.get(name=state)
+
+            for subscriber in mailing_list.email_set.filter(mailinglistmembership__confirmed=True):
+                membership = subscriber.mailinglistmembership_set.get(mailing_list=mailing_list)
+                context = {'obj': self,
+                           'email': subscriber.email,
+                           'confirmation': membership.confirmation,
+                           'subject': subject, }
+                self._send_email(template, context)
+
+
+    def send_all_committee_leadership_email(self):
+        """To be sent weekly.
+        """
+        events = Event.objects.filter(
+                (Q(beneficiaries__committeemembership__position__icontains='chair') |
+                 Q(beneficiaries__committeemembership__position='Ranking Member')) &
+                Q(added__gte=datetime.date.today() - datetime.timedelta(7))
+            ).order_by('start_date').distinct()
+
+        mailing_list = MailingList.objects.get(name='All committee leadership')
+        template = 'feeds/all_leadership_email.html'
+
+        for subscriber in mailing_list.email_set.filter(mailinglistmembership__confirmed=True):
+            membership = subscriber.mailinglistmembership_set.get(mailing_list=mailing_list)
+            context = {'events': events,
+                       'email': subscriber.email,
+                       'confirmation': membership.confirmation,
+                       'subject': 'PoliticalPartyTime: Committee leadership fundraisers', }
+            self._send_email(template, context)
+
+
+    def send_committee_leadership_emails(self):
+        """To be sent weekly. Users will subscribe to receive
+        information on the leadership of one or more committees.
+        We will aggregate those subscriptions by user so that
+        each user receives only a single e-mail for specific
+        committee leadership.
+        """
+        template = 'feeds/leadership_email.html'
+        mailing_lists = MailingList.objects.filter(name__startswith=('Committee leadership'))
+        recipients = defaultdict(list) # Recipient e-mail is the key, list of parties is the value
+        subscribers = Email.objects.filter(mailing_lists=mailing_lists).distinct()
+
+        for subscriber in subscribers:
+            memberships = subscriber.mailinglistmembership_set.filter(confirmed=True,
+                                                                      mailing_list__in=mailing_lists)
+            events_for_subscriber = []
+
+            for membership in memberships:
+                mailing_list = membership.mailing_list
+                committee = Committee.objects.get(title=mailing_list.name.replace('Committee leadership - ', ''))
+                leadership_ids = committee.leadership_members().values_list('member', flat=True)
+                events = Event.objects.filter(beneficiaries__in=leadership_ids,
+                                              added__gte=datetime.date.today() - datetime.timedelta(7)
+                                          ).order_by('start_date')
+                events_for_subscriber += events
+
+            events = sorted(set(events), cmp=lambda x, y: cmp(x.start_date, y.start_date))
+
+            # How to handle sending a confirmation code since
+            # this e-mail includes events signed up for with
+            # multiple codes?
+            # One possibility would be to include a single valid
+            # confirmation code, and warn users that clicking the
+            # unsubscribe link will unsubscribe them from all the
+            # the specific committee leadership e-mails.
+            context = {'events': events,
+                       'email': recipient.email,
+                       'confirmation': memberships[0].confirmation,
+                       'subject': 'PoliticalPartyTime: Committee leadership fundraisers', }
+            self._send_email(template, context)
+
+
+    def _send_email(self, template, context):
+        template = get_template(template)
+        body = template.render(Context(context))
+        email = EmailMultiAlternatives(context['subject'],
+                                       body,
+                                       'bounce@politicalpartytime.org',
+                                       [context['email'], ])
+        email.attach_alternative(body, 'text/html')
+        email.send()
+
+
 from django.dispatch import dispatcher
 from django.db.models import signals
 
 def change_watcher(sender, **kwargs):
-    kwargs['instance'].sendemailalert()
+    kwargs['instance'].send_state_email()
 
 #signals.post_save.connect(change_watcher, sender=Event)
 
@@ -579,6 +676,37 @@ class StateMailingList(models.Model):
 
     def __unicode__(self):
         return self.state + ": " + self.email
+
+
+
+class MailingList(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+
+class Email(models.Model):
+    email = models.EmailField()
+    mailing_lists = models.ManyToManyField(MailingList, through='MailingListMembership')
+
+    def __unicode__(self):
+        return self.email
+
+
+class MailingListMembership(models.Model):
+    mailing_list = models.ForeignKey(MailingList)
+    email = models.ForeignKey(Email)
+    confirmation = models.IntegerField(max_length=36)
+    confirmed = models.BooleanField()
+
+    class Meta:
+        unique_together = (('mailing_list', 'email', ))
+
+    def __unicode__(self):
+        return '%s: %s' % (self.mailing_list, self.email)
+
 
 
 class CookRating(models.Model):
