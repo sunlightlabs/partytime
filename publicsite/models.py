@@ -446,10 +446,16 @@ class Event(models.Model):
         event_url = 'http://%s%s' % (Site.objects.get_current().domain,
                                      self.get_absolute_url())
 
-        description = ("This is an invitation for a political fundraiser on %s. "
-                       "Get details at Sunlight Foundation's "
-                       "<a href=\"%s\">Party Time</a>"
-                       ) % (self.start_date.strftime('%B %d, %Y'), event_url)
+        if self.start_date:
+            description = ("This is an invitation for a political fundraiser on %s. "
+                           "Get details at Sunlight Foundation's "
+                           "<a href=\"%s\">Party Time</a>"
+                           ) % (self.start_date.strftime('%B %d, %Y'), event_url)
+        else:
+            description = ("This is an invitation for a political fundraiser. "
+                           "Get details at Sunlight Foundation's "
+                           "<a href=\"%s\">Party Time</a>"
+                           ) % (event_url)
 
         params = {'title': self.event_title(),
                   'publisher': "Sunlight Foundation's Party Time",
