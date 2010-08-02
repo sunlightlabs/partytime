@@ -36,8 +36,6 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
         'other_members': ('name',),
     }
 
-    readonly_fields = ['scribd_url', ]
-
     list_display = ('id', 'start_date', 'entertainment', 'venue', 'status',)
 
     list_filter = ('status', 'start_date', 'canceled', 'postponed', )

@@ -19,7 +19,7 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
 
-        fields = ['Cook Report Rating', 'key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State', 'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 'RSVP_Info', 'Distribution_Paid_for_By']
+        fields = ['Cook Report Rating', 'key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State', 'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 'RSVP_Info', 'Distribution_Paid_for_By', 'Canceled', 'Postponed', ]
         csv.writer(sys.stdout).writerow(fields)
 
         events = Event.objects.filter(start_date__gte=datetime.date(2010, 07, 01)).order_by('start_date')
@@ -103,6 +103,8 @@ class Command(NoArgsCommand):
                     event.committee_id,
                     event.rsvp_info,
                     event.distribution_paid_for_by,
+                    event.canceled or '',
+                    event.postponed or '',
                     ]
 
             try:
