@@ -569,12 +569,18 @@ class Event(models.Model):
 
 
     def send_state_email(self):
+        if self.status:
+            return
+
         for beneficiary in self.beneficiaries.exclude(Q(state__isnull=True) | Q(state='')):
             subject = 'PoliticalPartyTime: Fundraiser for %s on %s' % (unicode(beneficiary),
                                                                        self.start_date.strftime('%B %d, %Y'))
-            template = get_template('feeds/party_description.html')
+            template = 'emails/party_description.html'
             state = beneficiary.state
-            mailing_list = MailingList.objects.get(name=state)
+            try:
+                mailing_list = MailingList.objects.get(name=state)
+            except MailingList.DoesNotExist: # Should never happen, but just in case.
+                continue
 
             for subscriber in mailing_list.email_set.filter(mailinglistmembership__confirmed=True):
                 membership = subscriber.mailinglistmembership_set.get(mailing_list=mailing_list)
@@ -595,7 +601,7 @@ class Event(models.Model):
             ).order_by('start_date').distinct()
 
         mailing_list = MailingList.objects.get(name='All committee leadership')
-        template = 'feeds/all_leadership_email.html'
+        template = 'emails/all_leadership_email.html'
 
         for subscriber in mailing_list.email_set.filter(mailinglistmembership__confirmed=True):
             membership = subscriber.mailinglistmembership_set.get(mailing_list=mailing_list)
@@ -613,9 +619,8 @@ class Event(models.Model):
         each user receives only a single e-mail for specific
         committee leadership.
         """
-        template = 'feeds/leadership_email.html'
+        template = 'emails/leadership_email.html'
         mailing_lists = MailingList.objects.filter(name__startswith=('Committee leadership'))
-        recipients = defaultdict(list) # Recipient e-mail is the key, list of parties is the value
         subscribers = Email.objects.filter(mailing_lists=mailing_lists).distinct()
 
         for subscriber in subscribers:
@@ -634,13 +639,13 @@ class Event(models.Model):
 
             events = sorted(set(events), cmp=lambda x, y: cmp(x.start_date, y.start_date))
 
-            # How to handle sending a confirmation code since
-            # this e-mail includes events signed up for with
-            # multiple codes?
-            # One possibility would be to include a single valid
-            # confirmation code, and warn users that clicking the
-            # unsubscribe link will unsubscribe them from all the
-            # the specific committee leadership e-mails.
+            # Because there are multiple memberships being included
+            # in a single e-mail, and each membership has its own
+            # confirmation code, we send the first membership's
+            # confirmation code as the one with which the recipient
+            # can cancel the e-mail. We warn users in the template
+            # that clicking the unsubscribe link will unsubscribe them from
+            # all the specific committee leadership e-mails.
             context = {'events': events,
                        'email': recipient.email,
                        'confirmation': memberships[0].confirmation,
@@ -653,19 +658,18 @@ class Event(models.Model):
         body = template.render(Context(context))
         email = EmailMultiAlternatives(context['subject'],
                                        body,
-                                       'bounce@politicalpartytime.org',
+                                       'Party Time <bounce@politicalpartytime.org>',
                                        [context['email'], ])
         email.attach_alternative(body, 'text/html')
         email.send()
 
 
-from django.dispatch import dispatcher
-from django.db.models import signals
-
 def change_watcher(sender, **kwargs):
     kwargs['instance'].send_state_email()
 
-#signals.post_save.connect(change_watcher, sender=Event)
+
+from django.db.models import signals
+signals.post_save.connect(change_watcher, sender=Event, dispatch_uid='partytime.publicsite')
 
 
 class StateMailingList(models.Model):
