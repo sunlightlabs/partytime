@@ -525,49 +525,6 @@ class Event(models.Model):
         return ','.join(sorted(tags))
 
 
-    def sendemailalert(self):
-        from django.template.loader import get_template
-        from django.template import Context
-        from django.core.mail import send_mail, EmailMultiAlternatives
-
-        if not self.status:
-            states = []
-            bens = ''
-            hosts = ''
-
-            for h in self.hosts.all():
-                if not hosts:
-                    hosts = h.name
-                else:
-                    hosts = hosts + ', ' + h.name
-
-            for b in self.beneficiaries.all():
-                bens = bens + b.name + ", "
-                if b.state and b.state not in states:
-                    states.append(b.state)
-                elif b.crp_id and b.affiliate:
-                    l = Lawmaker.objects.filter(crp_id=b.crp_id, affiliate__isnull=True)
-                    for ll in l:
-                        if ll.state and ll.state not in states:
-                            states.append(ll.state)
-
-            for state in states:
-                emaillist = StateMailingList.objects.filter(state=state, confirmed=True)
-
-                for l in emaillist:
-                    subject = "PoliticalPartyTime: " + bens[:-2] + " fundraiser " + self.start_date.strftime("%Y-%m-%d")
-
-                    if not hosts:
-                        subject = subject + " for " + hosts
-
-                    t = get_template('feeds/party_description.html')
-                    html = t.render(Context({'obj': self}))
-                    body = '<p><a href="http://politicalpartytime.org/party/' + str(self.pk) + '">Click here to view invitation on the Sunlight Foundation\'s PoliticalPartytime.org.</a></p>'+ html + '<p>To unsubscribe from these alerts, <a href="http://politicalpartytime.org/emailalerts/?email='+l.email+'&state='+l.state+'&remove='+str(l.confirmation)+'">click here</a>.</p>'
-                    email = EmailMultiAlternatives(subject, body, 'bounce@politicalpartytime.org', [l.email])
-                    email.attach_alternative(body, "text/html")
-                    email.send()
-
-
     def send_state_email(self):
         if self.status:
             return
