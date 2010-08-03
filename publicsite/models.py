@@ -234,10 +234,24 @@ class Lawmaker(models.Model):
         except CommitteeMembership.DoesNotExist:
             return None
 
-    def leadership_positions(self):
+    def committee_leadership_positions(self):
         return self.committeemembership_set.filter(Q(position='Chair') |
                                                    Q(position='Vice Chair') |
                                                    Q(position='Ranking Member'))
+
+    def congressional_leadership_positions(self):
+        return self.leadershipposition_set.all()
+
+
+    def all_leadership_positions(self):
+        positions = []
+        for position in self.committee_leadership_positions():
+            positions.append('%s, %s' % (position.position, position.committee.title))
+
+        for position in self.congressional_leadership_positions():
+            positions.append(position.position)
+
+        return positions
 
 
 class LeadershipPosition(models.Model):
@@ -569,79 +583,6 @@ class Event(models.Model):
                 self._send_email(template, context)
 
 
-    def send_all_committee_leadership_email(self):
-        """To be sent weekly.
-        """
-        events = Event.objects.filter(
-                (Q(beneficiaries__committeemembership__position__icontains='chair') |
-                 Q(beneficiaries__committeemembership__position='Ranking Member')) &
-                Q(added__gte=datetime.date.today() - datetime.timedelta(7))
-            ).order_by('start_date').distinct()
-
-        mailing_list = MailingList.objects.get(name='All committee leadership')
-        template = 'emails/all_leadership_email.html'
-
-        for subscriber in mailing_list.email_set.filter(mailinglistmembership__confirmed=True):
-            membership = subscriber.mailinglistmembership_set.get(mailing_list=mailing_list)
-            context = {'events': events,
-                       'email': subscriber.email,
-                       'confirmation': membership.confirmation,
-                       'subject': 'PoliticalPartyTime: Committee leadership fundraisers', }
-            self._send_email(template, context)
-
-
-    def send_committee_leadership_emails(self):
-        """To be sent weekly. Users will subscribe to receive
-        information on the leadership of one or more committees.
-        We will aggregate those subscriptions by user so that
-        each user receives only a single e-mail for specific
-        committee leadership.
-        """
-        template = 'emails/leadership_email.html'
-        mailing_lists = MailingList.objects.filter(name__startswith=('Committee leadership'))
-        subscribers = Email.objects.filter(mailing_lists=mailing_lists).distinct()
-
-        for subscriber in subscribers:
-            memberships = subscriber.mailinglistmembership_set.filter(confirmed=True,
-                                                                      mailing_list__in=mailing_lists)
-            events_for_subscriber = []
-
-            for membership in memberships:
-                mailing_list = membership.mailing_list
-                committee = Committee.objects.get(title=mailing_list.name.replace('Committee leadership - ', ''))
-                leadership_ids = committee.leadership_members().values_list('member', flat=True)
-                events = Event.objects.filter(beneficiaries__in=leadership_ids,
-                                              added__gte=datetime.date.today() - datetime.timedelta(7)
-                                          ).order_by('start_date')
-                events_for_subscriber += events
-
-            events = sorted(set(events), cmp=lambda x, y: cmp(x.start_date, y.start_date))
-
-            # Because there are multiple memberships being included
-            # in a single e-mail, and each membership has its own
-            # confirmation code, we send the first membership's
-            # confirmation code as the one with which the recipient
-            # can cancel the e-mail. We warn users in the template
-            # that clicking the unsubscribe link will unsubscribe them from
-            # all the specific committee leadership e-mails.
-            context = {'events': events,
-                       'email': recipient.email,
-                       'confirmation': memberships[0].confirmation,
-                       'subject': 'PoliticalPartyTime: Committee leadership fundraisers', }
-            self._send_email(template, context)
-
-
-    def _send_email(self, template, context):
-        template = get_template(template)
-        body = template.render(Context(context))
-        email = EmailMultiAlternatives(context['subject'],
-                                       body,
-                                       'Party Time <bounce@politicalpartytime.org>',
-                                       [context['email'], ])
-        email.attach_alternative(body, 'text/html')
-        email.send()
-
-
 def change_watcher(sender, **kwargs):
     kwargs['instance'].send_state_email()
 
@@ -680,7 +621,7 @@ class Email(models.Model):
 class MailingListMembership(models.Model):
     mailing_list = models.ForeignKey(MailingList)
     email = models.ForeignKey(Email)
-    confirmation = models.IntegerField(max_length=36)
+    confirmation = models.BigIntegerField()
     confirmed = models.BooleanField()
 
     class Meta:
@@ -690,7 +631,7 @@ class MailingListMembership(models.Model):
         return '%s: %s' % (self.mailing_list, self.email)
 
     def confirmation_url(self):
-        return 'http://politicalpartytime.org/emailalerts/?email=%s&confirmation=%s&list_id=%s' % (
+        return 'http://politicalpartytime.org/emailalerts/?email=%s&confirmation=%s&list=%s' % (
                     self.email.email,
                     self.confirmation,
                     self.mailing_list.id)
