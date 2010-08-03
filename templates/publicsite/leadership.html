@@ -74,6 +74,10 @@
                                 {% endif %}
                                 {% endifequal %}
 
+                                {% if forloop.last %}
+                                {% else %},
+                                {% endif %}
+
                                 {% endfor %}	    
                         </li>
                     {% endif %}
