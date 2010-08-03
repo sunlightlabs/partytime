@@ -461,7 +461,7 @@ class Event(models.Model):
         event_url = 'http://%s%s' % (Site.objects.get_current().domain,
                                      self.get_absolute_url())
 
-	 if self.start_date:
+	if self.start_date:
             description = ("This is an invitation for a political fundraiser on %s. "
                            "Get details at Sunlight Foundation's "
                            "<a href=\"%s\">Party Time</a>"
