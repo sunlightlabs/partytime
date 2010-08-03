@@ -1,8 +1,12 @@
 {% extends "publicsite/base.html" %}
 
+
 {% block content %}
 
+    <h1>{{ title }}</h1>
+
     {% for doc in page.object_list %}
+
 
 		<div id="summary_container">
 			<div id="summary_topbar">
@@ -32,13 +36,48 @@
 					    <li>
     					        <span class="detail_head">For:</span>
                                 {% for ben in beneficiaries %}<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{% endif %}">{{ ben }}</a>  
-                                {% for membership in ben.leadership_positions %}
-                                ({{ membership.position }}, <a href="{{ membership.committee.get_absolute_url }}">{{ membership.committee }}</a>)
-                                {% endfor %}
+                                {% if ben.affiliate %}
+                                (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}">{{ ben.affiliate }}</a>)
+                                {% endif %}
+
+                                {% ifequal pagetype 'committee' %}
+                                {% if ben.leadership_positions %}
+                                ({% for membership in ben.leadership_positions %}{{ membership.position }}, <a href="{{ membership.committee.get_absolute_url }}">{{ membership.committee }}</a>{% endfor %})
+                                {% endif %}
+                                {% endifequal %}
+
+                                {% ifequal pagetype 'congressional' %}
+                                {% if ben.leadershipposition_set.all %}
+                                ({{ ben.leadershipposition_set.all|join:"; " }})
+                                {% endif %}
+                                {% endifequal %}
+
                                 {% endfor %}	    
     					</li>
     				{% endif %}
     				{% endwith %}
+
+                    {% with doc.other_members.all as other_members %}
+                    {% if other_members %}
+                    <li><span class="detail_head">Other members:</span>
+                                {% for member in other_members %}<a href="{% if member.crp_id %}{% url partytime_pol_detail member.crp_id %}{% else %}{% url partytime_search 'membereficiary' member.name|urlencode %}{% endif %}">{{ member }}</a>  
+
+                                {% ifequal pagetype 'committee' %}
+                                {% if member.leadership_positions %}
+                                ({% for membership in member.leadership_positions %}{{ membership.position }}, <a href="{{ membership.committee.get_absolute_url }}">{{ membership.committee }}</a>{% if forloop.revcounter0 > 0 %}; {% endif %}{% endfor %})
+                                {% endif %}
+                                {% endifequal %}
+
+                                {% ifequal pagetype 'congressional' %}
+                                {% if member.leadershipposition_set.all %}
+                                ({{ member.leadershipposition_set.all|join:"; " }})
+                                {% endif %}
+                                {% endifequal %}
+
+                                {% endfor %}	    
+                        </li>
+                    {% endif %}
+                    {% endwith %}
     				
     				{% with doc.hosts.all as hosts %}
 					{% if hosts %}
@@ -49,6 +88,7 @@
 				</ul>
 			</div>
 		</div>
+
 
     {% endfor %}
 

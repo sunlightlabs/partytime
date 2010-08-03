@@ -6,17 +6,21 @@ except ImportError:
     import simplejson
 import time
 import datetime
+import random
 
 from django import forms
-from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models import Q
+from django.db.models.query import QuerySet
+from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponseServerError, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
 
 from partytime.publicsite.models import *
@@ -371,11 +375,10 @@ def cmtedetail(request, cmteid):
             )
 
 
-def leadership(request):
-    events = Event.objects.filter(Q(beneficiaries__committeemembership__position='Chair') |
-                                  Q(beneficiaries__committeemembership__position='Vice Chair') |
-                                  Q(beneficiaries__committeemembership__position='Ranking Member')) \
-                           .order_by('-start_date', 'start_time')
+def committee_leadership(request):
+    leadership_ids = CommitteeMembership.objects.values_list('member', flat=True).exclude(position='Member')
+    events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
+                        ).distinct().order_by('-start_date', 'start_time')
 
     paginator = Paginator(events, 50, orphans=5)
     pagenum = request.GET.get('page', 1)
@@ -388,6 +391,30 @@ def leadership(request):
     return render_to_response(
             'publicsite/leadership.html',
             {'page': page,
+             'title': 'Events held for or attended by committee leaders',
+             'pagetype': 'committee',
+            },
+        )
+
+
+def congressional_leadership(request):
+    leadership_ids = LeadershipPosition.objects.values_list('lawmaker', flat=True)
+    events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
+                        ).distinct().order_by('-start_date', 'start_time')
+
+    paginator = Paginator(events, 50, orphans=5)
+    pagenum = request.GET.get('page', 1)
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite/leadership.html',
+            {'page': page,
+             'title': 'Events held for or attended by congressional leaders',
+             'pagetype': 'congressional',
             },
         )
 
@@ -609,3 +636,71 @@ def stateemail(request):
                 email.attach_alternative(body, "text/html")
                 email.send()
     return HttpResponseRedirect('/')
+
+
+def email_subscribe(request):
+    redirect = HttpResponseRedirect('/data/all')
+
+    """
+    Confirmation URLs should look like:
+    http://politicalpartytime.org/emailalerts?email=abycoffe@sunlightfoundation.com&confirmation=29083429309234&list=5
+
+    The list number corresponds to the ID of the relevant MailingList object.
+    """
+
+    if request.method == 'POST': # User is subscribing to an e-mail list
+        email = request.POST.get('email', None)
+        list_id = request.POST.get('list', None)
+        if not email or not list_id:
+            raise HttpResponseServerError
+
+        email, created = Email.objects.get_or_create(email=email)
+
+        try:
+            mailing_list = MailingList.objects.get(id=list_id)
+        except MailingList.DoesNotExist:
+            raise HttpResponseServerError
+
+        confirmation = hash(str(email.pk + mailing_list.pk + random.randint(1, 999999999)))
+        if confirmation < 0:
+            confirmation = confirmation * -1
+
+        try:
+            membership = MailingListMembership.objects.create(mailing_list=mailing_list,
+                                                              email=email,
+                                                              confirmation=confirmation,
+                                                              confirmed=False)
+        except IntegrityError:
+            return render_to_response('publicsite/message.html',
+                    {'message': 'You are already subscribed to that mailing list. Please check your e-mail for instructions on confirmation your subscription.', })
+
+        membership.send_confirmation()
+        return render_to_response('publicsite/message.html',
+                {'message': 'Thank you for subscribing. Please check your e-mail for instructions on confirming your subscription.', })
+
+    else:
+        email = request.GET.get('email', None)
+        list_id = request.GET.get('list', None)
+        confirmation = request.GET.get('confirmation', None)
+        if not email or not list_id or not confirmation:
+            raise Http404
+
+        mailing_list = get_object_or_404(MailingList, id=list_id)
+
+        membership = get_object_or_404(MailingListMembership,
+                                       mailing_list=mailing_list,
+                                       email=email,
+                                       confirmation=confirmation)
+
+        if 'remove' in request.GET:
+            membership.delete()
+            return render_to_response('publicsite/message.html',
+                    {'message': 'You have been unsubscribed.', })
+
+        membership.confirmed = True
+        membership.save()
+
+        return render_to_response('publicsite/message.html',
+                {'message': 'Your subscription has been confirmed.', })
+
+

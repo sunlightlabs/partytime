@@ -240,6 +240,21 @@ class Lawmaker(models.Model):
                                                    Q(position='Ranking Member'))
 
 
+class LeadershipPosition(models.Model):
+    congress = models.CharField(u'Number of this congress (e.g. 111th',
+                                max_length=8)
+    lawmaker = models.ForeignKey(Lawmaker)
+    position = models.CharField(u'The leadership position',
+                                max_length=100)
+    body = models.CharField(u'House or Senate',
+                            max_length=1,
+                            choices=(('H', 'House'),
+                                     ('S', 'Senate'), )
+                            )
+
+    def __unicode__(self):
+        return self.position
+
 
 class Committee(models.Model):
     short = models.CharField(blank=False, max_length=4, primary_key=True)
@@ -668,6 +683,24 @@ class MailingListMembership(models.Model):
     def __unicode__(self):
         return '%s: %s' % (self.mailing_list, self.email)
 
+    def confirmation_url(self):
+        return 'http://politicalpartytime.org/emailalerts/?email=%s&confirmation=%s&list_id=%s' % (
+                    self.email.email,
+                    self.confirmation,
+                    self.mailing_list.id)
+
+    def cancellation_url(self):
+        return '%s&remove=true' % self.confirmation_url()
+
+    def send_confirmation(self):
+        template = get_template('emails/confirmation.html')
+        body = template.render(Context({'membership': self, }))
+        email = EmailMultiAlternatives('Confirm your PoliticalPartyTime.org e-mail subscription',
+                                       body,
+                                       'Party Time <bounce@politicalpartytime.org>',
+                                       [self.email.email, ])
+        email.attach_alternative(body, 'text/html')
+        email.send()
 
 
 class CookRating(models.Model):
