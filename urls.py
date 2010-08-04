@@ -62,5 +62,9 @@ urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
     url(r'^json/(?P<CID>.+)/', 'partytime.publicsite.views.jsonCID'),
     url(r'^layar/$', 'partytime.publicsite.views.partytime_layar', name='partytime_layar'),
-    url(r'^emailalerts/', 'partytime.publicsite.views.stateemail'),
+    url(r'^emailalerts/', 'partytime.publicsite.views.email_subscribe'),
+)
+
+urlpatterns += patterns('django.views.generic.simple',
+    url(r'^data/all/$', 'direct_to_template', {'template': 'publicsite/data_page.html'}),
 )

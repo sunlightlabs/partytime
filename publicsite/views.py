@@ -246,8 +246,6 @@ def jsonCID(request, CID):
 
 
 def widget_state(request, state):
-    from django.db.models import Q
-
     q = Q()
     cids = Lawmaker.objects.filter(crp_id__isnull=False, state=state) \
                            .values('crp_id') \
@@ -366,10 +364,10 @@ def cmtedetail(request, cmteid):
 
     return render_to_response(
             'publicsite/cmtedetail.html', 
-            {'cmte': res['cmte'], 
+            {'cmte': res['cmte'],
              'page': page,
-             'members': res['members'], 
-             'since_year': res['since_year'], 
+             'members': res['members'],
+             'since_year': res['since_year'],
              'snapshot_image_name': '',
              }
             )
@@ -639,27 +637,37 @@ def stateemail(request):
 
 
 def email_subscribe(request):
-    redirect = HttpResponseRedirect('/data/all')
-
     """
     Confirmation URLs should look like:
     http://politicalpartytime.org/emailalerts?email=abycoffe@sunlightfoundation.com&confirmation=29083429309234&list=5
 
     The list number corresponds to the ID of the relevant MailingList object.
     """
+    error_response = render_to_response('publicsite/message.html',
+            {'message': 'There was an error. Please try your submission again.', })
 
     if request.method == 'POST': # User is subscribing to an e-mail list
         email = request.POST.get('email', None)
         list_id = request.POST.get('list', None)
         if not email or not list_id:
-            raise HttpResponseServerError
+            #return HttpResponse('no email or list_id')
+            return error_response
 
         email, created = Email.objects.get_or_create(email=email)
 
-        try:
-            mailing_list = MailingList.objects.get(id=list_id)
-        except MailingList.DoesNotExist:
-            raise HttpResponseServerError
+        if list_id == 'state':
+            state = request.POST.get('state', None)
+            if not state:
+                return HttpResponse('no state found')
+                return error_response
+            mailing_list = get_object_or_404(MailingList, name=state)
+        else:
+            try:
+                mailing_list = get_object_or_404(MailingList, id=list_id)
+            except MailingList.DoesNotExist:
+                return HttpResponse('mailing list does not exist')
+                return error_response
+
 
         confirmation = hash(str(email.pk + mailing_list.pk + random.randint(1, 999999999)))
         if confirmation < 0:
@@ -672,7 +680,7 @@ def email_subscribe(request):
                                                               confirmed=False)
         except IntegrityError:
             return render_to_response('publicsite/message.html',
-                    {'message': 'You are already subscribed to that mailing list. Please check your e-mail for instructions on confirmation your subscription.', })
+                    {'message': 'You are already subscribed to that mailing list. Please check your e-mail for instructions on confirming your subscription.', })
 
         membership.send_confirmation()
         return render_to_response('publicsite/message.html',
@@ -687,9 +695,10 @@ def email_subscribe(request):
 
         mailing_list = get_object_or_404(MailingList, id=list_id)
 
+
         membership = get_object_or_404(MailingListMembership,
                                        mailing_list=mailing_list,
-                                       email=email,
+                                       #email=email,
                                        confirmation=confirmation)
 
         if 'remove' in request.GET:
@@ -702,5 +711,4 @@ def email_subscribe(request):
 
         return render_to_response('publicsite/message.html',
                 {'message': 'Your subscription has been confirmed.', })
-
 

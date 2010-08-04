@@ -567,7 +567,7 @@ class Event(models.Model):
         for beneficiary in self.beneficiaries.exclude(Q(state__isnull=True) | Q(state='')):
             subject = 'PoliticalPartyTime: Fundraiser for %s on %s' % (unicode(beneficiary),
                                                                        self.start_date.strftime('%B %d, %Y'))
-            template = 'emails/party_description.html'
+            template = 'emails/state_email.html'
             state = beneficiary.state
             try:
                 mailing_list = MailingList.objects.get(name=state)
@@ -579,8 +579,21 @@ class Event(models.Model):
                 context = {'obj': self,
                            'email': subscriber.email,
                            'confirmation': membership.confirmation,
+                           'list_id': mailing_list.id,
+                           'cancellation_url': membership.cancellation_url(),
                            'subject': subject, }
-                self._send_email(template, context)
+                send_email(template, context)
+
+
+def send_email(template, context):
+    template = get_template(template)
+    body = template.render(Context(context))
+    email = EmailMultiAlternatives(context['subject'],
+                                   body,
+                                   'Party Time <bounce@politicalpartytime.org>',
+                                   [context['email'], ])
+    email.attach_alternative(body, 'text/html')
+    email.send()
 
 
 def change_watcher(sender, **kwargs):
@@ -641,7 +654,7 @@ class MailingListMembership(models.Model):
 
     def send_confirmation(self):
         template = get_template('emails/confirmation.html')
-        body = template.render(Context({'membership': self, }))
+        body = template.render(Context({'membership': self, 'email': self.mailing_list, }))
         email = EmailMultiAlternatives('Confirm your PoliticalPartyTime.org e-mail subscription',
                                        body,
                                        'Party Time <bounce@politicalpartytime.org>',
