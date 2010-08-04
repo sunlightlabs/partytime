@@ -658,14 +658,12 @@ def email_subscribe(request):
         if list_id == 'state':
             state = request.POST.get('state', None)
             if not state:
-                return HttpResponse('no state found')
                 return error_response
             mailing_list = get_object_or_404(MailingList, name=state)
         else:
             try:
                 mailing_list = get_object_or_404(MailingList, id=list_id)
             except MailingList.DoesNotExist:
-                return HttpResponse('mailing list does not exist')
                 return error_response
 
 
