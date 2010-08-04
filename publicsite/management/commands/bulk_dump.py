@@ -30,10 +30,12 @@ def get_events():
               'rsvp_info',
               'distribution_paid_for_by', ]
     events = Event.objects.values_list(*fields).filter(Q(status='') | Q(status=None))
+    fields[0] = 'url'
     data = [fields, ]
 
     # Need to loop through events to encode them correctly for CSV output.
     for event in events:
+        event = ['http://politicalpartytime.org/party/%s' % event[0], ] + list(event)
         data.append(clean_row(event))
 
     return data
