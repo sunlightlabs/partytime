@@ -40,17 +40,9 @@
                                 (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}">{{ ben.affiliate }}</a>)
                                 {% endif %}
 
-                                {% ifequal pagetype 'committee' %}
-                                {% if ben.leadership_positions %}
-                                ({% for membership in ben.leadership_positions %}{{ membership.position }}, <a href="{{ membership.committee.get_absolute_url }}">{{ membership.committee }}</a>{% endfor %})
+                                {% if ben.all_leadership_positions %}
+                                ({{ ben.all_leadership_positions|join:"; " }})
                                 {% endif %}
-                                {% endifequal %}
-
-                                {% ifequal pagetype 'congressional' %}
-                                {% if ben.leadershipposition_set.all %}
-                                ({{ ben.leadershipposition_set.all|join:"; " }})
-                                {% endif %}
-                                {% endifequal %}
 
                                 {% endfor %}	    
     					</li>
@@ -62,17 +54,9 @@
                     <li><span class="detail_head">Other members:</span>
                                 {% for member in other_members %}<a href="{% if member.crp_id %}{% url partytime_pol_detail member.crp_id %}{% else %}{% url partytime_search 'membereficiary' member.name|urlencode %}{% endif %}">{{ member }}</a>  
 
-                                {% ifequal pagetype 'committee' %}
-                                {% if member.leadership_positions %}
-                                ({% for membership in member.leadership_positions %}{{ membership.position }}, <a href="{{ membership.committee.get_absolute_url }}">{{ membership.committee }}</a>{% if forloop.revcounter0 > 0 %}; {% endif %}{% endfor %})
+                                {% if member.all_leadership_positions %}
+                                ({{ member.all_leadership_positions|join:"; " }})
                                 {% endif %}
-                                {% endifequal %}
-
-                                {% ifequal pagetype 'congressional' %}
-                                {% if member.leadershipposition_set.all %}
-                                ({{ member.leadershipposition_set.all|join:"; " }})
-                                {% endif %}
-                                {% endifequal %}
 
                                 {% if forloop.last %}
                                 {% else %},
