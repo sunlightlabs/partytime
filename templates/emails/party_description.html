@@ -1,24 +1,22 @@
-<p>
-    <a href="http://politicalpartytime.org/party/{{ obj.pk }}">Click here to view the invitation on the Sunlight Foundation's PoliticalPartyTime.org.</a>
-</p>
+<a href="http://politicalpartytime.org{{ obj.get_absolute_url }}"><h1>{{ obj }}</h1></a>
 {% with obj.beneficiaries.all as beneficiaries %}
     <ul>
         {% if beneficiaries %}
         	<li>
         		<span class="detail_head">For:</span>
         		{% for b in beneficiaries %}
-        			<a href="http://www.politicalpartytime.org/search/Beneficiary/{{ b.name }}">{{ b }}</a>
+                <a href="http://www.politicalpartytime.org/search/Beneficiary/{{ b.name }}">{{ b }}</a> {% if b.all_leadership_positions %}({{ b.all_leadership_positions|join:"; "}}){% endif %}
         		{% endfor %}
         	</li>
     	{% endif %}
     	{% with obj.hosts.all as hosts %}
     	    {% if hosts %}<li><span class="detail_head">Hosted by:</span> {% for host in hosts %}<a href="http://www.politicalpartytime.org/search/Host/{{ host }}">{{ host }}</a> {% endfor %}</li>{% endif %}
     	{% endwith %}
-    	{% if obj.start_date %}<li><span class="detail_head">When:</span> {{ obj.start_date }} ({{ obj.start_time }} - {{ obj.end_time }})</a></li>{% endif %}
+    	{% if obj.start_date %}<li><span class="detail_head">When:</span> {{ obj.start_date|date:"F j, Y" }}</li>{% endif %}
     	{% if obj.venue_name %}<li><span class="detail_head">Where:</span> <a href="http://www.politicalpartytime.org/search/Venue_Name/{{ obj.venue_name }}">{{ obj.venue_name }}</a> - {{ obj.venue_address }}</li>{% endif %}
     	{% if obj.entertainment %}<li><span class="detail_head">Type of Event:</span> <a href="http://www.politicalpartytime.org/search/Entertainment_Type/{{ obj.entertainment }}">{{ obj.entertainment }}</a></li>{% endif %}
     	{% with obj.other_members.all as other_members %}
-    	    {% if other_members %}<li><span class="detail_head">Also in Attendance:</span> {% for other_member in other_members %} <a href="http://www.politicalpartytime.org/search/Other_Members_of_Congress/{{ other_member }}">{{ other_member }}</a> {% endfor %}</li>{% endif %}
+        {% if other_members %}<li><span class="detail_head">Also scheduled to attend:</span> {% for other_member in other_members %} <a href="http://www.politicalpartytime.org/search/Other_Members_of_Congress/{{ other_member }}">{{ other_member }}</a> {% if other_member.all_leadership_positions %}({{ other_member.all_leadership_positions|join:"; "}}){% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}</li>{% endif %}
     	{% endwith %}
     	{% if obj.contributions_info %}<li><span class="detail_head">Contribution Information:</span> {{ obj.contributions_info }}</li>{% endif %}
     	{% if obj.make_checks_payable_to %}<li><span class="detail_head">Make Checks Payable To:</span> {{ obj.make_checks_payable_to }} - {{ obj.checks_payable_to_address }}</li>{% endif %}
@@ -28,7 +26,4 @@
     	{% if obj.distribution_paid_for_by %}<li><span class="detail_head">Distribution Paid for by:</span> {{ obj.distribution_paid_for_by }}</li>{% endif %}
     </ul>
 {% endwith %}
-
-<p>
-To unsubscribe from these alerts, <a href="http://politicalpartytime.org/emailalerts/?email={{ email }}&state={{ state }}&remove={{ confirmation }}">click here</a>
-</p>
+    <a href="http://politicalpartytime.org{{ obj.get_absolute_url }}">Click here to view the invitation on the Sunlight Foundation's PoliticalPartyTime.org.</a>
