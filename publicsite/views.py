@@ -595,47 +595,6 @@ class PartyTimeLayar(LayarView):
 partytime_layar = PartyTimeLayar()
 
 
-
-
-
-def stateemail(request):
-    import random
-    from django.core.mail import send_mail, EmailMultiAlternatives
-    states = Lawmaker.objects.filter(state__isnull=False).exclude(state='').values('state').distinct()
-    statelist = []
-    for tstate in states:
-        statelist.append(tstate['state'])
-    if request.GET:
-        if 'email' in request.GET and 'state' in request.GET:
-            if 'confirm' in request.GET:
-                try:
-                    c = StateMailingList.objects.get(email=request.GET['email'],state=request.GET['state'], confirmation=int(request.GET['confirm']))                  
-                    c.confirmed=True
-                    c.save()
-                    return HttpResponseRedirect('/')
-                except:
-                    return HttpResponse('Incorrect confirmation.')
-            elif 'remove' in request.GET:
-                try:
-                    c = StateMailingList.objects.get(email=request.GET['email'],state=request.GET['state'],confirmation=request.GET['remove'])
-                    c.confirmed=False
-                    c.save()
-                    return HttpResponseRedirect('/')
-                except:
-                    return HttpResponse('Incorrect confirmation.')
-            else:
-                if request.GET['state'] not in statelist:
-                    return HttpResponseRedirect('/')
-                confirm =  random.randint(1, 99999999)          
-                c = StateMailingList(email=request.GET['email'],state=request.GET['state'],confirmation=confirm) 
-                c.save()
-                body = '<html><a href="http://politicalpartytime.org/emailalerts/?email='+request.GET['email']+'&state='+request.GET['state']+'&confirm='+str(confirm)+'">Click here to receive an email from the Sunlight Foundation\'s PoliticalPartyTime.org each time we receive word that a Congressional candidate from '+request.GET['state']+' is the beneficiary of a fundraising event.</a> These are often hosted by lobbyists or business or labor groups seeking to influence a lawmaker, and they can also serve as early indicators of whether candidates have funds to mount viable campaigns--before quarterly reports are released by the FEC. (You can remove yourself from this list at any time.)</html>' 
-                email = EmailMultiAlternatives('Confirm email alert signup for '+request.GET['state']+' delegation fundraisers', body, 'bounce@politicalpartytime.org', [request.GET['email']])
-                email.attach_alternative(body, "text/html")
-                email.send()
-    return HttpResponseRedirect('/')
-
-
 def email_subscribe(request):
     """
     Confirmation URLs should look like:
