@@ -22,6 +22,8 @@ from django.http import HttpResponseServerError, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.encoding import smart_str
+from django.views.decorators.cache import cache_page
+
 
 from partytime.publicsite.models import *
 from layar import LayarView, POI
@@ -373,6 +375,7 @@ def cmtedetail(request, cmteid):
             )
 
 
+@cache_page(60*30)
 def committee_leadership(request):
     leadership_ids = CommitteeMembership.objects.values_list('member', flat=True).exclude(position='Member')
     events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
@@ -395,6 +398,7 @@ def committee_leadership(request):
         )
 
 
+@cache_page(60*30)
 def congressional_leadership(request):
     leadership_ids = LeadershipPosition.objects.values_list('lawmaker', flat=True)
     events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)

@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
+from django.views.decorators.cache import cache_page
+
 from publicsite.feeds import *
 from settings import *
 
@@ -47,8 +49,8 @@ urlpatterns = patterns('',
     url(r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes', name='partytime_chamber_committees'),
     url(r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
     url(r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'}, name='partytime_committee_list'),
-    url(r'^committee-leadership/$', 'partytime.publicsite.views.committee_leadership'),
-    url(r'^congressional-leadership/$', 'partytime.publicsite.views.congressional_leadership'),
+    url(r'^committee-leadership/$', 'partytime.publicsite.views.committee_leadership', name='partytime_committee_leadership'),
+    url(r'^congressional-leadership/$', 'partytime.publicsite.views.congressional_leadership', name='partytime_congressional_leadership'),
     url(r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac', name='partytime_pol_detail'),
     url(r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all', name='partytime_leadpacs'),
     url(r'^ical/$', IcalFeed(), name='partytime_ical'),
