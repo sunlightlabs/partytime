@@ -21,68 +21,68 @@ from django.utils.datastructures import MultiValueDict, MergeDict
 
 
 class ForeignKeySearchInput(forms.HiddenInput):
-	"""
-	A Widget for displaying ForeignKeys in an autocomplete search input 
-	instead in a <select> box.
-	"""
+    """
+    A Widget for displaying ForeignKeys in an autocomplete search input 
+    instead in a <select> box.
+    """
 
-	class Media:
-		css = {
-			'all': ('%s/autocomplete/jquery.autocomplete.css' % settings.MEDIA_URL,)
-		}
+    class Media:
+        css = {
+            'all': ('%s/autocomplete/jquery.autocomplete.css' % settings.MEDIA_URL,)
+        }
 
-		js = (
-			'%s/js/jquery.js' % settings.MEDIA_URL,
-			'%s/js/jquery.autocomplete.js' % settings.MEDIA_URL,
-			'%s/autocomplete/AutocompleteObjectLookups.js' % settings.MEDIA_URL
-		)
-
-
-	def label_for_value(self, value):
-		rel_name = self.search_fields[0].split('__')[0]
-		key = self.rel.get_related_field().name
-		obj = self.rel.to._default_manager.get(**{key: value})
-		return getattr(obj,rel_name)
+        js = (
+            '%s/js/jquery.js' % settings.MEDIA_URL,
+            '%s/js/jquery.autocomplete.js' % settings.MEDIA_URL,
+            '%s/autocomplete/AutocompleteObjectLookups.js' % settings.MEDIA_URL
+        )
 
 
-	def __init__(self, rel, search_fields, attrs=None):
-		self.rel = rel
-		self.search_fields = search_fields
-		super(ForeignKeySearchInput, self).__init__(attrs)
+    def label_for_value(self, value):
+        rel_name = self.search_fields[0].split('__')[0]
+        key = self.rel.get_related_field().name
+        obj = self.rel.to._default_manager.get(**{key: value})
+        return getattr(obj,rel_name)
 
 
-	def render(self, name, value, attrs=None):
-		if attrs is None:
-			attrs = {}
+    def __init__(self, rel, search_fields, attrs=None):
+        self.rel = rel
+        self.search_fields = search_fields
+        super(ForeignKeySearchInput, self).__init__(attrs)
 
-		rendered = super(ForeignKeySearchInput, self).render(name, value, attrs)
 
-		if value:
-			label = self.label_for_value(value)
+    def render(self, name, value, attrs=None):
+        if attrs is None:
+            attrs = {}
 
-		else:
-			label = u''
+        rendered = super(ForeignKeySearchInput, self).render(name, value, attrs)
 
-		return rendered + mark_safe(u''' 
+        if value:
+            label = self.label_for_value(value)
+
+        else:
+            label = u''
+
+        return rendered + mark_safe(u''' 
 <input type="text" id="lookup_%(name)s" value="%(label)s" size="40"/>
 <script type="text/javascript">
 function addItem_id_%(name)s(id, name) {
-	$("#id_%(name)s").val( id );
-	$("#lookup_%(name)s").val( name );
+    $("#id_%(name)s").val( id );
+    $("#lookup_%(name)s").val( name );
 }
 
 $(document).ready(function(){
 
 function liFormat_%(name)s (row, i, num) {
-	var result = row[0] ;
-	return result;
+    var result = row[0] ;
+    return result;
 }
 
 function selectItem_%(name)s(li) {
-	if( li == null ) var sValue = '';
-	if( !!li.extra ) var sValue = li.extra[0];
-	else var sValue = li.selectValue;
-	$("#id_%(name)s").val( sValue );
+    if( li == null ) var sValue = '';
+    if( !!li.extra ) var sValue = li.extra[0];
+    else var sValue = li.selectValue;
+    $("#id_%(name)s").val( sValue );
 }
 
 
@@ -94,16 +94,16 @@ $("#lookup_%(name)s").autocomplete("../search/", {
         app_label: '%(app_label)s',
         model_name: '%(model_name)s',
     },
-	delay:10,
-	minChars:2,
-	matchSubset:1,
-	autoFill:true,
-	matchContains:1,
-	cacheLength:10,
-	selectFirst:true,
-	formatItem:liFormat_%(name)s,
-	maxItemsToShow:10,
-	onItemSelect:selectItem_%(name)s
+    delay:10,
+    minChars:2,
+    matchSubset:1,
+    autoFill:true,
+    matchContains:1,
+    cacheLength:10,
+    selectFirst:true,
+    formatItem:liFormat_%(name)s,
+    maxItemsToShow:10,
+    onItemSelect:selectItem_%(name)s
 }); 
 
 // --- Autocomplete ---
@@ -111,142 +111,143 @@ $("#lookup_%(name)s").autocomplete("../search/", {
 });
 
 </script>
-		''') % {
-			'search_fields': ','.join(self.search_fields),
-			'MEDIA_URL': settings.MEDIA_URL,
-			'model_name': self.rel.to._meta.module_name,
-			'app_label': self.rel.to._meta.app_label,
-			'label': label,
-			'name': name,
-			'value': value,
-		}
+        ''') % {
+            'search_fields': ','.join(self.search_fields),
+            'MEDIA_URL': settings.MEDIA_URL,
+            'model_name': self.rel.to._meta.module_name,
+            'app_label': self.rel.to._meta.app_label,
+            'label': label,
+            'name': name,
+            'value': value,
+        }
 
 
 class ManyToManySearchInput(forms.MultipleHiddenInput):
-	"""
-	A Widget for displaying ForeignKeys in an autocomplete search input 
-	instead in a <select> box.
-	"""
+    """
+    A Widget for displaying ForeignKeys in an autocomplete search input 
+    instead in a <select> box.
+    """
 
-	class Media:
+    class Media:
 
-		css = {
-			'all': ('%s/autocomplete/jquery.autocomplete.css' % settings.MEDIA_URL,)
-		}
+        css = {
+            'all': ('%s/autocomplete/jquery.autocomplete.css' % settings.MEDIA_URL,)
+        }
 
-		js = (
-			'%s/js/jquery.js' % settings.MEDIA_URL,
-			'%s/js/jquery.autocomplete.js' % settings.MEDIA_URL,
-			'%s/autocomplete/AutocompleteObjectLookups.js' % settings.MEDIA_URL
-		)
-
-
-	def __init__(self, rel, search_fields, attrs=None):
-		self.rel = rel
-		self.search_fields = search_fields
-		super(ManyToManySearchInput, self).__init__(attrs)
-		self.help_text = u"To search, enter at least two characters"
-	
-
-	def value_from_datadict(self, data, files, name):
-		if isinstance(data, (MultiValueDict, MergeDict)):
-			res = data.getlist(name)
-
-		else:
-			res = data.get(name, None)
-
-		print name, res
-
-		for id in res:
-			print self.rel.to.objects.get(pk=id)
-
-		return res
+        js = (
+            '%s/js/jquery.js' % settings.MEDIA_URL,
+            '%s/js/jquery.autocomplete.js' % settings.MEDIA_URL,
+            '%s/autocomplete/AutocompleteObjectLookups.js' % settings.MEDIA_URL
+        )
 
 
-	def render(self, name, value, attrs=None):
+    def __init__(self, rel, search_fields, attrs=None):
+        self.rel = rel
+        self.search_fields = search_fields
+        super(ManyToManySearchInput, self).__init__(attrs)
+        self.help_text = u"To search, enter at least two characters"
+    
 
-		if attrs is None:
-			attrs = {}
+    def value_from_datadict(self, data, files, name):
+        if isinstance(data, (MultiValueDict, MergeDict)):
+            res = data.getlist(name)
 
-		if value is None:
- 			value = []
+        else:
+            res = data.get(name, None)
 
-		label = ''
-		selected = ''
-		rel_name = self.search_fields[0].split('__')[0]
+        #print name, res
 
-		for id in value:
-			obj = self.rel.to.objects.get(pk=id)
-			selected = selected + mark_safe(u"""
-				<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
-				) % {'label': getattr(obj,rel_name),
-					 'name': name,
-					 'value': obj.id,
+        for id in res:
+            continue
+            #print self.rel.to.objects.get(pk=id)
+
+        return res
+
+
+    def render(self, name, value, attrs=None):
+
+        if attrs is None:
+            attrs = {}
+
+        if value is None:
+             value = []
+
+        label = ''
+        selected = ''
+        rel_name = self.search_fields[0].split('__')[0]
+
+        for id in value:
+            obj = self.rel.to.objects.get(pk=id)
+            selected = selected + mark_safe(u"""
+                <div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
+                ) % {'label': getattr(obj,rel_name),
+                     'name': name,
+                     'value': obj.id,
                     }
 
 
-		return mark_safe(u'''
+        return mark_safe(u'''
 <input type="text" id="lookup_%(name)s" value="" size="40"/>%(label)s
 <div style="float:left; padding-left:105px; width:300px;">
 <font  style="color:#999999;font-size:10px 
 !important;">%(help_text)s</font>
 <div id="box_%(name)s" style="padding-left:20px;cursor:pointer;">
-	%(selected)s
+    %(selected)s
 </div></div>
 <script type="text/javascript">
 function addItem_id_%(name)s(id,name) {
-	// --- add new element from popup ---
+    // --- add new element from popup ---
 
-	$('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+id+'"/>'+name+'</div>')
-	.click(function () {$(this).remove();})
-	.appendTo("#box_%(name)s");
-	$("#lookup_%(name)s").val( '' );
+    $('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+id+'"/>'+name+'</div>')
+    .click(function () {$(this).remove();})
+    .appendTo("#box_%(name)s");
+    $("#lookup_%(name)s").val( '' );
 }
 
 $(document).ready(function(){
-	function liFormat_%(name)s (row, i, num) {
-		var result = row[0] ;
-		return result;
-	}
+    function liFormat_%(name)s (row, i, num) {
+        var result = row[0] ;
+        return result;
+    }
 
-	function selectItem_%(name)s(li) {
-		if( li == null ) return
+    function selectItem_%(name)s(li) {
+        if( li == null ) return
 
-		// --- new element ---
+        // --- new element ---
 
-		$('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+li.extra[0]+'"/>'+li.selectValue+'</div>')
-		.click(function () {$(this).remove();})
-		.appendTo("#box_%(name)s");
-		$("#lookup_%(name)s").val( '' );
-	}
+        $('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+li.extra[0]+'"/>'+li.selectValue+'</div>')
+        .click(function () {$(this).remove();})
+        .appendTo("#box_%(name)s");
+        $("#lookup_%(name)s").val( '' );
+    }
 
 
-	// --- Autocomplete ---
+    // --- Autocomplete ---
 
-	$("#lookup_%(name)s").autocomplete("../search/", {
-			extraParams: {
+    $("#lookup_%(name)s").autocomplete("../search/", {
+            extraParams: {
                 search_fields: '%(search_fields)s',
                 app_label: '%(app_label)s',
                 model_name: '%(model_name)s',
             },
-		delay:10,
-		minChars:2,
-		matchSubset:1,
-		autoFill:false,
-		matchContains:1,
-		cacheLength:10,
-		selectFirst:true,
-		formatItem:liFormat_%(name)s,
-		maxItemsToShow:10,
-		onItemSelect:selectItem_%(name)s
-	}); 
+        delay:10,
+        minChars:2,
+        matchSubset:1,
+        autoFill:false,
+        matchContains:1,
+        cacheLength:10,
+        selectFirst:true,
+        formatItem:liFormat_%(name)s,
+        maxItemsToShow:10,
+        onItemSelect:selectItem_%(name)s
+    }); 
 
    $(".to_delete").click(function () {$(this).remove();});
 
 });
 
 </script>
-		''') % {'search_fields': ','.join(self.search_fields),
+        ''') % {'search_fields': ','.join(self.search_fields),
                 'model_name': self.rel.to._meta.module_name,
                 'app_label': self.rel.to._meta.app_label,
                 'label': label,

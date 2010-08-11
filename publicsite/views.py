@@ -6,18 +6,24 @@ except ImportError:
     import simplejson
 import time
 import datetime
+import random
 
 from django import forms
-from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models import Q
+from django.db.models.query import QuerySet
+from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponseServerError, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
+from django.views.decorators.cache import cache_page
+
 
 from partytime.publicsite.models import *
 from layar import LayarView, POI
@@ -242,8 +248,6 @@ def jsonCID(request, CID):
 
 
 def widget_state(request, state):
-    from django.db.models import Q
-
     q = Q()
     cids = Lawmaker.objects.filter(crp_id__isnull=False, state=state) \
                            .values('crp_id') \
@@ -362,20 +366,20 @@ def cmtedetail(request, cmteid):
 
     return render_to_response(
             'publicsite/cmtedetail.html', 
-            {'cmte': res['cmte'], 
+            {'cmte': res['cmte'],
              'page': page,
-             'members': res['members'], 
-             'since_year': res['since_year'], 
+             'members': res['members'],
+             'since_year': res['since_year'],
              'snapshot_image_name': '',
              }
             )
 
 
-def leadership(request):
-    events = Event.objects.filter(Q(beneficiaries__committeemembership__position='Chair') |
-                                  Q(beneficiaries__committeemembership__position='Vice Chair') |
-                                  Q(beneficiaries__committeemembership__position='Ranking Member')) \
-                           .order_by('-start_date', 'start_time')
+@cache_page(60*30)
+def committee_leadership(request):
+    leadership_ids = CommitteeMembership.objects.values_list('member', flat=True).exclude(position='Member')
+    events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
+                        ).distinct().order_by('-start_date', 'start_time')
 
     paginator = Paginator(events, 50, orphans=5)
     pagenum = request.GET.get('page', 1)
@@ -388,6 +392,31 @@ def leadership(request):
     return render_to_response(
             'publicsite/leadership.html',
             {'page': page,
+             'title': 'Events held for or attended by committee leaders',
+             'pagetype': 'committee',
+            },
+        )
+
+
+@cache_page(60*30)
+def congressional_leadership(request):
+    leadership_ids = LeadershipPosition.objects.values_list('lawmaker', flat=True)
+    events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
+                        ).distinct().order_by('-start_date', 'start_time')
+
+    paginator = Paginator(events, 50, orphans=5)
+    pagenum = request.GET.get('page', 1)
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite/leadership.html',
+            {'page': page,
+             'title': 'Events held for or attended by congressional leaders',
+             'pagetype': 'congressional',
             },
         )
 
@@ -570,42 +599,77 @@ class PartyTimeLayar(LayarView):
 partytime_layar = PartyTimeLayar()
 
 
+def email_subscribe(request):
+    """
+    Confirmation URLs should look like:
+    http://politicalpartytime.org/emailalerts?email=abycoffe@sunlightfoundation.com&confirmation=29083429309234&list=5
+
+    The list number corresponds to the ID of the relevant MailingList object.
+    """
+    error_response = render_to_response('publicsite/message.html',
+            {'message': 'There was an error. Please try your submission again.', })
+
+    if request.method == 'POST': # User is subscribing to an e-mail list
+        email = request.POST.get('email', None)
+        list_id = request.POST.get('list', None)
+        if not email or not list_id:
+            #return HttpResponse('no email or list_id')
+            return error_response
+
+        email, created = Email.objects.get_or_create(email=email)
+
+        if list_id == 'state':
+            state = request.POST.get('state', None)
+            if not state:
+                return error_response
+            mailing_list = get_object_or_404(MailingList, name=state)
+        else:
+            try:
+                mailing_list = get_object_or_404(MailingList, id=list_id)
+            except MailingList.DoesNotExist:
+                return error_response
 
 
+        confirmation = hash(str(email.pk + mailing_list.pk + random.randint(1, 999999999)))
+        if confirmation < 0:
+            confirmation = confirmation * -1
 
-def stateemail(request):
-    import random
-    from django.core.mail import send_mail, EmailMultiAlternatives
-    states = Lawmaker.objects.filter(state__isnull=False).exclude(state='').values('state').distinct()
-    statelist = []
-    for tstate in states:
-        statelist.append(tstate['state'])
-    if request.GET:
-        if 'email' in request.GET and 'state' in request.GET:
-            if 'confirm' in request.GET:
-                try:
-                    c = StateMailingList.objects.get(email=request.GET['email'],state=request.GET['state'], confirmation=int(request.GET['confirm']))                  
-                    c.confirmed=True
-                    c.save()
-                    return HttpResponseRedirect('/')
-                except:
-                    return HttpResponse('Incorrect confirmation.')
-            elif 'remove' in request.GET:
-                try:
-                    c = StateMailingList.objects.get(email=request.GET['email'],state=request.GET['state'],confirmation=request.GET['remove'])
-                    c.confirmed=False
-                    c.save()
-                    return HttpResponseRedirect('/')
-                except:
-                    return HttpResponse('Incorrect confirmation.')
-            else:
-                if request.GET['state'] not in statelist:
-                    return HttpResponseRedirect('/')
-                confirm =  random.randint(1, 99999999)          
-                c = StateMailingList(email=request.GET['email'],state=request.GET['state'],confirmation=confirm) 
-                c.save()
-                body = '<html><a href="http://politicalpartytime.org/emailalerts/?email='+request.GET['email']+'&state='+request.GET['state']+'&confirm='+str(confirm)+'">Click here to receive an email from the Sunlight Foundation\'s PoliticalPartyTime.org each time we receive word that a Congressional candidate from '+request.GET['state']+' is the beneficiary of a fundraising event.</a> These are often hosted by lobbyists or business or labor groups seeking to influence a lawmaker, and they can also serve as early indicators of whether candidates have funds to mount viable campaigns--before quarterly reports are released by the FEC. (You can remove yourself from this list at any time.)</html>' 
-                email = EmailMultiAlternatives('Confirm email alert signup for '+request.GET['state']+' delegation fundraisers', body, 'bounce@politicalpartytime.org', [request.GET['email']])
-                email.attach_alternative(body, "text/html")
-                email.send()
-    return HttpResponseRedirect('/')
+        try:
+            membership = MailingListMembership.objects.create(mailing_list=mailing_list,
+                                                              email=email,
+                                                              confirmation=confirmation,
+                                                              confirmed=False)
+        except IntegrityError:
+            return render_to_response('publicsite/message.html',
+                    {'message': 'You are already subscribed to that mailing list. Please check your e-mail for instructions on confirming your subscription.', })
+
+        membership.send_confirmation()
+        return render_to_response('publicsite/message.html',
+                {'message': 'Thank you for subscribing. Please check your e-mail for instructions on confirming your subscription.', })
+
+    else:
+        email = request.GET.get('email', None)
+        list_id = request.GET.get('list', None)
+        confirmation = request.GET.get('confirmation', None)
+        if not email or not list_id or not confirmation:
+            raise Http404
+
+        mailing_list = get_object_or_404(MailingList, id=list_id)
+
+
+        membership = get_object_or_404(MailingListMembership,
+                                       mailing_list=mailing_list,
+                                       #email=email,
+                                       confirmation=confirmation)
+
+        if 'remove' in request.GET:
+            membership.delete()
+            return render_to_response('publicsite/message.html',
+                    {'message': 'You have been unsubscribed.', })
+
+        membership.confirmed = True
+        membership.save()
+
+        return render_to_response('publicsite/message.html',
+                {'message': 'Your subscription has been confirmed.', })
+

@@ -1,0 +1,225 @@
+{% extends "publicsite/base.html" %}
+
+{% load partytime %}
+
+{% block content %}
+
+<h3>BYOP: Build Your Own Party (Data Pack)</h3>
+
+<p>Here's where to get the real goods--all the underlying, raw data that the Sunlight Foundation has created based on fundraising invitations collected for the Party Time project. As we enter information on new invitations, the database is updated automatically.<p>
+The database contains records of invitations for fundraisers and other events feting lawmakers and congressional candidates collected by the project from anonymous lobbyist sources and are displayed on our <a href="http://www.politicalpartytime.org">public website</a>. 
+</p>
+<p>
+Invitations gathered date back to 2006; however, most are from the 2008 calendar year when we began collecting invitations in earnest and launched this project (July 2008). The data are input by Sunlight interns and staffers. While we check for duplicate entries for particular events and errors, it is always worth checking the original source, the invitations for display on our website, for accuracy. 
+</p>
+<p>
+Because these events are not required to be reported in any official manner, we only know about the events we've received information about. We encourage the public to send us more information about events. 
+</p>
+<p>
+These documents are posted as a public service in the interest of creating more transparency about the relationships between lobbyists and lawmakers. Sunlight is not responsible for the content of the invitations themselves (including erroneous information) or for verifying whether the events advertised in the invitations actually occurred.
+</p>
+<p>There are several ways to get your Party Time data fix.</p>
+
+<h4>API</h4>
+
+<p>Returns Party Time data in JSON format. You can find the JSON feed here: <a href="http://politicalpartytime.org/json/N00009668/">http://politicalpartytime.org/json/N00009668/</a> The last number represents a candidateID. You can determine a candidate ID by going to his or her profile page on Political Party Time. (IDs originate from the Center for Responsive Politics -- the nation's authority on campaign finance data.)</p>
+
+<h4>RSS</h4>
+<p>You can find the RSS feed for Party Time here: <a href="http://politicalpartytime.org/feeds/pol/N00009668/">http://politicalpartytime.org/feeds/pol/N00009668/</a></p>
+
+<h4>CSV</h4>
+<p> All of the Party Time data is available as a single CSV dump <a href="/www/partytime_dump_all.csv">here.</a></p>
+
+<h4>relational ZIP</h4>
+
+<p>And as a relational "zip" file <a href="/www/partytime_dump.zip">here.</a>
+</p>
+
+<h4>Party on, data geeks!</h4>
+
+<table>
+<tr><td >Field Name</td>
+  <td>Explanation</td></tr>
+<tr><td >ID</td>
+  <td>unique ID (primary key)</td></tr>
+<tr><td >Beneficiary</td>
+  <td>candidate name, party, district, office, 
+  or committee name</td></tr>
+
+<tr><td >Host</td>
+  <td>full names of hosts</td></tr>
+<tr><td >Other Members 
+  Of Congress</td>
+  <td>name of lawmakers featured on invitation 
+  who are not beneficiaries of event</td></tr>
+<tr><td >Start Time</td>
+  <td>start time</td></tr>
+<tr><td >End Time</td>
+
+  <td>end time</td></tr>
+<tr><td >Start Date</td>
+  <td>start date</td></tr>
+<tr><td >End Date</td>
+  <td>end date</td></tr>
+<tr><td >Venue Name</td>
+  <td>Name of the venue where the event 
+  is being held</td></tr>
+
+<tr><td >Entertainment 
+  Type</td>
+  <td>type of entertainment listed, i.e. beer 
+  tasting, pheasant hunt, reception</td></tr>
+<tr><td >Venue Address1</td>
+  <td>Venue street address</td></tr>
+<tr><td >Venue Address2</td>
+  <td>Apt/suite/room number for the event</td></tr>
+<tr><td >Venue City</td>
+
+  <td>venue city</td></tr>
+<tr><td >Venue State</td>
+  <td>venue state</td></tr>
+<tr><td >Venue Zipcode</td>
+  <td>venue zip code</td></tr>
+<tr><td >Venue Website</td>
+  <td>venue website</td></tr>
+
+<tr><td >Contributions 
+  Info</td>
+  <td>information on invitation for suggested 
+  contributions for event</td></tr>
+<tr><td >Latlong</td>
+  <td>latitude/longitude of venue location</td></tr>
+<tr><td >Rsvp Info</td>
+  <td>RSVP information</td></tr>
+<tr><td >Distribution 
+  Paid For By</td>
+
+  <td>who is paying for distribution of invitation</td></tr>
+<tr><td >Make Checks 
+  Payable To</td>
+  <td>information on to whom invitee should 
+  send invitations</td></tr>
+<tr><td >Checks 
+  Payable To Address</td>
+  <td>address where payments should be sent</td></tr>
+<tr><td >Committee 
+  Id</td>
+  <td>committee ID for beneficiary, if listed 
+  on invitation</td></tr>
+
+</table>
+
+
+<h4>State-based e-mail alerts</h4>
+
+You can monitor your state's congressional delegation's fundraising activity by signing up to receive an e-mail each time we add an event for one of its members. You can unsubscribe at any time.
+<fieldset>
+<form method="post" action="/emailalerts/">{% csrf_token %}
+Your e-mail: <input name="email"/>
+<input type="hidden" name="list" value="state" />
+<br/>Delegation to watch: <select name="state"> 
+<option value="AL">Alabama</option> 
+<option value="AK">Alaska</option> 
+<option value="AZ">Arizona</option> 
+<option value="AR">Arkansas</option> 
+<option value="CA">California</option> 
+<option value="CO">Colorado</option> 
+<option value="CT">Connecticut</option> 
+<option value="DE">Delaware</option> 
+<option value="DC">District Of Columbia</option> 
+<option value="FL">Florida</option> 
+<option value="GA">Georgia</option> 
+<option value="HI">Hawaii</option> 
+<option value="ID">Idaho</option> 
+<option value="IL">Illinois</option> 
+<option value="IN">Indiana</option> 
+<option value="IA">Iowa</option> 
+<option value="KS">Kansas</option> 
+<option value="KY">Kentucky</option> 
+<option value="LA">Louisiana</option> 
+<option value="ME">Maine</option> 
+<option value="MD">Maryland</option> 
+<option value="MA">Massachusetts</option> 
+<option value="MI">Michigan</option> 
+<option value="MN">Minnesota</option> 
+<option value="MS">Mississippi</option> 
+<option value="MO">Missouri</option> 
+<option value="MT">Montana</option> 
+<option value="NE">Nebraska</option> 
+<option value="NV">Nevada</option> 
+<option value="NH">New Hampshire</option> 
+<option value="NJ">New Jersey</option> 
+<option value="NM">New Mexico</option> 
+<option value="NY">New York</option> 
+<option value="NC">North Carolina</option> 
+<option value="ND">North Dakota</option> 
+<option value="OH">Ohio</option> 
+<option value="OK">Oklahoma</option> 
+<option value="OR">Oregon</option> 
+<option value="PA">Pennsylvania</option> 
+<option value="RI">Rhode Island</option> 
+<option value="SC">South Carolina</option> 
+<option value="SD">South Dakota</option> 
+<option value="TN">Tennessee</option> 
+<option value="TX">Texas</option> 
+<option value="UT">Utah</option> 
+<option value="VT">Vermont</option> 
+<option value="VA">Virginia</option> 
+<option value="WA">Washington</option> 
+<option value="WV">West Virginia</option> 
+<option value="WI">Wisconsin</option> 
+<option value="WY">Wyoming</option>
+</select>
+<br/><input type="submit" value="Sign up"/></form></fieldset>
+
+<br /><br />
+
+{% get_leadership_mailing_lists %}
+
+<h4>Congressional leadership e-mails</h4>
+Get a weekly e-mail listing events planned for members who hold congressional leadership positions, as well as events they're scheduled to attend. The following positions are included:
+<ul>
+{% for position in congressional_leader_positions %}
+    <li>{{ position }}</li>
+{% endfor %}
+</ul>
+<form method="post" action="/emailalerts/">{% csrf_token %}
+<fieldset>
+<input type="hidden" name="list" value="{{ congressional_leader_email_id }}" />
+Your e-mail: <input name="email"/>
+<br/><input type="submit" value="Sign up" />
+</fieldset>
+</form>
+
+<br /><br />
+
+<h4>Committee leadership e-mails</h4>
+Get a weekly e-mail listing events planned for committee chairs and ranking members, as well as events they're scheduled to attend.
+<form method="post" action="/emailalerts/">{% csrf_token %}
+<fieldset>
+Your e-mail: <input name="email"/>
+<br />
+Committee: <select name="list">
+{% for mailing_list in committee_leader_mailing_lists %}
+<option value="{{ mailing_list.id }}">{{ mailing_list.committee }}</option>
+{% endfor %}
+</select>
+<br/><input type="submit" value="Sign up" />
+</form>
+</fieldset>
+
+<br /><br />
+
+<h4>New post e-mails</h4>
+Get an e-mail each time a new post is published to the Party Time blog.
+<form method="post" action="/emailalerts/">{% csrf_token %}
+<fieldset>
+<input type="hidden" name="list" value="{{ new_post_email_id }}" />
+Your e-mail: <input name="email"/>
+<br/><input type="submit" value="Sign up" />
+</fieldset>
+</form>
+
+<br /><br />
+
+{% endblock %}

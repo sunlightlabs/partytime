@@ -1,0 +1,10 @@
+<p>These are the {{ subject|lower }} events added to <a href="http://politicalpartytime.org">PoliticalPartyTime.org</a> in the past week.</p>
+{% for obj in events %}
+{% include "emails/party_description.html" %}
+<br /><br />
+<hr />
+{% endfor %}
+
+<p>
+To unsubscribe from these alerts, <a href="{{ cancellation_url }}">click here</a>
+</p>

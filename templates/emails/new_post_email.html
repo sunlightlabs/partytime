@@ -1,0 +1,8 @@
+<h2><a href="{{ post.guid }}">{{ post.title }}</a></h2>
+<p>&bull; POSTED - {{ post.post_date.month }}.{{post.post_date.day}}.{{post.post_date.year}} by {{post.author.user_name}}</p>
+<p>{{ firstgraf|safe|linebreaks }}</p>
+<p><a href="{{ post.guid }}">Click here to read the rest of the post</a></p>
+
+<p style="margin-top: 50px;">
+To unsubscribe from these alerts, <a href="http://politicalpartytime.org/emailalerts/?email={{ email }}&remove={{ confirmation }}">click here</a>
+</p>

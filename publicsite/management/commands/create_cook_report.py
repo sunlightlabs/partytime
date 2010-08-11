@@ -19,7 +19,32 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
 
-        fields = ['Cook Report Rating', 'key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State', 'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 'RSVP_Info', 'Distribution_Paid_for_By', 'Canceled', 'Postponed', ]
+        fields = ['Cook Report Rating',
+                  'Invitation_URL',
+                  'Beneficiary',
+                  'Host',
+                  'Other Members',
+                  'Start_Date',
+                  'Start_Time',
+                  'End_Date',
+                  'End_Time',
+                  'Entertainment',
+                  'Venue_Name',
+                  'Venue_Address1',
+                  'Venue_Address2',
+                  'Venue_City',
+                  'Venue_State',
+                  'Venue_Zipcode',
+                  'Venue_Website',
+                  'LatLong',
+                  'Contributions_Info',
+                  'Make_Checks_Payable_To',
+                  'Checks_Payable_To_Address',
+                  'Committee_Id',
+                  'RSVP_Info',
+                  'Distribution_Paid_for_By',
+                  'Canceled',
+                  'Postponed', ]
         csv.writer(sys.stdout).writerow(fields)
 
         events = Event.objects.filter(start_date__gte=datetime.date(2010, 07, 01)).order_by('start_date')
@@ -79,7 +104,7 @@ class Command(NoArgsCommand):
                     cook_rating = ''
 
             row = [cook_rating,
-                    event.pk,
+                    'http://politicalpartytime.org%s' % event.get_absolute_url(),
                     beneficiary.__unicode__(),
                     ' || '.join([x.__unicode__() for x in event.hosts.all()]),
                     ' || '.join([x.__unicode__() for x in event.other_members.all()]),
@@ -93,10 +118,10 @@ class Command(NoArgsCommand):
                     event.venue.address2 if event.venue else '',
                     event.venue.city if event.venue else '',
                     event.venue.state if event.venue else '',
+                    event.venue.zipcode if event.venue else '',
                     event.venue.website if event.venue else '',
                     '%s;%s' % (event.venue.latitude,
                                event.venue.longitude) if event.venue else '',
-
                     event.contributions_info,
                     event.make_checks_payable_to,
                     event.checks_payable_to_address,

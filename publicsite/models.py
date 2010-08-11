@@ -234,11 +234,40 @@ class Lawmaker(models.Model):
         except CommitteeMembership.DoesNotExist:
             return None
 
-    def leadership_positions(self):
+    def committee_leadership_positions(self):
         return self.committeemembership_set.filter(Q(position='Chair') |
                                                    Q(position='Vice Chair') |
                                                    Q(position='Ranking Member'))
 
+    def congressional_leadership_positions(self):
+        return self.leadershipposition_set.all()
+
+
+    def all_leadership_positions(self):
+        positions = []
+        for position in self.committee_leadership_positions():
+            positions.append('%s, %s' % (position.position, position.committee.title))
+
+        for position in self.congressional_leadership_positions():
+            positions.append(position.position)
+
+        return positions
+
+
+class LeadershipPosition(models.Model):
+    congress = models.CharField(u'Number of this congress (e.g. 111th',
+                                max_length=8)
+    lawmaker = models.ForeignKey(Lawmaker)
+    position = models.CharField(u'The leadership position',
+                                max_length=100)
+    body = models.CharField(u'House or Senate',
+                            max_length=1,
+                            choices=(('H', 'House'),
+                                     ('S', 'Senate'), )
+                            )
+
+    def __unicode__(self):
+        return self.position
 
 
 class Committee(models.Model):
@@ -531,147 +560,48 @@ class Event(models.Model):
         return ','.join(sorted(tags))
 
 
-    def sendemailalert(self):
-        from django.template.loader import get_template
-        from django.template import Context
-        from django.core.mail import send_mail, EmailMultiAlternatives
-
-        if not self.status:
-            states = []
-            bens = ''
-            hosts = ''
-
-            for h in self.hosts.all():
-                if not hosts:
-                    hosts = h.name
-                else:
-                    hosts = hosts + ', ' + h.name
-
-            for b in self.beneficiaries.all():
-                bens = bens + b.name + ", "
-                if b.state and b.state not in states:
-                    states.append(b.state)
-                elif b.crp_id and b.affiliate:
-                    l = Lawmaker.objects.filter(crp_id=b.crp_id, affiliate__isnull=True)
-                    for ll in l:
-                        if ll.state and ll.state not in states:
-                            states.append(ll.state)
-
-            for state in states:
-                emaillist = StateMailingList.objects.filter(state=state, confirmed=True)
-
-                for l in emaillist:
-                    subject = "PoliticalPartyTime: " + bens[:-2] + " fundraiser " + self.start_date.strftime("%Y-%m-%d")
-
-                    if not hosts:
-                        subject = subject + " for " + hosts
-
-                    t = get_template('feeds/party_description.html')
-                    html = t.render(Context({'obj': self}))
-                    body = '<p><a href="http://politicalpartytime.org/party/' + str(self.pk) + '">Click here to view invitation on the Sunlight Foundation\'s PoliticalPartytime.org.</a></p>'+ html + '<p>To unsubscribe from these alerts, <a href="http://politicalpartytime.org/emailalerts/?email='+l.email+'&state='+l.state+'&remove='+str(l.confirmation)+'">click here</a>.</p>'
-                    email = EmailMultiAlternatives(subject, body, 'bounce@politicalpartytime.org', [l.email])
-                    email.attach_alternative(body, "text/html")
-                    email.send()
-
-
     def send_state_email(self):
+        if self.status:
+            return
+
         for beneficiary in self.beneficiaries.exclude(Q(state__isnull=True) | Q(state='')):
             subject = 'PoliticalPartyTime: Fundraiser for %s on %s' % (unicode(beneficiary),
                                                                        self.start_date.strftime('%B %d, %Y'))
-            template = get_template('feeds/party_description.html')
+            template = 'emails/state_email.html'
             state = beneficiary.state
-            mailing_list = MailingList.objects.get(name=state)
+            try:
+                mailing_list = MailingList.objects.get(name=state)
+            except MailingList.DoesNotExist: # Should never happen, but just in case.
+                continue
 
             for subscriber in mailing_list.email_set.filter(mailinglistmembership__confirmed=True):
                 membership = subscriber.mailinglistmembership_set.get(mailing_list=mailing_list)
                 context = {'obj': self,
                            'email': subscriber.email,
                            'confirmation': membership.confirmation,
+                           'list_id': mailing_list.id,
+                           'cancellation_url': membership.cancellation_url(),
                            'subject': subject, }
-                self._send_email(template, context)
+                send_email(template, context)
 
 
-    def send_all_committee_leadership_email(self):
-        """To be sent weekly.
-        """
-        events = Event.objects.filter(
-                (Q(beneficiaries__committeemembership__position__icontains='chair') |
-                 Q(beneficiaries__committeemembership__position='Ranking Member')) &
-                Q(added__gte=datetime.date.today() - datetime.timedelta(7))
-            ).order_by('start_date').distinct()
+def send_email(template, context):
+    template = get_template(template)
+    body = template.render(Context(context))
+    email = EmailMultiAlternatives(context['subject'],
+                                   body,
+                                   'Party Time <bounce@politicalpartytime.org>',
+                                   [context['email'], ])
+    email.attach_alternative(body, 'text/html')
+    email.send()
 
-        mailing_list = MailingList.objects.get(name='All committee leadership')
-        template = 'feeds/all_leadership_email.html'
-
-        for subscriber in mailing_list.email_set.filter(mailinglistmembership__confirmed=True):
-            membership = subscriber.mailinglistmembership_set.get(mailing_list=mailing_list)
-            context = {'events': events,
-                       'email': subscriber.email,
-                       'confirmation': membership.confirmation,
-                       'subject': 'PoliticalPartyTime: Committee leadership fundraisers', }
-            self._send_email(template, context)
-
-
-    def send_committee_leadership_emails(self):
-        """To be sent weekly. Users will subscribe to receive
-        information on the leadership of one or more committees.
-        We will aggregate those subscriptions by user so that
-        each user receives only a single e-mail for specific
-        committee leadership.
-        """
-        template = 'feeds/leadership_email.html'
-        mailing_lists = MailingList.objects.filter(name__startswith=('Committee leadership'))
-        recipients = defaultdict(list) # Recipient e-mail is the key, list of parties is the value
-        subscribers = Email.objects.filter(mailing_lists=mailing_lists).distinct()
-
-        for subscriber in subscribers:
-            memberships = subscriber.mailinglistmembership_set.filter(confirmed=True,
-                                                                      mailing_list__in=mailing_lists)
-            events_for_subscriber = []
-
-            for membership in memberships:
-                mailing_list = membership.mailing_list
-                committee = Committee.objects.get(title=mailing_list.name.replace('Committee leadership - ', ''))
-                leadership_ids = committee.leadership_members().values_list('member', flat=True)
-                events = Event.objects.filter(beneficiaries__in=leadership_ids,
-                                              added__gte=datetime.date.today() - datetime.timedelta(7)
-                                          ).order_by('start_date')
-                events_for_subscriber += events
-
-            events = sorted(set(events), cmp=lambda x, y: cmp(x.start_date, y.start_date))
-
-            # How to handle sending a confirmation code since
-            # this e-mail includes events signed up for with
-            # multiple codes?
-            # One possibility would be to include a single valid
-            # confirmation code, and warn users that clicking the
-            # unsubscribe link will unsubscribe them from all the
-            # the specific committee leadership e-mails.
-            context = {'events': events,
-                       'email': recipient.email,
-                       'confirmation': memberships[0].confirmation,
-                       'subject': 'PoliticalPartyTime: Committee leadership fundraisers', }
-            self._send_email(template, context)
-
-
-    def _send_email(self, template, context):
-        template = get_template(template)
-        body = template.render(Context(context))
-        email = EmailMultiAlternatives(context['subject'],
-                                       body,
-                                       'bounce@politicalpartytime.org',
-                                       [context['email'], ])
-        email.attach_alternative(body, 'text/html')
-        email.send()
-
-
-from django.dispatch import dispatcher
-from django.db.models import signals
 
 def change_watcher(sender, **kwargs):
     kwargs['instance'].send_state_email()
 
-#signals.post_save.connect(change_watcher, sender=Event)
+
+from django.db.models import signals
+signals.post_save.connect(change_watcher, sender=Event, dispatch_uid='partytime.publicsite')
 
 
 class StateMailingList(models.Model):
@@ -704,7 +634,7 @@ class Email(models.Model):
 class MailingListMembership(models.Model):
     mailing_list = models.ForeignKey(MailingList)
     email = models.ForeignKey(Email)
-    confirmation = models.IntegerField(max_length=36)
+    confirmation = models.BigIntegerField()
     confirmed = models.BooleanField()
 
     class Meta:
@@ -713,6 +643,24 @@ class MailingListMembership(models.Model):
     def __unicode__(self):
         return '%s: %s' % (self.mailing_list, self.email)
 
+    def confirmation_url(self):
+        return 'http://politicalpartytime.org/emailalerts/?email=%s&confirmation=%s&list=%s' % (
+                    self.email.email,
+                    self.confirmation,
+                    self.mailing_list.id)
+
+    def cancellation_url(self):
+        return '%s&remove=true' % self.confirmation_url()
+
+    def send_confirmation(self):
+        template = get_template('emails/confirmation.html')
+        body = template.render(Context({'membership': self, 'email': self.mailing_list, }))
+        email = EmailMultiAlternatives('Confirm your PoliticalPartyTime.org e-mail subscription',
+                                       body,
+                                       'Party Time <bounce@politicalpartytime.org>',
+                                       [self.email.email, ])
+        email.attach_alternative(body, 'text/html')
+        email.send()
 
 
 class CookRating(models.Model):
