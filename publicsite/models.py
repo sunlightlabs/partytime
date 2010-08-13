@@ -564,6 +564,9 @@ class Event(models.Model):
         if self.status:
             return
 
+        if self.start_date and self.start_date < datetime.date.today():
+            return
+
         for beneficiary in self.beneficiaries.exclude(Q(state__isnull=True) | Q(state='')):
             subject = 'PoliticalPartyTime: Fundraiser for %s on %s' % (unicode(beneficiary),
                                                                        self.start_date.strftime('%B %d, %Y'))
