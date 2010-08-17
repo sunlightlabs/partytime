@@ -146,7 +146,7 @@ def dump_all():
               'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State',
               'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	
               'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 
-              'RSVP_Info', 'Distribution_Paid_for_By', 'CRP_ID', 'Canceled', 'Postponed', 'CRP_ID', ]
+              'RSVP_Info', 'Distribution_Paid_for_By', 'Canceled', 'Postponed', 'CRP_ID', ]
     rows = [fields, ]
 
     events = Event.objects.filter(Q(status='') | Q(status=None)).select_related()
@@ -177,6 +177,7 @@ def dump_all():
 
         row += [event.contributions_info,
                 event.make_checks_payable_to,
+                event.checks_payable_to_address,
                 event.committee_id,
                 event.rsvp_info,
                 event.distribution_paid_for_by,
