@@ -16,7 +16,15 @@
 			<div id="summary_date">
 				<img src="http://media.sunlightprojects.org/partytime/images/date.png">
 				<span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
-				{% if doc.start_time or doc.end_time %}<span class="summary_time">({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</span>{% endif %}
+                {% if doc.start_time and not doc.end_date %}
+				<span class="summary_time">({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</span>
+                {% endif %}
+                {% if doc.end_date %}
+                {% if doc.start_time %}<span class="summary_time">({{ doc.start_time|time:"f a" }})</span>{% endif %}
+                    - <span class="summary_date">{{ doc.end_date|date:"N jS, Y" }}</span>
+                    {% if doc.end_time %}<span class="summary_time">({{ doc.end_time|time:"f a" }})</span>{% endif %}
+                {% endif %}
+
 			</div>
 			<div id="summary_invite">
 				<a href="#invite">
@@ -65,7 +73,21 @@
 				{% endif %}
 				{% endwith %}
 				
-				{% if doc.start_time or doc.end_time %}<li><span class="detail_head">When:</span> {{ doc.start_date }} ({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</a></li>{% endif %}
+                {% if doc.start_time or doc.end_time %}<li><span class="detail_head">When:</span> 
+                {% comment %}
+                {{ doc.start_date }} ({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})</a></li>
+                {% endcomment %}
+            {% endif %}
+                {{ doc.start_date|date:"N jS, Y" }}
+                {% if doc.start_time and not doc.end_date %}
+                ({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})
+                {% endif %}
+                {% if doc.end_date %}
+                    {% if doc.start_time %}({{ doc.start_time|time:"f a" }}){% endif %}
+                    - {{ doc.end_date|date:"N jS, Y" }}</span>
+                    {% if doc.end_time %}({{ doc.end_time|time:"f a" }}){% endif %}
+                {% endif %}
+
             {% if doc.venue.venue_name %}<li><span class="detail_head">Where:</span> <a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a> {% if doc.venue.venue_address %} - {{ doc.venue.venue_address }}{% endif %}</li>{% endif %}
             {% if doc.entertainment %}<li><span class="detail_head">Type of Event:</span> <a href="{% url partytime_search 'Entertainment_Type' doc.entertainment|urlencode %}">{{ doc.entertainment }}</a></li>{% endif %}
 				{% with doc.other_members.all as other_members %}
