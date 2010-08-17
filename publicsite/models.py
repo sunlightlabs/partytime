@@ -475,7 +475,7 @@ class Event(models.Model):
         event_url = 'http://%s%s' % (Site.objects.get_current().domain,
                                      self.get_absolute_url())
 
-	if self.start_date:
+        if self.start_date:
             description = ("This is an invitation for a political fundraiser on %s. "
                            "Get details at Sunlight Foundation's "
                            "<a href=\"%s\">Party Time</a>"
@@ -489,7 +489,6 @@ class Event(models.Model):
         params = {'title': self.event_title(),
                   'publisher': "Sunlight Foundation's Party Time",
                   'description': description,
-                  # The link_back_url will work only for Scribd Qualified Publishers.
                   'link_back_url': event_url,
                   'tags': self.make_scribd_tags(),
                   'category': 'Government Docs',
@@ -497,6 +496,12 @@ class Event(models.Model):
                   }
 
         scribd.update([doc,], **params)
+
+        collections = scribd.api_user.get_collections()
+        collection = [x for x in collections if x.collection_name == 'Party Time']
+        if collection:
+            collection = collection[0]
+            doc.add_to_collection(collection)
 
         self.scribd_id = doc.id
         self.scribd_url = doc.get_scribd_url()
