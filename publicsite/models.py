@@ -501,7 +501,10 @@ class Event(models.Model):
         collection = [x for x in collections if x.collection_name == 'Party Time']
         if collection:
             collection = collection[0]
-            doc.add_to_collection(collection)
+            try:
+                doc.add_to_collection(collection)
+            except:
+                pass
 
         self.scribd_id = doc.id
         self.scribd_url = doc.get_scribd_url()
