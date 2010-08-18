@@ -253,6 +253,14 @@ class Lawmaker(models.Model):
 
         return positions
 
+    def affiliate_leadership_positions(self):
+        positions = []
+        lawmaker = Lawmaker.objects.filter((Q(affiliate='') | Q(affiliate=None)), crp_id=self.crp_id)
+        if not lawmaker:
+            return positions
+        lawmaker = lawmaker[0]
+        return lawmaker.all_leadership_positions()
+
 
 class LeadershipPosition(models.Model):
     congress = models.CharField(u'Number of this congress (e.g. 111th',

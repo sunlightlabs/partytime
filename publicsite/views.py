@@ -377,7 +377,11 @@ def cmtedetail(request, cmteid):
 
 @cache_page(60*30)
 def committee_leadership(request):
-    leadership_ids = CommitteeMembership.objects.values_list('member', flat=True).exclude(position='Member')
+    """Turning the querysets into lists to avoid subqueries.
+    """
+    crp_ids = list(CommitteeMembership.objects.values_list('member__crp_id', flat=True).exclude(position='Member'))
+    leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
+
     events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
                         ).distinct().order_by('-start_date', 'start_time')
 
@@ -400,7 +404,12 @@ def committee_leadership(request):
 
 @cache_page(60*30)
 def congressional_leadership(request):
-    leadership_ids = LeadershipPosition.objects.values_list('lawmaker', flat=True)
+    """Turning the querysets into lists to avoid subqueries.
+    """
+    crp_ids = list(LeadershipPosition.objects.values_list('lawmaker__crp_id', flat=True))
+    leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
+
+
     events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
                         ).distinct().order_by('-start_date', 'start_time')
 
