@@ -496,7 +496,7 @@ def admin_uploadzip(request):
                 destination = open(syspath + dirpath + localfilename, 'wb')
                 destination.write(zfile.read(zfname))
                 destination.close()
-                newe.pdf_document_link = '/' + dirpath + localfilename
+                newe.pdf_document_link = '/' + dirpath + watermarked_pdf_filename
                 newe.save()
 
                 filepath = syspath + dirpath + localfilename
