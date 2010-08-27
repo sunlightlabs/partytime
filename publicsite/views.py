@@ -457,6 +457,10 @@ def admin_uploadzip(request):
     import os, zipfile, cStringIO
     from django.contrib.auth.decorators import login_required
     import datetime
+    import shutil
+    from watermark import WatermarkAdder
+
+    watermarker = WatermarkAdder('/var/www/files.politicalpartytime.org/pdfs/partytimesource.pdf')
 
     login_required(admin_uploadzip)
 
@@ -471,29 +475,38 @@ def admin_uploadzip(request):
             return zipfile.ZipFile(coredata) 
 
     if request.FILES:
-            f = request.FILES['file']
-            zfile = getzip(f)
-            for zfname in zfile.namelist():
-                if zfname[-4:]=='.pdf':
-                    newe = Event(status='temp', scribd_id=0)
-                    newe.save()
-                    pk = newe.pk
-                    localfilename = 'flyer_'+str(pk)+'.pdf'
-                    syspath = '/var/www/files.politicalpartytime.org/pdfs/'
-                    m = datetime.date.today().month
-                    if m<10:
-                        strm = '0'+str(m)
-                    else:
-                        strm = str(m)
-                    dirpath = str(datetime.date.today().year)+'/'+strm+'/'
-                    if not os.path.isdir(syspath + dirpath):
-                        os.makedirs(syspath + dirpath,0777)
-                    destination = open(syspath + dirpath + localfilename, 'wb')
-                    destination.write(zfile.read(zfname))
-                    destination.close()
-                    newe.pdf_document_link = '/' + dirpath + localfilename
-                    newe.save()
-            return HttpResponseRedirect('/admin/publicsite/event/')
+        f = request.FILES['file']
+        zfile = getzip(f)
+        for zfname in zfile.namelist():
+            if zfname[-4:]=='.pdf':
+                newe = Event(status='temp', scribd_id=0)
+                newe.save()
+                pk = newe.pk
+                localfilename = 'flyer_'+str(pk)+'_original.pdf'
+                watermarked_pdf_filename = 'flyer_%s.pdf' % str(pk)
+                syspath = '/var/www/files.politicalpartytime.org/pdfs/'
+                m = datetime.date.today().month
+                if m<10:
+                    strm = '0'+str(m)
+                else:
+                    strm = str(m)
+                dirpath = str(datetime.date.today().year)+'/'+strm+'/'
+                if not os.path.isdir(syspath + dirpath):
+                    os.makedirs(syspath + dirpath,0777)
+                destination = open(syspath + dirpath + localfilename, 'wb')
+                destination.write(zfile.read(zfname))
+                destination.close()
+                newe.pdf_document_link = '/' + dirpath + localfilename
+                newe.save()
+
+                filepath = syspath + dirpath + localfilename
+                watermarked_filepath = syspath + dirpath + watermarked_pdf_filename
+                try:
+                    watermarker(filepath, watermarked_filepath)
+                except: # Just in case the watermarking doesn't work.
+                    shutil.copyfile(filepath, watermarked_filepath)
+
+        return HttpResponseRedirect('/admin/publicsite/event/')
     else:
         return HttpResponseRedirect('/')
 
