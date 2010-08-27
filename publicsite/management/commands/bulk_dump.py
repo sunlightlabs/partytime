@@ -141,8 +141,8 @@ def create_zipfile():
 
 
 def dump_all():
-    fields = ['key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'End_Date', 
-              'Start_Time', 'End_Time',	'Entertainment', 'Venue_Name',	
+    fields = ['key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'Start_Time', 
+              'End_Date', 'End_Time',	'Entertainment', 'Venue_Name',	
               'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State',
               'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	
               'Make_Checks_Payable_To', 'Checks_Payable_To_Address', 'Committee_Id', 
