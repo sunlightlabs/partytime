@@ -10,7 +10,7 @@ from publicsite.models import *
 
 
 def clean_row(row):
-    return [smart_str(x) if x else '' for x in row]
+    return [smart_str(x).replace('\n', ' ') if x else '' for x in row]
 
 
 def get_events():
@@ -30,7 +30,10 @@ def get_events():
               'rsvp_info',
               'distribution_paid_for_by', ]
     events = Event.objects.values_list(*fields).filter(Q(status='') | Q(status=None))
-    fields[0] = 'url'
+    fields.reverse()
+    fields.append('url')
+    fields.reverse()
+    #fields[0] = 'url'
     data = [fields, ]
 
     # Need to loop through events to encode them correctly for CSV output.
@@ -201,5 +204,5 @@ class Command(NoArgsCommand):
     requires_model_validation = False
 
     def handle_noargs(self, **options):
-        #create_zipfile()
+        create_zipfile()
         dump_all()
