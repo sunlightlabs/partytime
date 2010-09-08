@@ -10,7 +10,7 @@ from publicsite.models import *
 
 
 def clean_row(row):
-    return [smart_str(x).replace('^M', '').replace('\n', ' ') if x else '' for x in row]
+    return [smart_str(x).replace('\n', '').replace('\r', ' ') if x else '' for x in row]
 
 
 def get_events():
