@@ -59,6 +59,7 @@ class Command(NoArgsCommand):
                 continue
 
             beneficiary = beneficiaries[0]
+            affiliate = ''
             if not beneficiary.district:
 
                 if beneficiary.state: # Senate
