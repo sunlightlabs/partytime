@@ -70,3 +70,10 @@ urlpatterns = patterns('',
 urlpatterns += patterns('django.views.generic.simple',
     url(r'^data/all/$', 'direct_to_template', {'template': 'publicsite/data_page.html'}),
 )
+
+from sitemap import sitemaps
+
+urlpatterns += patterns('',
+    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.index', {'sitemaps': sitemaps}),
+    (r'^sitemap-(?P<section>.+)\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps})
+)
