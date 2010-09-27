@@ -4,7 +4,7 @@
 
     {% ifnotequal snapshot_image_name ""%}<img src="http://media.sunlightprojects.org/partytime/images/{{ snapshot_image_name }}.png">{% endifnotequal %}
 
-    {% for doc in docset %}
+    {% for doc in page.object_list %}
         <div id="summary_container">
             <div id="summary_topbar">
                 <div id="summary_date">
@@ -56,4 +56,6 @@
             </div>
         </div>
         {% endfor %}
+
+        {% include "publicsite/paginator.html" %}
 {% endblock %}

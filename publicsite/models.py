@@ -117,7 +117,9 @@ class EventManager(models.Manager):
     def upcoming(self, limit=10):
         events = Event.objects.filter(
                     start_date__gte=datetime.datetime.now(),
-                    status='').order_by('start_date', 'start_time')[:limit]
+                    status='').order_by('start_date', 'start_time')
+        if limit:
+            events = events[:limit]
         return events
 
     def daterange(self, start, end):

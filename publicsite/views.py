@@ -145,11 +145,19 @@ def recent(request):
 
 
 def upcoming(request):
-    docset = Event.objects.upcoming(15)
+    docset = Event.objects.upcoming(None)
+    paginator = Paginator(docset, 25, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPate):
+        raise Http404
+
     return render_to_response(
             'publicsite/snapshot.html',
             {'snapshot_image_name': 'upcoming', 
-             'docset': docset, }
+             'page': page,
+             }
             )
 
 
