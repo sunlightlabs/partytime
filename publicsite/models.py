@@ -147,7 +147,7 @@ class EventManager(models.Manager):
                 events = events.filter(tags__tag_name__icontains=args)
             else:
                 events = events.filter(**{str(field): str(args)})
-            return events
+            return events.distinct()
         except:
             pass
 

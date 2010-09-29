@@ -108,7 +108,11 @@ class LawmakerAdmin(admin.ModelAdmin):
     search_fields = ['name', ]
 
 
+class CookRatingAdmin(admin.ModelAdmin):
+    list_display = ('body', 'state', 'district', 'rating', 'as_of', )
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Venue, VenueAdmin)
 admin.site.register(Host, HostAdmin)
 admin.site.register(Lawmaker, LawmakerAdmin)
+admin.site.register(CookRating, CookRatingAdmin)
