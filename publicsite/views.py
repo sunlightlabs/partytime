@@ -150,7 +150,7 @@ def upcoming(request):
     pagenum = request.GET.get('page', 1)
     try:
         page = paginator.page(pagenum)
-    except (EmptyPage, InvalidPate):
+    except (EmptyPage, InvalidPage):
         raise Http404
 
     return render_to_response(
@@ -181,10 +181,17 @@ def upcoming_embed2(request):
 
 def bydate(request,start,end):
     docset = Event.objects.daterange(start, end)
+    paginator = Paginator(docset, 25, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
     return render_to_response(
                 'publicsite/snapshot.html', 
                 {'snapshot_image_name': '', 
-                 'docset':docset, }
+                 'page': page, }
                 )
 
 
