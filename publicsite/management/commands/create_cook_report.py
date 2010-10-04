@@ -95,6 +95,9 @@ class Command(NoArgsCommand):
 
 
             if not cook_rating and body is not 'S':
+                if district.startswith('0'):
+                    district = district.lstrip('0')
+
                 rating = CookRating.objects.filter(body=body,
                                                    state=state,
                                                    district=district) \
