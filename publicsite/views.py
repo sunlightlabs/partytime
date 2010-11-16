@@ -286,10 +286,16 @@ def leadpac_all(request):
     docset = Event.objects.filter(status='', beneficiaries__affiliate__isnull=False) \
 			  .exclude(beneficiaries__affiliate='') \
                           .order_by('-start_date', '-start_time')
+    paginator = Paginator(docset, 25, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
 
     return render_to_response(
             'publicsite/snapshot.html', 
-            {'snapshot_image_name': '', 'docset': docset, }
+            {'snapshot_image_name': '', 'page': page, }
             )
 
 
