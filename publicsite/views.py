@@ -644,6 +644,9 @@ partytime_layar = PartyTimeLayar()
 
 class TownhouseLayar(PartyTimeLayar):
 
+    def __init__(self):
+        self.developer_key = ''
+
     def get_partytime_queryset(self, latitude, longitude, radius, **kwargs):
         deg_in_m = 111045.0
 
