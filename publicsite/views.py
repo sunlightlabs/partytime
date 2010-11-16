@@ -667,11 +667,8 @@ class TownhouseLayar(PartyTimeLayar):
         actions = [{'label': 'See Venue', 'uri':venue_url},
                    {'label': 'Latest Party', 'uri': party_url}]
 
-        line3 = ' '.join([str(l) for l in latest_event.beneficiaries.all()])
-
         return POI(id=item.id, lat=item.latitude, lon=item.longitude,
                    title=item.venue_name, line2=item.venue_address(),
-                   line3=line3,
                    attribution='http://PoliticalPartyTime.org',
                    actions=actions)
 
