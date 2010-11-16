@@ -4,9 +4,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
+        <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
 	<meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=" />
 	{% block refresh %}{% endblock %}
 	
+
 		<title>{% block title %}{% endblock %} Sunlight Foundation's Party Time!</title>
 		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/reset-min.css"> 
 		<link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/screen.css" type="text/css" media="screen, projection">
@@ -170,6 +172,26 @@
 			pageTracker._initData();
 			pageTracker._trackPageview();
 		</script>
+
+        <script type="text/javascript">
+        var _sf_async_config={uid:14977,domain:"politicalpartytime.org"};
+        (function(){
+          function loadChartbeat() {
+            window._sf_endpt=(new Date()).getTime();
+            var e = document.createElement('script');
+            e.setAttribute('language', 'javascript');
+            e.setAttribute('type', 'text/javascript');
+            e.setAttribute('src',
+               (("https:" == document.location.protocol) ? "https://s3.amazonaws.com/" : "http://") +
+               "static.chartbeat.com/js/chartbeat.js");
+            document.body.appendChild(e);
+          }
+          var oldonload = window.onload;
+          window.onload = (typeof window.onload != 'function') ?
+             loadChartbeat : function() { oldonload(); loadChartbeat(); };
+        })();
+
+        </script>
 
 	</body>
 </html>
