@@ -385,6 +385,15 @@ class Venue(models.Model):
     def natural_key(self):
         return (self.venue_name)
 
+    def political_parties(self):
+        """How many events have been held for members of each
+        political party at this venue.
+        """
+        parties = [lawmaker.party for sublist in [event.beneficiaries.all() for event in self.event_set.all()] for lawmaker in sublist]
+        r = parties.count('R')
+        d = parties.count('D')
+        return {'Republican': r, 'Democrat': d, 'Parties': parties, }
+
 
 class Event(models.Model):
     from django import forms
