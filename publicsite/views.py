@@ -647,7 +647,7 @@ class TownhouseLayar(PartyTimeLayar):
     def __init__(self):
         self.developer_key = ''
 
-    def get_partytime_queryset(self, latitude, longitude, radius, **kwargs):
+    def get_partytimetownhouses_queryset(self, latitude, longitude, radius, **kwargs):
         deg_in_m = 111045.0
 
         width = radius / math.fabs(math.cos(math.radians(latitude))*deg_in_m)
@@ -658,6 +658,22 @@ class TownhouseLayar(PartyTimeLayar):
                                       longitude__range=longitude_range,
                                       townhouse=True)
         return venues
+
+    def poi_from_partytimetownhouses_item(self, item):
+        latest_event = Event.objects.filter(venue=item.id).select_related().order_by('-start_date')[0]
+
+        venue_url = 'http://politicalpartytime.org/search/Venue_Name/%s/' % item.venue_name
+        party_url = 'http://politicalpartytime.org/party/%s/' % latest_event.id
+        actions = [{'label': 'See Venue', 'uri':venue_url},
+                   {'label': 'Latest Party', 'uri': party_url}]
+
+        line3 = ' '.join([str(l) for l in latest_event.beneficiaries.all()])
+
+        return POI(id=item.id, lat=item.latitude, lon=item.longitude,
+                   title=item.venue_name, line2=item.venue_address(),
+                   line3=line3,
+                   attribution='http://PoliticalPartyTime.org',
+                   actions=actions)
 
 
 townhouse_layar = TownhouseLayar()
