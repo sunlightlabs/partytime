@@ -132,11 +132,13 @@
 						
 				
 						
+                        {% block upcoming_events %}
 						{% cache 7200 events %}
 						    {% upcoming_events %}
                             <div id="got_invites"><a href="{% url partytime_upload %}"><img src="http://media.sunlightprojects.org/partytime/images/got_invites.png" border="0"></a></div>
     						{% recent_events %}
                         {% endcache %}
+                        {% endblock %}
                         
                         
 					</div> <!--end right col -->
