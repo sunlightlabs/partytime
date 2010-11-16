@@ -642,6 +642,24 @@ class PartyTimeLayar(LayarView):
 partytime_layar = PartyTimeLayar()
 
 
+class TownhouseLayar(PartyTimeLayar):
+
+    def get_partytime_queryset(self, latitude, longitude, radius, **kwargs):
+        deg_in_m = 111045.0
+
+        width = radius / math.fabs(math.cos(math.radians(latitude))*deg_in_m)
+        height = (radius / deg_in_m)
+        latitude_range = (str(latitude-height), str(latitude+height))
+        longitude_range = (str(longitude-width), str(longitude+width))
+        venues = Venue.objects.filter(latitude__range=latitude_range,
+                                      longitude__range=longitude_range,
+                                      townhouse=True)
+        return venues
+
+
+townhouse_layar = TownhouseLayar()
+
+
 def email_subscribe(request):
     """
     Confirmation URLs should look like:

@@ -360,6 +360,8 @@ class Venue(models.Model):
     longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
     website = models.CharField(blank=True,max_length=255)
 
+    townhouse = models.BooleanField(default=False)
+
     def __unicode__(self):
         address = self.venue_address()
 
