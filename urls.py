@@ -65,8 +65,8 @@ urlpatterns = patterns('',
     url(r'^json/(?P<CID>.+)/', 'partytime.publicsite.views.jsonCID'),
     url(r'^layar/$', 'partytime.publicsite.views.partytime_layar', name='partytime_layar'),
     url(r'^emailalerts/', 'partytime.publicsite.views.email_subscribe'),
-    url(r'^townhouses/', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite/townhouses.html', }),
     url(r'^townhouses/layar/$', 'partytime.publicsite.views.townhouse_layar', name='partytime_townhouse_layar'),
+    url(r'^townhouses/', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite/townhouses.html', }),
 )
 
 urlpatterns += patterns('django.views.generic.simple',
