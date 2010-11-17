@@ -750,3 +750,7 @@ def email_subscribe(request):
         return render_to_response('publicsite/message.html',
                 {'message': 'Your subscription has been confirmed.', })
 
+
+def venue_detail(request, venue_id):
+    venue = get_object_or_404(Venue, pk=venue_id)
+    return HttpResponseRedirect('/search/%s' % venue.venue_name.replace(' ', '%20'))
