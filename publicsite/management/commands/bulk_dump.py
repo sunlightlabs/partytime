@@ -144,7 +144,7 @@ def create_zipfile():
 
 
 def dump_all():
-    fields = ['key', 'Beneficiary', 'Host', 'Other Members', 'Start_Date', 'Start_Time', 
+    fields = ['key', 'Beneficiary', 'Host', 'Other Members', 'Other Member CRP_IDs', 'Start_Date', 'Start_Time', 
               'End_Date', 'End_Time',	'Entertainment', 'Venue_Name',	
               'Venue_Address1', 'Venue_Address2', 'Venue_City', 'Venue_State',
               'Venue_Zipcode', 'Venue_Website', 'LatLong', 'Contributions_Info',	
@@ -158,7 +158,8 @@ def dump_all():
         row = [event.id,
                ' || '.join([str(x) for x in event.beneficiaries.all()]),
                ' || '.join([str(x) for x in event.hosts.all()]),
-               ' || '.join([str(x) for x in event.other_members.all()]),
+               ' || '.join([str(x) for x in event.other_members.order_by('name')]),
+               ' || '.join([str(x.crp_id) for x in event.other_members.order_by('name') if x.crp_id]),
                event.start_date or '',
                event.start_time or '',
                event.end_date or '',
