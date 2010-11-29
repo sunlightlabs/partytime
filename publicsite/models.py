@@ -134,7 +134,7 @@ class EventManager(models.Manager):
         try:
             events = Event.objects.filter(status='').order_by('-start_date','-start_time')
             if field == 'beneficiary':
-                events = events.filter(beneficiaries__name__icontains=args)
+                events = events.filter(beneficiaries__name__icontains=args) | events.filter(beneficiaries__affiliate__icontains=args)
             elif field == 'host':
                 events = events.filter(hosts__name__icontains=args)
             elif field == 'other_members_of_congress':
