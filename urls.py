@@ -67,7 +67,7 @@ urlpatterns = patterns('',
     url(r'^emailalerts/', 'partytime.publicsite.views.email_subscribe'),
     url(r'^townhouses/layar/$', 'partytime.publicsite.views.townhouse_layar', name='partytime_townhouse_layar'),
     url(r'^townhouses/', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite/townhouses.html', }),
-    url(r'^venue/(?P<venue_id)/$', 'partytime.publicsite.views.venue_detail', name='partytime_venue_detail'),
+    url(r'^venue/(?P<venue_id>\d+)/$', 'partytime.publicsite.views.venue_detail', name='partytime_venue_detail'),
 )
 
 urlpatterns += patterns('django.views.generic.simple',
