@@ -753,4 +753,4 @@ def email_subscribe(request):
 
 def venue_detail(request, venue_id):
     venue = get_object_or_404(Venue, pk=venue_id)
-    return HttpResponseRedirect('/search/%s' % venue.venue_name.replace(' ', '%20'))
+    return HttpResponseRedirect('/search/Venue_Name/%s' % venue.venue_name.replace(' ', '%20'))
