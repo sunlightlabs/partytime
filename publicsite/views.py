@@ -332,7 +332,7 @@ def polwithpac(request, cid):
             lm = ll
       
     eventlist = Event.objects.filter(status='', beneficiaries__crp_id=cid) \
-                             .order_by('-start_date', '-start_time')
+                             .order_by('-start_date', '-start_time').distinct()
 
     return render_to_response(
             'publicsite/polwithpac.html',
