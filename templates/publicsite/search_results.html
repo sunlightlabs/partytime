@@ -13,7 +13,13 @@
 {%if lm %}
 Matching lawmakers:
 {% for doc in lm %}
-<a href="{% url partytime_pol_detail doc.crp_id %}">{{doc}}</a>
+{% if doc.crp_id %}
+<a href="{% url partytime_pol_detail doc.crp_id %}">
+{% endif %}
+{{doc}}
+{% if doc.crp_id %}
+</a>
+{% endif %}
 {%endfor%}<br/><br/>
 {%endif%}
 
