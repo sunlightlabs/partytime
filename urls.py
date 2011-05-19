@@ -10,7 +10,7 @@ from settings import *
 from contact_form.forms import ContactForm
 
 class PartyTimeContactForm(ContactForm):
-    from_email = "bounce@sunlightfoundation.com"
+    from_email = "partytime@sunlightfoundation.com"
     recipient_list = ['ksteiner@sunlightfoundation.com','nwatzman@sunlightfoundation.com']
     subject = "[PoliticalPartyTime.org] Contact"
 
