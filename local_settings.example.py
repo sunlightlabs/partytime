@@ -1,14 +1,18 @@
-DATABASE_ENGINE = ''
-DATABASE_NAME = ''
-DATABASE_USER = ''
-DATABASE_PASSWORD = ''
-DATABASE_HOST = ''
-DATABASE_PORT = ''
-
-TEMPLATE_DIRS = (
-    # full path to template dirs with trailing slashes
-)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    }
+}
 
 FILE_UPLOAD_PATH = "/dev/null" # no trailing slash
 
-CACHE_BACKEND = 'locmem:///'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
