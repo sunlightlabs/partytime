@@ -1,48 +1,62 @@
-{% load partytime %}
 {% load cache %}
+{% load media %}
+{% load partytime %}
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 	<head>
         <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
-	<meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=" />
-	{% block refresh %}{% endblock %}
-	
-
+	    
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	    
 		<title>{% block title %}{% endblock %} Sunlight Foundation's Party Time!</title>
-		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/reset-min.css"> 
-		<link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/screen.css" type="text/css" media="screen, projection">
-		<!--[if IE]><link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
-		<link rel="stylesheet" type="text/css" href="http://media.sunlightprojects.org/partytime/css/style.css"> 
+	    <meta name="description" content="From the early hours of the morning until late in the evening, politicians are partying. Sunlight's PARTY TIME can help you find out who is partying, where and when.">
+	    <meta name="author" content="Sunlight Foundation">
+
+	    <meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=">
+	    <meta property="og:site_name" content="Sunlight Foundation's Party Time">
+        {% block opengraph %}
+            <meta property="og:title" content="Party Time">
+            <meta property="og:description" content="From the early hours of the morning until late in the evening, politicians are partying. Sunlight's PARTY TIME can help you find out who is partying, where and when.">
+            <meta property="og:type" content="cause">
+            <meta property="og:url" content="http://politicalpartytime.org/">
+        {% endblock %}
+        <meta property="fb:admins" content="7812952">
+	    
+	    {% block refresh %}{% endblock %}
+	
+        {% css "css/partytime.css" %}
+		<!--[if IE]>{% css "css/blueprint_ie.css" %}<![endif]-->
+		{% block css %}{% endblock %}
+		
         <link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="{% url partytime_feeds 'upcoming' %}">
         <link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="{% url partytime_feeds 'recent' %}">
-		<link rel="shortcut icon" href="http://sunlightfoundation.com/favicon.ico" type="image/x-icon">
-		<script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
-		<link rel="shortcut icon" href="http://media.sunlightprojects.org/partytime/images/favicon.ico">
+		<link rel="shortcut icon" href="{% media_url "images/favicon.ico" %}">
+		
+		<script src="http://www.scribd.com/javascripts/view.js"></script>
 		<script type="text/javascript">
-		function toggleLayer( whichLayer )
-{
-  var elem, vis;
-  if( document.getElementById ) // this is the way the standards work
-    elem = document.getElementById( whichLayer );
-  else if( document.all ) // this is the way old msie versions work
-      elem = document.all[whichLayer];
-  else if( document.layers ) // this is the way nn4 works
-    elem = document.layers[whichLayer];
-  vis = elem.style;
-  // if the style.display value is blank we try to figure it out here
-  if(vis.display==''&&elem.offsetWidth!=undefined&&elem.offsetHeight!=undefined)
-    vis.display = (elem.offsetWidth!=0&&elem.offsetHeight!=0)?'block':'none';
-  vis.display = (vis.display==''||vis.display=='block')?'none':'block';
-}
-</script>
-		
-		
-		<style type="text/css" media="screen">
-		/************ moved to style.css in wp dir ***********/
+    		function toggleLayer(whichLayer) {
+                var elem, vis;
+                if (document.getElementById) {
+                    // this is the way the standards work
+                    elem = document.getElementById(whichLayer);
+                } else if (document.all) {
+                    // this is the way old msie versions work
+                    elem = document.all[whichLayer];
+                } else if (document.layers) {
+                    // this is the way nn4 works
+                    elem = document.layers[whichLayer];
+                }
+                vis = elem.style;
+                // if the style.display value is blank we try to figure it out here
+                if (vis.display == '' && elem.offsetWidth != undefined && elem.offsetHeight != undefined) {
+                    vis.display = (elem.offsetWidth!=0&&elem.offsetHeight!=0)?'block':'none';
+                }
+                vis.display = (vis.display==''||vis.display=='block')?'none':'block';
+            }
+        </script>
 
-	
-		</style>
 	</head>
 	<body>
 		
@@ -66,7 +80,7 @@
 						<div id="navbar">
 							<ul>
 								
-								<li><a href="http://blog.politicalpartytime.org/">BLOG</a></li>
+								<li><a href="/blog/">BLOG</a></li>
 								<li><a href="/widgets/">WIDGETS</a></li>
 								<li><a href="/about/">ABOUT</a></li>
 								<li><a href="/methodology/">METHODOLOGY</a></li>
@@ -127,21 +141,18 @@
 									<p><strong>Other Lawmakers Mentioned:</strong> lawmakers mentioned on invitation who are used as a draw for the event </p>
 									<p>Note: You may wonder why you often see repeat entries for the same party. Sometimes we receive the same invitation from more than one source. We are working on eliminating these duplicates.</p>
 									</div>
-					
-					
 						
-						{% block sidebar %}{% endblock %}
+						{% block sidebar %}
 						
-				
+    						{% block upcoming_events %}
+    						{% cache 7200 events %}
+    						    {% upcoming_events %}
+                                <div id="got_invites"><a href="{% url partytime_upload %}"><img src="http://media.sunlightprojects.org/partytime/images/got_invites.png" border="0"></a></div>
+        						{% recent_events %}
+                            {% endcache %}
+                            {% endblock %}
 						
-                        {% block upcoming_events %}
-						{% cache 7200 events %}
-						    {% upcoming_events %}
-                            <div id="got_invites"><a href="{% url partytime_upload %}"><img src="http://media.sunlightprojects.org/partytime/images/got_invites.png" border="0"></a></div>
-    						{% recent_events %}
-                        {% endcache %}
-                        {% endblock %}
-                        
+						{% endblock %}
                         
 					</div> <!--end right col -->
 					
