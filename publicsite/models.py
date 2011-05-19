@@ -42,63 +42,63 @@ class Author(models.Model):
         pass
 
 
-class Post(models.Model):
-    title = models.CharField(max_length=255, db_column='post_title')
-    content = models.TextField(db_column='post_content')
-    post_date = models.DateTimeField('post date')
-    guid = models.CharField(max_length=255)
-    post_status = models.CharField(max_length=255)
-    post_type = models.CharField(max_length=255)
-    author = models.ForeignKey(Author, related_name='posts', db_column='post_author')
-    comment_count = models.IntegerField()
-
-    category_cache = None
-    tag_cache = None
-
-    class Meta:
-    	db_table = 'wp_posts'
-
-    def __unicode__(self):
-        return self.title
-
-    def clean_content(self):
-        content = BLOCK_ELEMENT_RE.sub(r"\n\1\n", self.content).strip()
-       	content = NONBLOCK_ELEMENT_RE.sub(r"><\3",content)
-       	return content
-
-    def categories(self):
-        if not self.category_cache:
-            taxonomy = "category"
-            self.category_cache = self._get_terms(taxonomy)
-        return self.category_cache
-
-    def tags(self):
-        if not self.tag_cache:
-            taxonomy = "post_tag"
-            self.tag_cache = self._get_terms(taxonomy)
-        return self.tag_cache
-
-    def _get_terms(self, taxonomy):
-        sql = """SELECT t.name,
-                        t.slug
-                    FROM wp_terms t
-                    INNER JOIN wp_term_taxonomy tt
-                        ON t.term_id = tt.term_id
-                    INNER JOIN wp_term_relationships tr
-                        ON tt.term_taxonomy_id = tr.term_taxonomy_id
-                    WHERE tt.taxonomy = %s
-                        AND
-                          tr.object_id = %s
-                  ORDER BY tr.term_order"""
-        cursor = connection.cursor()
-        cursor.execute(sql, [taxonomy, self.id])
-        return [{'name': row[0], 'slug': row[1]} for row in cursor.fetchall()]
-
-    def save(self):
-        pass
-
-    def delete(self):
-        pass
+# class Post(models.Model):
+#     title = models.CharField(max_length=255, db_column='post_title')
+#     content = models.TextField(db_column='post_content')
+#     post_date = models.DateTimeField('post date')
+#     guid = models.CharField(max_length=255)
+#     post_status = models.CharField(max_length=255)
+#     post_type = models.CharField(max_length=255)
+#     author = models.ForeignKey(Author, related_name='posts', db_column='post_author')
+#     comment_count = models.IntegerField()
+# 
+#     category_cache = None
+#     tag_cache = None
+# 
+#     class Meta:
+#       db_table = 'wp_posts'
+# 
+#     def __unicode__(self):
+#         return self.title
+# 
+#     def clean_content(self):
+#         content = BLOCK_ELEMENT_RE.sub(r"\n\1\n", self.content).strip()
+#           content = NONBLOCK_ELEMENT_RE.sub(r"><\3",content)
+#           return content
+# 
+#     def categories(self):
+#         if not self.category_cache:
+#             taxonomy = "category"
+#             self.category_cache = self._get_terms(taxonomy)
+#         return self.category_cache
+# 
+#     def tags(self):
+#         if not self.tag_cache:
+#             taxonomy = "post_tag"
+#             self.tag_cache = self._get_terms(taxonomy)
+#         return self.tag_cache
+# 
+#     def _get_terms(self, taxonomy):
+#         sql = """SELECT t.name,
+#                         t.slug
+#                     FROM wp_terms t
+#                     INNER JOIN wp_term_taxonomy tt
+#                         ON t.term_id = tt.term_id
+#                     INNER JOIN wp_term_relationships tr
+#                         ON tt.term_taxonomy_id = tr.term_taxonomy_id
+#                     WHERE tt.taxonomy = %s
+#                         AND
+#                           tr.object_id = %s
+#                   ORDER BY tr.term_order"""
+#         cursor = connection.cursor()
+#         cursor.execute(sql, [taxonomy, self.id])
+#         return [{'name': row[0], 'slug': row[1]} for row in cursor.fetchall()]
+# 
+#     def save(self):
+#         pass
+# 
+#     def delete(self):
+#         pass
 
 
 class EventManager(models.Manager):

@@ -26,6 +26,7 @@ from django.views.decorators.cache import cache_page
 
 
 from partytime.publicsite.models import *
+from wordpress.models import Post
 from layar import LayarView, POI
 
 
@@ -40,13 +41,13 @@ def index(request):
         term = request.GET.get('term', None)
 
     if term:        
-        blog_posts = Post.objects.filter(post_type='post', post_status='publish', content__icontains=term).order_by('-post_date')[:10]
+        blog_posts = Post.objects.published().filter(content__icontains=term).select_related()[:10]
     else:
-        blog_posts = Post.objects.filter(post_type='post', post_status='publish').order_by('-post_date')[:10]
+        blog_posts = Post.objects.published().select_related()[:10]
 
     return render_to_response(
             'publicsite/index.html', 
-            {'blog_posts': blog_posts, }, 
+            {'post_list': blog_posts, }, 
             context_instance = RequestContext(request)
             )
 

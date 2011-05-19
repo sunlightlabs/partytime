@@ -24,6 +24,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'partytime.publicsite.views.index', name='partytime_home'),
+    url(r'^', include('mediasync.urls')),
+    url(r'^blog/', include('wordpress.urls')),
     url(r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search', name='partytime_search'),
     url(r'^search_embed/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed', name='partytime_search_embed'),
     url(r'^search_embed_flex/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed_flex', name='partytime_search_embed_flex'),
