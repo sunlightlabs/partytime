@@ -11,7 +11,7 @@ from contact_form.forms import ContactForm
 
 class PartyTimeContactForm(ContactForm):
     from_email = "partytime@sunlightfoundation.com"
-    recipient_list = ['ksteiner@sunlightfoundation.com','nwatzman@sunlightfoundation.com']
+    recipient_list = ["partytime@sunlightfoundation.com"]
     subject = "[PoliticalPartyTime.org] Contact"
 
 feeds = {
