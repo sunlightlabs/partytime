@@ -20,3 +20,5 @@ slimmer
 -e git://github.com/themartorana/python-postmark.git#egg=postmark
 
 http://python-scribd.googlecode.com/files/python-scribd-1.1.0.tar.gz
+
+gunicorn
