@@ -2,9 +2,6 @@
 {% block title %}
 {% if doc.entertainment %}{{ doc.entertainment }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}
 - {% endblock %}
-{% block sidebar %}
-
-{% endblock %}
 
 {% block content %}
 	
