@@ -11,11 +11,11 @@
 
 <div class="the_post" id="wp_blogpost">
 	{{ post.content|safe|linebreaks }}
-	<!--
-	<span class="comment_link">
-		<a href="{{ post.guid }}#comments">{{ post.comment_count}} comments</a>
-	</span>
-	-->
+	{% if post_list %}
+	    <span class="comment_link">
+	        <a href="http://politicalpartytime.org{{ post.get_absolute_url }}#disqus_thread">Comments</a>
+	    </span>
+	{% endif %}
 </div>
 
 <div class="share">

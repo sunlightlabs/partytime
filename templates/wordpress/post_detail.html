@@ -44,8 +44,8 @@
 
 {% block js %}
     <script type="text/javascript">
-        var disqus_identifer = '{{ post.id }} http://blog.politicalpartytime.org/?p={{ post.id }}';
-		var disqus_url = 'http://politicalpartytime.org{{ post.get_absolute_url }}';
+        var disqus_identifer = 'http://blog.politicalpartytime.org/?p={{ post.id }}';
+        var disqus_url = 'http://politicalpartytime.org{{ post.get_absolute_url }}';
         var disqus_shortname = 'politicalpartytime';
         (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

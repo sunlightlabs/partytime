@@ -20,3 +20,15 @@
 	{% endfor %}
 	<div class="red2black" style="margin-bottom:2em;"><a href="/blog/?page=2">&larr; Previous Party Time Posts</a></div>
 {% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        var disqus_shortname = 'politicalpartytime';
+        (function () {
+            var s = document.createElement('script'); s.async = true;
+            s.type = 'text/javascript';
+            s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+{% endblock %}
