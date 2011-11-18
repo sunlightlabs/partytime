@@ -10,7 +10,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
             'fields': (('start_date', 'start_time'), ('end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link')
         }),
         (None, {
-            'fields': ('hosts', 'beneficiaries', 'other_members')
+            'fields': ('hosts', 'beneficiaries', 'is_presidential', 'other_members')
         }),
         (None, {
             'fields': (
