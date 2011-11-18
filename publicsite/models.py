@@ -436,6 +436,8 @@ class Event(models.Model):
     data_entry_problems = models.CharField(blank=True, max_length=255, null=True)
     notes = models.TextField(blank=True)
 
+    is_presidential = models.BooleanField(blank=True, default=False)
+
     canceled = models.BooleanField(u'This event has been canceled',
                                    blank=True,
                                    default=False)
