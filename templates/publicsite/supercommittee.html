@@ -1,0 +1,70 @@
+{% extends "publicsite/base.html" %}
+
+{% load partytime %}
+
+{% block content %}
+
+<div id="cmte_detail">
+    {% comment %}
+    <a href="{% url partytime_committee_list %}">
+		<img src="http://media.sunlightprojects.org/partytime/images/committees.png" border="0" alt="Parties by Committee Membership">
+	</a> 
+    {% endcomment %}
+<h1>Fundraisers for or hosted by Super Committee members</h1>
+</div>
+<div id="committee_members">
+	<p><strong>Committee Members:</strong>
+    {#{% for mem in members %}<a href="{% url partytime_pol_detail mem.crp_id %}">{{mem.name}}</a>{%if not forloop.last%}, {% endif %}{% endfor %}#}
+    {% for mem in members %}<a href="{% url partytime_pol_detail mem.lawmaker.crp_id %}">{{ mem }}</a>{%if not forloop.last%}, {% endif %}{% endfor %}
+	</p>
+</div>
+
+
+
+	{% for doc in page.object_list %}
+		<div id="summary_container">
+			<div id="summary_topbar">
+				<div id="summary_date">
+					<img src="http://media.sunlightprojects.org/partytime/images/date.png">
+					<span class="summary_date">{{ doc.start_date|date:"N jS, Y" }}</span>
+					<span class="summary_time">({{ doc.start_time|time:"g:iA" }} - {{ doc.end_time|time:"g:iA" }})</span>
+				</div>
+				<div id="summary_invite">
+                    <a href="{% url partytime_party_detail doc.id %}">
+						<img src="http://media.sunlightprojects.org/partytime/images/page_white_text.png">
+					</a>
+                    <a href="{% url partytime_party_detail doc.id %}">View Invitation</a>
+				</div>
+			</div>
+			<div id="summary_data">
+				<ul>
+					{% if doc.entertainment or doc.venue.venue_name %}
+						<li>
+							{% if doc.entertainment %}<span class="detail_head">{{ doc.entertainment }}</span>{% endif %}
+                            {% if doc.venue.venue_name %}@ <a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a>{% endif %}
+						</li>
+					{% endif %}
+					
+					{% with doc.beneficiaries.all as beneficiaries %}
+					{% if beneficiaries %}
+					    <li>
+    					        <span class="detail_head">For:</span>
+                                {% for ben in beneficiaries %}<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{% endif %}">{{ ben }}</a>  {% endfor %}	    
+    					</li>
+    				{% endif %}
+    				{% endwith %}
+    				
+    				{% with doc.hosts.all as hosts %}
+					{% if hosts %}
+                    <li><span class="detail_head">Hosted By:</span> {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}</li>
+					{% endif %}
+					{% endwith %}
+					
+				</ul>
+			</div>
+		</div>
+		{% endfor %}
+
+        {% include "publicsite/paginator.html" %}
+
+{% endblock %}

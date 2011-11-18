@@ -1,3 +1,4 @@
+import mimetypes
 import math
 import random
 try:
@@ -353,22 +354,42 @@ def upload(request):
         uf = request.FILES.get('pdf', None)
 
         if uf:
-            if uf.name.endswith(".pdf") and uf.size < 1024 * 1024 * 100:  # size < 100MB
-                path = "%s/upload/%s.pdf" % (settings.FILE_UPLOAD_PATH, random.randint(100000,999999))
-                destination = open(path, 'wb')
+            timestamp = str(time.time()).split('.')[0]
 
+            fname = uf.name.replace(' ', '_')
+
+            local_path = '%s/%s' % (settings.FILE_UPLOAD_PATH, '%s-%s' % (timestamp, fname))
+            remote_path = 'uploads/%s' % '%s-%s' % (timestamp, fname)
+
+            from mediasync.backends.s3 import *
+
+            with open(local_path, 'wb') as destination:
                 for chunk in uf.chunks():
                     destination.write(chunk)
-                    return HttpResponseRedirect('/upload/thanks/')
+
+            mimetype, encoding = mimetypes.guess_type(local_path)
+
+            client = Client()
+            client.open()
+            result = client.put(open(local_path).read(), mimetype or '', remote_path)
+            client.close()
+
+            if result:
+                send_mail('[partytime] Invitation submission', 
+                         'A new invitation has been submitted to Political Party Time. You may download it from http://assets.sunlightfoundation.com.s3.amazonaws.com/partytime/3.0/%s' % remote_path, 
+                          'partytime@sunlightfoundation.com', 
+                          ['partytime@sunlightfoundation.com', 'abycoffe+partytime@sunlightfoundation.com', ]
+                          )
+
+            return HttpResponseRedirect('/upload/thanks/')
 
     return render_to_response(
             'publicsite/upload.html', 
             context_instance = RequestContext(request)
             )
-    
 
 def upload_thanks(request):
-    return HttpResponse("thanks")
+    return HttpResponse("Thank you for your submission.")
 
 
 #
@@ -402,6 +423,26 @@ def cmtedetail(request, cmteid):
              }
             )
 
+def supercommittee(request):
+    members = SuperCommitteeMember.objects.all()
+    member_ids = members.values_list('lawmaker_id', flat=True)
+    events = Event.objects.filter(
+            Q(beneficiaries__id__in=member_ids) | Q(other_members__id__in=member_ids)
+            ).distinct().order_by('-start_date', '-start_time')
+    #events = Event.objects.filter(beneficiaries__id__in=members.values_list('lawmaker_id', flat=True)).order_by('-start_date', '-start_time').distinct()
+    paginator = Paginator(events, 50, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite/supercommittee.html', 
+            {'page': page,
+             'members': members,
+             }
+            )
 
 @cache_page(60*30)
 def committee_leadership(request):
@@ -488,7 +529,7 @@ def admin_uploadzip(request):
     import shutil
     from watermark import WatermarkAdder
 
-    watermarker = WatermarkAdder('/var/www/files.politicalpartytime.org/pdfs/partytimesource.pdf')
+    watermarker = WatermarkAdder('/projects/partytime/FILES/pdfs/partytimesource.pdf')
 
     login_required(admin_uploadzip)
 
@@ -506,13 +547,15 @@ def admin_uploadzip(request):
         f = request.FILES['file']
         zfile = getzip(f)
         for zfname in zfile.namelist():
+            if zfname.startswith('.') or zfname.startswith('__'):
+                continue
             if zfname[-4:]=='.pdf':
                 newe = Event(status='temp', scribd_id=0)
                 newe.save()
                 pk = newe.pk
                 localfilename = 'flyer_'+str(pk)+'_original.pdf'
                 watermarked_pdf_filename = 'flyer_%s.pdf' % str(pk)
-                syspath = '/var/www/files.politicalpartytime.org/pdfs/'
+                syspath = '/projects/partytime/FILES/pdfs/'
                 m = datetime.date.today().month
                 if m<10:
                     strm = '0'+str(m)
@@ -540,7 +583,9 @@ def admin_uploadzip(request):
 
 
 
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def admin_checkfordupes(request):
     from django.db.models import Q
 

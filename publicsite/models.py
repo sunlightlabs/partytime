@@ -12,6 +12,7 @@ from django.template import Context
 from django.template.loader import get_template
 
 import scribd
+import postmark
 
 from settings import SCRIBD_KEY, SCRIBD_SECRET
 
@@ -263,6 +264,12 @@ class Lawmaker(models.Model):
         lawmaker = lawmaker[0]
         return lawmaker.all_leadership_positions()
 
+
+class SuperCommitteeMember(models.Model):
+    lawmaker = models.ForeignKey(Lawmaker)
+
+    def __unicode__(self):
+        return self.lawmaker.__unicode__()
 
 class LeadershipPosition(models.Model):
     congress = models.CharField(u'Number of this congress (e.g. 111th',
@@ -622,10 +629,13 @@ def send_email(template, context):
     body = template.render(Context(context))
     email = EmailMultiAlternatives(context['subject'],
                                    body,
-                                   'Party Time <bounce@politicalpartytime.org>',
+                                   'Party Time <partytime@sunlightfoundation.com>',
                                    [context['email'], ])
     email.attach_alternative(body, 'text/html')
-    email.send()
+    try:
+        email.send()
+    except postmark.PMMailUnprocessableEntityException:
+        return
 
 
 def change_watcher(sender, **kwargs):
