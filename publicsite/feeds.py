@@ -5,6 +5,7 @@ import time
 import datetime
 from django.http import Http404, HttpResponse
 import vobject
+from django.db.models import Q
 
 EVENT_ITEMS = (
     ('uid', 'uid'),
@@ -118,9 +119,9 @@ class PolFeed(Feed):
             #print '1'
             raise Http404
         try:
-            print 'looking for id: %s' % (bits[0])
+            #print 'looking for id: %s' % (bits[0])
             # ignore those with leadership accounts - not sure what's going on with this. 
-            lm_list = Lawmaker.objects.filter(crp_id=bits[0]).exclude(affiliate__regex=r'\w+')
+            lm_list = Lawmaker.objects.filter(crp_id=bits[0]).filter(Q(affiliate__isnull=True)|Q(affiliate=''))
             if len(lm_list)>1:
                 raise Exception('too many lawmakers returned')
             lm = lm_list[0]
