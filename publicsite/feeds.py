@@ -94,6 +94,19 @@ class RecentFeed(Feed):
     def item_link(self, item):
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})
 
+class NewFeed(Feed):
+    title = "Party Time Recently Added Parties"
+    link = "/feeds/newlyadded/"
+    description = "Recently Added Parties"
+    title_template = "feeds/party_title.html"
+    description_template = "feeds/party_description.html"
+
+    def items(self):
+        return Event.objects.all().order_by('-added')[:10]
+
+    def item_link(self, item):
+        return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})
+
 class UpcomingFeed(Feed):
     title = "Party Time Upcoming Parties"
     link = "/feeds/upcoming/"
@@ -116,43 +129,43 @@ class PolFeed(Feed):
         # In case of "/rss/beats/0613/foo/bar/baz/", or other such clutter,
         # check that bits has only one member.
         if len(bits) != 1:
-            #print '1'
+            print '1'
             raise Http404
         try:
-            #print 'looking for id: %s' % (bits[0])
+            print 'looking for id: %s' % (bits[0])
             # ignore those with leadership accounts - not sure what's going on with this. 
             lm_list = Lawmaker.objects.filter(crp_id=bits[0]).filter(Q(affiliate__isnull=True)|Q(affiliate=''))
             if len(lm_list)>1:
                 raise Exception('too many lawmakers returned')
             lm = lm_list[0]
-            #print "got lm.affiliate = '%s' " % (lm.affiliate)
+            print "got lm.affiliate = '%s' " % (lm.affiliate)
             return lm
         except Exception as e:
-            #print '2: %s' % (e)
+            print '2: %s' % (e)
             raise Http404
 
 
     def title(self, obj):
         if not obj:
-            #print '3'
+            print '3'
             raise Http404
         return "PartyTime events for %s" % obj.name
 
     def link(self, obj):
         if not obj:
-            #print '4'
+            print '4'
             raise Http404
         return "/feeds/pol/" + obj.crp_id
 
     def item_link(self, item):
         if not item:
-            #print '5'
+            print '5'
             raise Http404
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})  
 
     def description(self, obj):
         if not obj:
-            #print '6'
+            print '6'
             raise Http404
         return "Parties for %s from the Sunlight Foundation" % obj.name
 
@@ -161,7 +174,7 @@ class PolFeed(Feed):
             return []
         items = Event.objects.filter(status='', beneficiaries__crp_id=obj.crp_id).order_by('-start_date','-start_time')[:10]
         if not items:
-            #print '7'
+            print '7'
             raise Http404
         else:
             return items
