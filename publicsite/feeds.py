@@ -102,7 +102,7 @@ class NewFeed(Feed):
     description_template = "feeds/party_description.html"
 
     def items(self):
-        return Event.objects.all().order_by('-added')[:10]
+        return Event.objects.filter(status='').order_by('-added')[:10]
 
     def item_link(self, item):
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})
