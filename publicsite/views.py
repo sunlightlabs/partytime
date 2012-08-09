@@ -30,7 +30,7 @@ from partytime.publicsite.models import *
 from wordpress.models import Post
 from layar import LayarView, POI
 
-
+""" OLD
 def index(request):
     term = None
     now = datetime.datetime.now()
@@ -51,7 +51,87 @@ def index(request):
             {'post_list': blog_posts, }, 
             context_instance = RequestContext(request)
             )
+"""
 
+@cache_page(60*1)
+def index(request):
+
+
+    blog_posts = Post.objects.published().select_related()[:2]    
+    upcoming_events = Event.objects.upcoming(2)
+    newest_events = Event.objects.newest(2)
+    
+    # cache the partiesheldforleadership template tags etc for this long in seconds. Some of them are ridiculous to generate. 
+    # Caching them all for different times decreases the likelihood they'll all need to get regened at the same page load. 
+    cachetime1 = 10
+    cachetime2 = 10
+    cachetime3 = 10
+    cachetime4 = 10
+    
+    
+    return render_to_response(
+            'publicsite_redesign/indextest.html', 
+            {'post_list': blog_posts,
+            'upcoming_events':upcoming_events,
+            'newest_events':newest_events, 
+            'cachetime1':cachetime1,
+            'cachetime2':cachetime2,
+            'cachetime3':cachetime3,
+            'cachetime4':cachetime4,                        
+            })
+
+def make_paginator_text(current_page, max_page):
+    print current_page, max_page
+    
+    initial_page = current_page - 3
+    
+    if current_page < 5:
+        initial_page = 1
+    
+    if current_page > max_page-2:
+        initial_page = max_page - 5
+
+    
+    return_html = ""
+    if current_page > 1:
+        return_html += '<span class="prev"><a class="textReplace" href="/blogindex/?page=' + str(current_page-1) + '">Previous</a></span>'
+        
+    for i in range(initial_page, initial_page+6):
+        print i
+        return_html += '<span class="pageNum ' 
+        if i==current_page:
+            return_html += 'cur">'  + str(i) + '</span>'
+        else:
+            return_html += '"><a href="/blogindex/?page=' + str(i) + '">' + str(i) + '</a></span>'
+    
+    
+    if current_page < max_page:
+        return_html += '<span class="next"><a class="textReplace" href="/blogindex/?page=' + str(current_page+1) + '">Next</a></span>'
+        
+    return return_html
+
+
+def blogindex(request):
+    # need to add pagination etc. 
+    blog_posts = Post.objects.published()
+
+    paginator = Paginator(blog_posts, 5)
+    pagenum = request.GET.get('page', 1)
+    max_page = paginator.num_pages, 
+    
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+    
+    paginator_html = make_paginator_text(int(pagenum), max_page[0])
+    
+    return render_to_response(
+            'publicsite_redesign/blogindex.html', 
+            {'post_list': page.object_list,
+            'paginator_html':paginator_html,
+            }
+            )
 
 def party(request, docid): 
     doc = get_object_or_404(Event, pk=docid)
@@ -658,6 +738,8 @@ def admin_mergelm_confirmed(request, original, replacement):
     orig = Lawmaker.objects.get(pk=original).delete()
     return HttpResponseRedirect('/admin/publicsite/lawmaker/')
 
+
+"""
 class PartyTimeLayar(LayarView):
 
     def get_partytime_queryset(self, latitude, longitude, radius, search_query,
@@ -694,6 +776,7 @@ class PartyTimeLayar(LayarView):
 partytime_layar = PartyTimeLayar()
 
 
+
 class TownhouseLayar(PartyTimeLayar):
 
     def __init__(self):
@@ -726,6 +809,8 @@ class TownhouseLayar(PartyTimeLayar):
 
 
 townhouse_layar = TownhouseLayar()
+
+"""
 
 
 def email_subscribe(request):

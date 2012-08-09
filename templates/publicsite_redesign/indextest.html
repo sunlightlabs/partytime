@@ -1,0 +1,105 @@
+{% extends "publicsite_redesign/base.html" %}
+{% load partytime_redesign %}
+
+{# override this to make the partystats in the footer go away #}
+{% block partystats_footer %}
+{% endblock %}
+		
+		
+{% block container %}
+<div class="callOut clearfix module">
+	<div class="colLtSm eightCol">
+		<h2 class="tagline">
+			Documenting the Political Partying Circuit
+		</h2>
+		<p>
+			From the early hours of the morning until late in the evening, politicians are partying. Sunlight's Party Time can help you find out who is partying, where and when.
+		</p>
+	</div>
+	<div class="uploadLarge colRt fourCol">
+		<h3 class="textReplace">Extend an Invite</h3>
+		<a class="button" href="">Upload</a>
+	</div>
+</div>
+<div class="module current">
+	<div class="colLtSm fourCol blog">
+		<h3>
+			Latest Blog Posts
+		</h3>
+		<ol>
+			{% for post in post_list %}
+			<li>
+				<h5>
+					<a href="">{{ post.title }}</a>
+				</h5>
+				<time pubdate="">{{ post.post_date|date:"F j, Y" }}</time>
+				<span class="author">By {{post.author.display_name }}</span>
+			</li>
+			
+			{% endfor %}
+		</ol>
+		<a href="" class="more">View more</a>
+
+	</div>
+	<div class="colLtSm fourCol current events">
+		<h3>
+			Newest Events Added
+		</h3>
+		<ol>
+			{% for event in newest_events %}
+			{% renderevent event %}
+			{% endfor %}
+		</ol>
+		<a href="" class="more">View more</a>
+	</div>
+	<div class="colRt fourCol current events">
+		<h3>
+			Next Events
+		</h3>
+		<ol>
+			{% for event in upcoming_events %}
+			{% renderevent event %}
+			{% endfor %}
+		</ol>
+		<a href="" class="more">View more</a>
+	</div>
+	<div class="clear"></div>
+</div>
+<div class="graph featured module">
+	<h2>
+		The Year in Parties
+	</h2>
+	<div id="yearInParties" style="min-width: 400px; height: 200px; margin: 0 auto">
+	</div>
+{% include "publicsite_redesign/includes/partystats_body.html" %}
+</div>
+<div class="module last">
+	<div class="colLt threeCol events">
+		{% load cache %}
+		{% cache cachetime1 'partieshostedbyleadership'  %}
+		{% partieshostedbyleadership %}
+		{% endcache %}
+	</div>
+	<div class="colLt threeCol events">
+		{% load cache %}
+		{% cache cachetime2 'partiesheldforleadership'  %}
+		{% partiesheldforleadership %}
+		{% endcache %}
+	</div>
+	<div class="colLt threeCol events">
+		{% load cache %}
+		{% cache cachetime3 'partiesforpresidentialcandidates'  %}
+		{% partiesforpresidentialcandidates %}
+		{% endcache %}
+	</div>
+	<div class="colRt threeCol events">
+		{% load cache %}
+		{% cache cachetime4 'partiesheldforcommitteeleadership'  %}
+		{% partiesheldforcommitteeleadership %}
+		{% endcache %}
+	</div>
+	<div class="clear"></div>
+</div>
+{% endblock %}
+	
+	

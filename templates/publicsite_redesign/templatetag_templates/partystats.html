@@ -1,0 +1,45 @@
+{% load humanize %}
+	<dl class="fourCol colLt">
+		<dt>
+			Number of events this week
+		</dt>
+		<dd>
+			{{ parties_this_week|intcomma }}
+		</dd>
+		<dt>
+			Number of events this month
+		</dt>
+		<dd>
+			{{ parties_this_month|intcomma }}
+		</dd>
+	</dl>
+	<dl class="fourCol colLt">
+		<dt>
+			Number of events this year
+		</dt>
+		<dd>
+			{{ parties_this_year|intcomma }}
+		</dd>
+		<dt>
+			Number of presidential parties this year
+		</dt>
+		<dd>
+			{{ num_presidential_parties|intcomma }}
+		</dd>
+	</dl>
+	<dl class="fourCol colRt">
+		<dt>
+			Number of hosts this year
+		</dt>
+		<dd>
+			{{hosts|intcomma}}
+		</dd>
+		<dt>
+			Number of beneficiaries this year
+		</dt>
+		<dd>
+			{{beneficiaries|intcomma}}
+		</dd>
+	</dl>
+	<div class="clear"></div>
+	<a href="" class="more centered">See what this week's social calendar looks like.</a>

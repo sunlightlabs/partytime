@@ -1,0 +1,41 @@
+{% extends "publicsite_redesign/sidebar_base.html" %}
+
+{% block title %}Blog - {{ block.super }}{% endblock %}
+
+{# Set the nav highlight #}
+{% block nav-blog %}class="active"{% endblock %}
+		
+{% block mainbar %}
+<h2>Recent Blog Posts</h2>
+{% for post in post_list %}
+<article class="module short">
+	<h1 class="h2">
+		<a href="{{post.get_absolute_url}}">{{ post.title }}</a>
+	</h1>
+	<div class="entryMetaData">
+		<address class="author"><a rel="author" href="">{{post.author.display_name }}</a></address>
+		<time datetime="{{ post.post_date|date:"c"}}" class="published" pubdate="">
+		{{ post.post_date|date:"F j, Y, P" }}
+		</time>
+	</div>
+	
+	
+	<ul class="clearfix social">
+	<li></li>
+	</ul>
+	
+	<div class="clear"></div>
+{{ post.content|safe|linebreaks }}
+<!--
+		<div class="pagination clearfix">
+			<span class="next"> <a class="more textReplace" href="{{post.get_absolute_url}}">View More</a></span>
+		</div>
+-->
+</article>
+{% endfor %}
+
+<div class="pagination">
+	{{ paginator_html|safe}}
+</div>
+
+{% endblock %}

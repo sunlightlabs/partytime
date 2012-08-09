@@ -1,0 +1,45 @@
+{% load partytime_redesign %}
+
+<div class="colRt threeCol events last sidebar wSide module">
+	<div class="uploadSmall module">
+		<h3 class="textReplace">Extend an Invite</h3>
+		<a class="button" href="">Upload</a>
+	</div>
+	<div class="newest module eventCluster current">
+		<h3>
+			Newest Events
+			<a href="" class="rss textReplace">rss</a>
+		</h3>
+		<ol>
+		{% for event in newest_events %}
+		{% renderevent event %}
+		{% endfor %}
+		</ol>
+		<a href="" class="more">View more</a>
+	</div>
+	<div class="newest module eventCluster current">
+		<h3>
+			Upcoming Events
+			<a href="" class="rss textReplace">rss</a>
+		</h3>
+		<ol>
+		{% for event in upcoming_events %}
+		{% renderevent event %}
+		{% endfor %}
+		</ol>
+		<a href="" class="more">View more</a>
+	</div>
+	<div class="newest module eventCluster current">
+		<h3>
+			Recent Events
+			<a href="" class="rss textReplace">rss</a>
+		</h3>
+		<ol>
+		{% for event in recent_events %}
+		{% renderevent event %}
+		{% endfor %}
+		</ol>
+		<a href="" class="more">View more</a>
+	</div>
+</div>
+<div class="clear"></div>

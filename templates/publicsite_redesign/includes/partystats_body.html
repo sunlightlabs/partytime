@@ -1,0 +1,12 @@
+{# This wraps the partystat stuff in the div used in the container -- i.e. on the index page. #}
+
+{% load partytime_redesign %}
+
+<!-- start  party stats -->
+<div class="partyStats thirds">
+{% load cache %}
+{% cache 10 'party_stats'  %}
+{% partystats %}
+{% endcache %}
+</div>
+<!-- end party stats -->

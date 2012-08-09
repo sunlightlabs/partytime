@@ -1,0 +1,11 @@
+{% load partytime_redesign %}
+
+<h3>
+	{{ title|safe }}
+</h3>
+<ol>
+	{% for event in parties %}
+	{% renderevent event %}
+	{% endfor %}
+</ol>
+<a href="{{ viewmorelink }}" class="more">View more</a>

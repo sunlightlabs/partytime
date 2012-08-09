@@ -1,0 +1,123 @@
+{% load cache %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        {% block og %}{% endblock %}
+
+        <title>{% block title %}Political Party Time{% endblock %}</title>
+
+        {% block head %}{% endblock %}
+		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
+        {% block css %}{% endblock %}
+
+        <script type="text/javascript" src="http://use.typekit.com/xbc3pmu.js"></script>
+        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+		{% block headjs %}{% endblock %}
+
+        {% if not debug %}
+        <script>
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', '{% block ga %}{% endblock %}']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+                var ga = document.createElement('script');
+                ga.type = 'text/javascript';
+                ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga, s);
+            })();
+        </script>{% endif %}
+		<!--[if lt IE 9]>
+		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+    </head>
+    <body class="{% block bodyclass %}{% endblock %}">
+		<header id="mainHeader" class="clearfix">
+			<a href="/">
+				<h1 class="textReplace">
+					Political Party Time
+				</h1>
+			</a>
+			<a href="" class="sunlightMini textReplace">
+				Sunlight Foundation
+			</a>
+			<nav class="clear">
+				<ul>
+					{# set nav to class="active" if, well, it's active #}
+					<li {% block nav-blog %}{% endblock %}><a href="/blogindex/">Blog</a></li>
+					<li {% block nav-calendar %}{% endblock %}><a href="/calendar/">Calendar</a></li>
+					<li {% block nav-api %}{% endblock %}><a href="/api/">Data/API</a></li>
+					<li {% block nav-faq %}{% endblock %}><a href="/FAQ/">FAQ</a></li>
+					<li {% block nav-about %}{% endblock %}><a href="/about/">About</a></li>
+					<li {% block nav-contact %}{% endblock %}><a href="/contact/">Contact</a></li>
+				</ul>
+			</nav>
+			<form action="/search/" method="get" id="searchform" class="search site">
+	            <input class="transparent" type="search" name="q" id="id_q" placeholder="Search...">
+	            <button type="submit">
+	                 <span>Go</span>
+	            </button>
+	        </form> 
+		</header>
+		<div class="container">
+		{% block container %}
+		{% endblock %}
+		
+		{% block sidebar %}
+		{% endblock %}
+		</div>
+		<footer>
+			
+			{% block partystats_footer %}
+			{% include "publicsite_redesign/includes/partystats_footer.html" %}
+			{# !override this in index.html! #}
+			{% endblock %}
+			
+			
+			<div class="footerWrap">
+				<div class="container">
+					<div class="fiveCol about colLt">
+						<a href="" class="sunlight textReplace">
+							Sunlight Foundation
+						</a>
+						<small>
+							<p>
+							Founded in 2006, the Sunlight Foundation is a non-partisan non-profit that uses cutting-edge technology and ideas to make government transparent and accountable.
+							</p>
+							Visit <a href="">Sunlightfoundation.com</a> to learn more.
+						</small>
+					</div>
+					<div class="sevenCol join colRt">
+						<div class="twos colLt">
+							<h2>
+								Like this project and want to discover others like it?
+							</h2>
+							<p>
+								Join the Sunlight Foundation's open government community to learn more.
+							</p>
+						</div>
+						<form class="twos colRt" action="http://organizing.sunlightfoundation.com/page/s/open-states" method="post" id="submit">
+		                    <input type="text" name="email" placeholder="your email address">
+		                    <input type="text" name="zip" placeholder="your zip code">
+		                    <button type="submit">
+		                         <span>Sign Up</span>
+		                    </button>
+		                </form>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</footer>
+	
+	
+{% block filler %}{% endblock %}
+		<script type="text/javascript" src="{% get_static_prefix %}js/sf.js"></script>
+		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-placehold.min.js"></script>
+        {% block js %}{% endblock %}
+
+    </body>
+</html>

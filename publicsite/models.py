@@ -11,6 +11,8 @@ from django.db.models import Q
 from django.template import Context
 from django.template.loader import get_template
 
+from django.contrib.localflavor.us.us_states import US_STATES
+
 import scribd
 import postmark
 
@@ -19,6 +21,7 @@ from settings import SCRIBD_KEY, SCRIBD_SECRET
 from sunlightapi import sunlight, SunlightApiError
 sunlight.apikey = '***REMOVED***'
 
+state_dict = dict(US_STATES)
 
 BLOCK_ELEMENTS = ('blockquote', 'ol', 'ul')
 BLOCK_ELEMENT_RE = re.compile(r'(%s)' % '|'.join([r'<%s>(.*?)</%s>' % (e, e) for e in BLOCK_ELEMENTS]))
@@ -117,17 +120,36 @@ class EventManager(models.Manager):
 
     def upcoming(self, limit=10):
         events = Event.objects.filter(
-                    start_date__gte=datetime.datetime.now(),
+                    start_date__gte=datetime.date.today(),
                     status='').order_by('start_date', 'start_time')
         if limit:
             events = events[:limit]
         return events
 
+
+    # this isn't, strictly speaking, the newest; it's the newest parties that haven't already happened. 
+    def newest(self, limit=10):
+        events = Event.objects.filter(
+                    start_date__gte=datetime.date.today(),
+                    status='').order_by('-added')
+        if limit:
+            events = events[:limit]
+        return events
+
+    # Why does it expect dates in %Y%m%d format instead of as datetime.date objects? No idea. -jf
     def daterange(self, start, end):
         startdate = datetime.datetime(int(start[0:4]), int(start[4:6]), int(start[6:8]))
         enddate = datetime.datetime(int(end[0:4]), int(end[4:6]), int(end[6:8]))
         events = Event.objects.filter(
                     start_date__gte=startdate, start_date__lte=enddate,
+                    status='').order_by('start_date', 'start_time')
+        return events
+
+    def month(self, year, month):
+        startdate = datetime.date(year, month, 1)
+        enddate = datetime.date(year, month+1, 1)
+        events = Event.objects.filter(
+                    start_date__gte=startdate, start_date__lt=enddate,
                     status='').order_by('start_date', 'start_time')
         return events
 
@@ -220,9 +242,17 @@ class Lawmaker(models.Model):
             info = ' (%s%s%s)' % (party_str, self.state, district_str)
 
         return u'%s%s%s' % (title_str, self.name, info)
+             
 
     def natural_key(self):
         return (self.name)
+        
+    def titled_name(self):
+        if self.title:
+            title_str = '%s ' % self.title
+        else:
+            title_str = ''
+        return u'%s%s' % (title_str, self.name)        
 
     def events_since_year(self, year=2009):
         return self.pol_events.filter(start_date__gte=datetime.date(year, 01, 01))
@@ -402,7 +432,12 @@ class Venue(models.Model):
         r = parties.count('R')
         d = parties.count('D')
         return {'Republican': r, 'Democrat': d, 'Parties': parties, }
-
+        
+    def state_full(self):
+        try:
+            return state_dict[self.state]
+        except:
+            return self.state
 
 class Event(models.Model):
     from django import forms
@@ -465,6 +500,15 @@ class Event(models.Model):
            return self.entertainment
         else:
             return 'Event'
+            
+    def truncated_name(self):
+        name = self.__unicode__()
+        #print name
+        if len(name)> 22:
+            return name[:22] + "..."
+        else:
+            return name
+
 
     def save(self):
         if self.scribd_upload and not self.status:

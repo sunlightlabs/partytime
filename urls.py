@@ -27,6 +27,14 @@ urlpatterns = patterns('',
     url(r'^$', 'partytime.publicsite.views.index', name='partytime_home'),
     url(r'^', include('mediasync.urls')),
     url(r'^blog/', include('wordpress.urls')),
+    # there didn't use to *be* a blog home page -- it was instead the home page. 
+    url(r'^blogindex/$', 'partytime.publicsite.views.blogindex', name='blogindex'),
+    
+    url(r'^about/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/about.html'}),
+    url(r'^FAQ/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/FAQ.html'}),
+    url(r'^about/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/about.html'}),
+    url(r'^api/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/api.html'}),
+    
     url(r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search', name='partytime_search'),
     url(r'^search_embed/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed', name='partytime_search_embed'),
     url(r'^search_embed_flex/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed_flex', name='partytime_search_embed_flex'),
@@ -69,11 +77,18 @@ urlpatterns = patterns('',
     url(r'^ajax/checkfordupes/$', 'partytime.publicsite.views.admin_checkfordupes'),
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
     url(r'^json/(?P<CID>.+)/', 'partytime.publicsite.views.jsonCID'),
-    url(r'^layar/$', 'partytime.publicsite.views.partytime_layar', name='partytime_layar'),
+#    url(r'^layar/$', 'partytime.publicsite.views.partytime_layar', name='partytime_layar'),
     url(r'^emailalerts/', 'partytime.publicsite.views.email_subscribe'),
-    url(r'^townhouses/layar/$', 'partytime.publicsite.views.townhouse_layar', name='partytime_townhouse_layar'),
+#    url(r'^townhouses/layar/$', 'partytime.publicsite.views.townhouse_layar', name='partytime_townhouse_layar'),
     url(r'^townhouses/', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite/townhouses.html', 'extra_context': {'timestamp': str(int(time.time())), }, }),
     url(r'^venue/(?P<venue_id>\d+)/$', 'partytime.publicsite.views.venue_detail', name='partytime_venue_detail'),
+    
+    ## for redesign testing
+    url(r'^new_base/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/base.html', 'extra_context': {'filler': 'this is some filler', }, }),
+    url(r'^templatetagtest/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/templatetagtest.html'}),
+    url(r'^indextest/$', 'partytime.publicsite.views.index'),
+    url(r'^about_test/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/abouttest.html'})
+    
 )
 
 urlpatterns += patterns('django.views.generic.simple',

@@ -1,32 +1,32 @@
-<div class="blog_meta">
-	<span class="blog_category red2black">
-		{% for c in post.categories %}
-			<a href="{% url wp_taxonomy_category c.slug %}">{{ c.name|safe }}</a>
-		{% endfor %}
-	</span>
-	&bull; POSTED - {{ post.post_date|date:"m.d.Y" }} BY {{post.author.display_name }}
-</div>
-
-<h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
-
-<div class="the_post" id="wp_blogpost">
+<article class="module">
+		<h1 class="h2">
+			{{ post.title }}
+		</h1>
+		<div class="entryMetaData">
+			<address class="author"><a rel="author" href="">{{post.author.display_name }}</a></address>
+			<time datetime="{{ post.post_date|date:"c"}}" class="published" pubdate="">
+			{{ post.post_date|date:"F j, Y, P" }}
+			</time>
+		</div>
+		
+		
+		<ul class="clearfix social">
+		<li id="share-buttons"></li>
+		</ul>
+		
+		<div class="clear"></div>
 	{{ post.content|safe|linebreaks }}
-	{% if post_list %}
-	    <span class="comment_link">
-	        <a href="http://politicalpartytime.org{{ post.get_absolute_url }}#disqus_thread">Comments</a>
-	    </span>
-	{% endif %}
-</div>
+	
+</article>
+<div class="tags">
+	<h4>
+		Tags
+	</h4>
+	<ul>
+			{% for t in post.tags %}
+	    		<li><a href="{% url wp_taxonomy_term t.slug %}">{{ t.name|safe }}</a></li>
+	    	{% endfor %}
 
-<div class="share">
-    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://politicalpartytime.org{{ post.get_absolute_url }}" data-text="{{ post.title }}" data-count="horizontal" data-via="SFpartytime">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <iframe src="http://www.facebook.com/plugins/like.php?app_id=175109929209675&amp;href=http://politicalpartytime.org{{ post.get_absolute_url|urlencode }}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:80px;" allowTransparency="true"></iframe>
-</div>
-
-{% if not post_list %}
-    <div class="the_tags red2black">TAGS:
-    	{% for t in post.tags %}
-    		<a href="{% url wp_taxonomy_term t.slug %}">{{ t.name|safe }}</a>{% if not forloop.last %},{% endif %}
-    	{% endfor %}
-    </div>
-{% endif %}
+	</ul>
+		<div class="clear"></div>
+	</div>

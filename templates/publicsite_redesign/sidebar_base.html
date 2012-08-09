@@ -1,0 +1,25 @@
+{% extends "publicsite_redesign/base.html" %}
+{% load partytime_redesign %}
+
+{% block container %}
+<div class="module nineCol colLt last wSide">
+{% block mainbar %}{% endblock %}
+</div>
+{% endblock %}
+
+
+{% block nav-blog %}{% endblock %}
+{% block nav-calendar %}{% endblock %}
+{% block nav-api %}{% endblock %}
+{% block nav-faq %}{% endblock %}
+{% block nav-about %}{% endblock %}
+{% block nav-contact %}{% endblock %}
+
+{% block sidebar %}
+
+{% load cache %}
+{% cache 10 'partytime_sidebar'  %}
+{% sidebarcontent %}
+{% endcache %}
+
+{% endblock %}

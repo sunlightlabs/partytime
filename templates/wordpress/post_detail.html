@@ -1,5 +1,6 @@
-{% extends "publicsite/base.html" %}
-{% load media %}
+{% extends "publicsite_redesign/sidebar_base.html" %}
+
+{% block title %}{{ post.title }} - {{ block.super }}{% endblock %}
 
 {% block opengraph %}
     <meta property="og:title" content="{{ post.title }}">
@@ -7,38 +8,21 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="http://politicalpartytime.org{{ post.get_absolute_url }}">
 {% endblock %}
+		
+		
+{% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
 
-{% block sidebar %}
-    <div id="rt_col_about">
-        <div class="about_content"> 
-            <p><strong>Sunlight&#39;s Party Time </strong> is a project to track parties for members of Congress or congressional candidates that happen all year round in Washington, D.C. and beyond. (<a href="javascript:toggleLayer('about_more');">read more</a>)</p> 
-            <div id="about_more"> 
-                <p>We also post information we receive about parties where members of Congress are expected to participate&mdash;such as convention or inaugural parties.</p> 
-                <p>Since we don&#39;t hear about all the parties, you can also tell us if you know where the party is and we don&#39;t.</p> 
-            </div>
-        </div>
-    </div>
-    <div id="got_invites">
-        <a href="/upload/"><img src="{% media_url "images/got_invites.png" %}"></a>
-    </div>
-{% endblock %}
+{% block mainbar %}
 
-{% block content %}
 
-    <a href="/blog/">
-        <img src="{% media_url "images/party_blog_header.png" %}">
-    </a>
-    <a href="http://blog.politicalpartytime.org/feed/">
-        <img src="{% media_url "images/party_blog_header_rss.png" %}">
-    </a>
-    
-	<!--starts a blog post-->
-
-	<div id="blog_post">
 	    {% include "wordpress/post.html" %}
-	</div>
-	
-	<div id="disqus_thread"></div>
+
+<div class="comments module last" id="disqus_thread">
+	<h3>
+		Comments
+	</h3>
+</div>
+
 	
 {% endblock %}
 
@@ -53,4 +37,34 @@
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         })();
     </script>
+	<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
+	<script>
+	    $(document).ready(function() {
+	        var ua = new gigya.socialize.UserAction();
+	        var params = {
+	            containerID: 'share-buttons',
+	            layout: 'horizontal',
+	            shareButtons: [
+	                {
+	                    provider: 'facebook-like',
+	                },
+	                {
+	                    provider: 'google-plusone'
+	                },
+	                {
+	                    provider: 'twitter-tweet',
+	                    related: 'sunfoundation',
+	                    via: 'sunfoundation'
+	                },
+	                {
+	                    provider: 'email'
+	                }
+	            ],
+	            userAction: ua
+	        };
+	        gigya.socialize.showShareBarUI(params);
+	    });
+	</script>
 {% endblock %}
+
+

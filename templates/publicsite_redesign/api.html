@@ -1,0 +1,205 @@
+{% extends "publicsite_redesign/sidebar_base.html" %}
+
+{% block title %}FAQ - {{ block.super }}{% endblock %}
+
+{# Set the nav highlight #}
+{% block nav-api %}class="active"{% endblock %}
+		
+{% block mainbar %}
+		
+<h2>BYOP: Build Your Own Party (Data Pack)</h2>
+<p>
+	Here&#39;s where to get the real goods--all the underlying, raw data that the Sunlight Foundation has created based on fundraising invitations collected for the Party Time project. As we enter information on new invitations, the database is updated automatically.
+</p>
+<p>
+	The database contains records of invitations for fundraisers and other events feting lawmakers and congressional candidates collected by the project from anonymous lobbyist sources and are displayed on our <a href="http://www.politicalpartytime.org">public website</a>. 
+</p>
+<p>
+	Invitations gathered date back to 2006; however, most are from the 2008 calendar year when we began collecting invitations in earnest and launched this project (July 2008). The data are input by Sunlight interns and staffers. While we check for duplicate entries for particular events and errors, it is always worth checking the original source, the invitations for display on our website, for accuracy. 
+</p>
+<p>
+	Because these events are not required to be reported in any official manner, we only know about the events we&#39;ve received information about. We encourage the public to send us more information about events. 
+</p>
+<p>
+	These documents are posted as a public service in the interest of creating more transparency about the relationships between lobbyists and lawmakers. Sunlight is not responsible for the content of the invitations themselves (including erroneous information) or for verifying whether the events advertised in the invitations actually occurred.
+</p>
+<p>
+	There are several ways to get your Party Time data fix.
+</p>
+
+<h3>API</h3>
+<p>
+	Returns Party Time data in JSON format. You can find the JSON feed here: <a href="http://politicalpartytime.org/json/N00009668/">http://politicalpartytime.org/json/N00009668/</a> 
+</p>
+<p>
+	The last number represents a candidateID. You can determine a candidate ID by going to his or her profile page on Political Party Time. (IDs originate from the Center for Responsive Politics -- the nation&#39;s authority on campaign finance data.)
+</p>
+
+<h3>RSS</h3>
+<p>
+	You can find the RSS feed for Party Time here: <a href="http://politicalpartytime.org/feeds/pol/N00009668/">http://politicalpartytime.org/feeds/pol/N00009668/</a>
+</p>
+
+<h3>CSV</h3>
+<p>
+	All of the Party Time data is available as a single CSV dump <a href="/www/partytime_dump_all.csv">here.</a>
+</p>
+
+<h3>relational ZIP</h3>
+
+<p>
+	And as a relational "zip" file <a href="/www/partytime_dump.zip">here.</a>
+</p>
+
+<h3>Party on, data geeks!</h3>
+<dl class="api">
+	<dt>
+		<code>Field Name</code>
+	</dt>
+	<dd>
+		Explanation
+	</dd>
+	<dt>
+		<code>ID</code>
+	</dt>
+	<dd>
+		unique ID (primary key)
+	</dd>
+	<dt>
+		<code>Beneficiary</code>
+	</dt>
+	<dd>
+		candidate name, party, district, office, or committee name
+	</dd>
+	<dt>
+		<code>Host</code>
+	</dt>
+	<dd>
+		full names of hosts
+	</dd>
+	<dt>
+		<code>Other Members Of Congress</code>
+	</dt>
+	<dd>
+		name of lawmakers featured on invitation who are not beneficiaries of event
+	</dd>
+	<dt>
+		<code>Start Time</code>
+	</dt>
+	<dd>
+		start time
+	</dd>
+	<dt>
+		<code>End Time</code>
+	</dt>
+	<dd>
+		end time
+	</dd>
+	<dt>
+		<code>Start Date</code>
+	</dt>
+	<dd>
+		start date
+	</dd>
+	<dt>
+		<code>End Date</code>
+	</dt>
+	<dd>
+		end date
+	</dd>
+	<dt>
+		<code>Venue Name</code>
+	</dt>
+	<dd>
+		Name of the venue where the event is being held
+	</dd>
+	<dt>
+		<code>Entertainment Type</code>
+	</dt>
+	<dd>
+		type of entertainment listed, i.e. beer tasting, pheasant hunt, reception
+	</dd>
+	<dt>
+		<code>Venue Address1</code>
+	</dt>
+	<dd>
+		Venue street address
+	</dd>
+	<dt>
+		<code>Venue Address2</code>
+	</dt>
+	<dd>
+		Apt/suite/room number for the event
+	</dd>
+	<dt>
+		<code>Venue City</code>
+	</dt>
+	<dd>
+		venue city
+	</dd>
+	<dt>
+		<code>Venue State</code>
+	</dt>
+	<dd>
+		venue state
+	</dd>
+	<dt>
+		<code>Venue Zipcode</code>
+	</dt>
+	<dd>
+		venue zip code
+	</dd>
+	<dt>
+		<code>Venue Website</code>
+	</dt>
+	<dd>
+		venue websit
+	</dd>
+	<dt>
+		<code>Contributions Info</code>
+	</dt>
+	<dd>
+		information on invitation for suggested contributions for event
+	</dd>
+	<dt>
+		<code>Latlong</code>
+	</dt>
+	<dd>
+		latitude/longitude of venue location
+	</dd>
+	<dt>
+		<code>Rsvp Info</code>
+	</dt>
+	<dd>
+		RSVP information
+	</dd>
+	<dt>
+		<code>Distribution Paid For By</code>
+	</dt>
+	<dd>
+		who is paying for distribution of invitation
+	</dd>
+	<dt>
+		<code>Make Checks Payable To</code>
+	</dt>
+	<dd>
+		information on to whom invitee should send invitati
+	</dd>
+	<dt>
+		<code>Checks Payable To Address</code>
+	</dt>
+	<dd>
+		address where payments should be sent
+	</dd>
+	<dt>
+		<code>Committee Id</code>
+	</dt>
+	<dd>
+		committee ID for beneficiary, if listed on invitation
+	</dd>
+</dl>
+<div class="clear"></div>
+
+{% endblock %}
+	
+	
