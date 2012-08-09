@@ -1,13 +1,12 @@
 {% load cache %}
 {% load static %}
 
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en" class="no-js">
     <head>
         <meta charset="utf-8">
-        {% block og %}{% endblock %}
-
         <title>{% block title %}Political Party Time{% endblock %}</title>
+        {% block og %}{% endblock %}
 
         {% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
@@ -34,7 +33,7 @@
 		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
     </head>
-    <body class="{% block bodyclass %}{% endblock %}">
+    <body class="{% block bodyclass %}home{% endblock %}">
 		<header id="mainHeader" class="clearfix">
 			<a href="/">
 				<h1 class="textReplace">
