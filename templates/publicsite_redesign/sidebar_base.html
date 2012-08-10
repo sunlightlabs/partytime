@@ -1,8 +1,10 @@
 {% extends "publicsite_redesign/base.html" %}
 {% load partytime_redesign %}
 
+{% block headjs %}{% endblock %}
+
 {% block container %}
-<div class="module nineCol colLt last wSide">
+<div class="{% block containerclass %}module nineCol colLt last wSide{% endblock %}">
 {% block mainbar %}{% endblock %}
 </div>
 {% endblock %}

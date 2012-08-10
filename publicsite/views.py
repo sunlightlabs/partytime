@@ -134,7 +134,7 @@ def blogindex(request):
 
 def party(request, docid): 
     doc = get_object_or_404(Event, pk=docid)
-    return render_to_response('publicsite/party.html', {"doc": doc}) 
+    return render_to_response('publicsite_redesign/party.html', {"doc": doc}) 
 
 
 def search_proxy(request):
