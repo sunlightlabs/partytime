@@ -81,10 +81,11 @@ def renderevent(event):
 def partiesheldforleadership():
     title = "Parties Held for Congressional Leadership"
     viewmorelink = ""
+    today = datetime.date.today()
 
     # what's the timing of all this stuff? 
     leader_ids = LeadershipPosition.objects.values_list('lawmaker_id', flat=True)
-    events = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids).distinct().order_by('-start_date', 'start_time')
+    events = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')
     
     parties = events[:3]
     
@@ -98,12 +99,13 @@ def partiesheldforleadership():
 def partiesheldforcommitteeleadership():
     title = "Parties Held for Committee<br>Leadership"
     viewmorelink = ""
+    today = datetime.date.today()
 
     # what's the timing of all this stuff? 
     crp_ids = list(CommitteeMembership.objects.values_list('member__crp_id', flat=True).exclude(position='Member'))
     leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
 
-    events = Event.objects.filter(status="", beneficiaries__in=leadership_ids).distinct().order_by('-start_date', 'start_time')
+    events = Event.objects.filter(status="", beneficiaries__in=leadership_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')
 
     parties = events[:3]
 
@@ -117,10 +119,11 @@ def partiesheldforcommitteeleadership():
 def partieshostedbyleadership():
     title = "Parties Hosted by Congressional Leadership"
     viewmorelink = ""
+    today = datetime.date.today()
 
     # what's the timing of all this stuff? 
     leader_ids = LeadershipPosition.objects.values_list('lawmaker__crp_id', flat=True)
-    events = Event.objects.filter(status="", other_members__crp_id__in=leader_ids).distinct().order_by('-start_date', 'start_time')
+    events = Event.objects.filter(status="", other_members__crp_id__in=leader_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')
 
     parties = events[:3]
     #print parties
@@ -136,8 +139,9 @@ def partieshostedbyleadership():
 def partiesforpresidentialcandidates():
     title = "Parties Held For Presidential<br>Candidates"
     viewmorelink = ""
+    today = datetime.date.today()
 
-    events = Event.objects.filter(status="", is_presidential=True).distinct().order_by('-start_date', 'start_time')
+    events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().order_by('-start_date', 'start_time')
 
     parties = events[:3]
     #print parties
@@ -169,8 +173,7 @@ def yearinpartiesjs():
 
     
     for month in monthly_count:
-        #print month, int(month[1]), month[2]
-        #print 
+
         month_datum = {
         'count':month[2]
         }
@@ -180,7 +183,6 @@ def yearinpartiesjs():
         month_data.append(month_datum)
         month_names.append(month_name)
         
-    print month_data, month_names
             
     return{
     'month_data':month_data,
