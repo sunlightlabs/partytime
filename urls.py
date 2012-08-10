@@ -34,6 +34,10 @@ urlpatterns = patterns('',
     url(r'^FAQ/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/FAQ.html'}),
     url(r'^about/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/about.html'}),
     url(r'^api/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/api.html'}),
+    url(r'^upload/$', 'partytime.publicsite.views.upload', name='partytime_upload'),
+    
+    
+    
     
     url(r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search', name='partytime_search'),
     url(r'^search_embed/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed', name='partytime_search_embed'),
@@ -45,7 +49,6 @@ urlpatterns = patterns('',
     url(r'^upcoming/$', 'partytime.publicsite.views.upcoming', name='partytime_upcoming'),
     url(r'^bydate/(?P<start>\d{8})/(?P<end>\d{8})/$', 'partytime.publicsite.views.bydate', name='partytime_bydate'),
     url(r'^upload/thanks/$', 'partytime.publicsite.views.upload_thanks', name='partytime_uploadthanks'),
-    url(r'^upload/$', 'partytime.publicsite.views.upload', name='partytime_upload'),
     url(r'^party/(?P<docid>\d+)/$', 'partytime.publicsite.views.party', name='partytime_party_detail'),
     url(r'^contact/', include('contact_form.urls'), {"form_class": PartyTimeContactForm, "fail_silently": False}, name='partytime_contact'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),

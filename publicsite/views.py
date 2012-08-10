@@ -463,7 +463,7 @@ def upload(request):
             return HttpResponseRedirect('/upload/thanks/')
 
     return render_to_response(
-            'publicsite/upload.html', 
+            'publicsite_redesign/upload.html', 
             context_instance = RequestContext(request)
             )
 
