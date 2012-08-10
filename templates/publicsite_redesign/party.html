@@ -21,54 +21,42 @@
 		</h2>
 	</div>
 	<dl class="clearfix">
-		{% if hosts %}
-		<dt class="host description">
-			 Hosted by 
-		</dt>
-		<dd class="host description">
-			{% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}
-		</dd>
-		{% endif %}
-		
-		<!--
-		{% if doc.venue.venue_name %}
-		<dt class="location description">
-			at 
-		</dt>
-		<dd  class="location description">
-			<a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a>
-		</dd>
-		{% endif %}
-		-->
 
-		{% if doc.venue.venue_address %} 
-		<dt class="address">
-			Address
-		</dt>
-		<dd class="address">
-				{{ doc.venue.venue_address }}
-			</a>
-		</dd>
-		{% endif %}
-		
-		
-		{% if doc.contributions_info %}
-		<dt class="contribute">
-			Contribution Information
-		</dt>
-		<dd class="contribute">
-			{{ doc.contributions_info }}
-		</dd>
-		{% endif %}
-		
-		{% if doc.rsvp_info %}
-		<dt class="rsvp">
-			RSVP
-		</dt>
-		<dd class="rsvp">
-			{{ doc.rsvp_info }}
-		</dd>
-		{% endif %}
+
+
+			{% with doc.hosts.all as hosts %}
+			{% if hosts %}
+		    <dt>Hosted by</dt><dd> {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}</dd>
+			{% endif %}
+			{% endwith %}
+
+		    <dt>When</dt> 
+
+		    <dd>{{ doc.start_date|date:"N jS, Y" }}
+            {% if doc.start_time and not doc.end_date %}
+			({{ doc.start_time|time:"f a" }}{% if doc.end_time %} - {{ doc.end_time|time:"f a" }}{% endif %})
+            {% endif %}
+            {% if doc.end_date %}
+            {% if doc.start_time %}({{ doc.start_time|time:"f a" }}){% endif %}
+                - {{ doc.end_date|date:"N jS, Y" }}
+                {% if doc.end_time %}({{ doc.end_time|time:"f a" }}){% endif %}
+            {% endif %}
+			</dd>
+			{% if doc.venue.venue_name %}<dt>Where</dt> <dd><a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a> {% if doc.venue.venue_address %} - {{ doc.venue.venue_address }}{% endif %}</dd>{% endif %}
+			{% if doc.entertainment %}<dt>Type of Event</dt><dd> <a href="{% url partytime_search 'Entertainment_Type' doc.entertainment|urlencode %}">{{ doc.entertainment }}</a></dd>{% endif %}
+				{% with doc.other_members.all as other_members %}
+				{% if other_members %}
+			    <dt>Other Lawmakers Mentioned</dt><dd> {% for other_member in other_members %} <a href="{% url partytime_search 'Other_Members_of_Congress' other_member.name|urlencode %}">{{ other_member }}</a> {% if other_member.all_leadership_positions %}({{ other_member.all_leadership_positions|join:"; " }}){% endif %}{% endfor %}</dd>
+				{% endif %}
+				{% endwith %}
+				
+				
+				{% if doc.contributions_info %}<dt>Contribution Information</dt><dd> {{ doc.contributions_info }}</dd>{% endif %}
+				{% if doc.make_checks_payable_to %}<dt>Make Checks Payable To</dt><dd> {{ doc.make_checks_payable_to }} - {{ doc.checks_payable_to_address }}</dd>{% endif %}
+				{% if doc.committee_id %}<dt>Committee ID</td><dd> {{ doc.committee_id }}</dd>{% endif %}
+				{% if doc.rsvp_info %}<dt>RSVP</dt><dd> {{ doc.rsvp_info }}</dd>{% endif %}
+				{% if doc.event__paid_for_by %}<dt>Event Paid for by</dt><dd> {{ doc.event__paid_for_by }}</dd>{% endif %}
+				{% if doc.distribution_paid_for_by %}<dt>Distribution Paid for by</dt><dd> {{ doc.distribution_paid_for_by }}</dd>{% endif %}	
 		
 	</dl>
 	<a class="contribute" href="mailto:partytime@sunlightfoundation.com">Suggest edits to event details</a>
