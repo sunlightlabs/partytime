@@ -81,7 +81,7 @@ def index(request):
             })
 
 def make_paginator_text(current_page, max_page):
-    print current_page, max_page
+    #print current_page, max_page
     
     initial_page = current_page - 3
     
@@ -97,7 +97,6 @@ def make_paginator_text(current_page, max_page):
         return_html += '<span class="prev"><a class="textReplace" href="/blogindex/?page=' + str(current_page-1) + '">Previous</a></span>'
         
     for i in range(initial_page, initial_page+6):
-        print i
         return_html += '<span class="pageNum ' 
         if i==current_page:
             return_html += 'cur">'  + str(i) + '</span>'

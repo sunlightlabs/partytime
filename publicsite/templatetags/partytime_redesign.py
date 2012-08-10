@@ -8,6 +8,9 @@ from publicsite.models import *
 
 register = Library()
 
+# customize month names. Oye. 
+month_name_array = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept','Oct', 'Nov', 'Dec']
+
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/partystats.html')  
 def partystats():
     """ Calculate all the stuff needed for the footer -- which also appears out of the footer on the index page. """
@@ -120,7 +123,7 @@ def partieshostedbyleadership():
     events = Event.objects.filter(status="", other_members__crp_id__in=leader_ids).distinct().order_by('-start_date', 'start_time')
 
     parties = events[:3]
-    print parties
+    #print parties
 
     return{
     'parties':parties,
@@ -137,10 +140,52 @@ def partiesforpresidentialcandidates():
     events = Event.objects.filter(status="", is_presidential=True).distinct().order_by('-start_date', 'start_time')
 
     parties = events[:3]
-    print parties
+    #print parties
 
     return{
     'parties':parties,
     'title':title,
     'viewmorelink':viewmorelink,
     }    
+    
+@register.inclusion_tag('publicsite_redesign/templatetag_templates/year_in_parties.js')
+def yearinpartiesjs():
+    
+    today = datetime.date.today()
+    year = today.year
+    month = today.month
+    
+    startdate = datetime.date(year-1, month, 1)
+    enddate = datetime.date(year, month+1, 1)
+    events = Event.objects.filter(
+                start_date__gte=startdate, start_date__lt=enddate,
+                status='')
+    
+    
+    monthly_count = events.extra(select={'year': 'EXTRACT(year FROM start_date)','month': 'EXTRACT(month FROM start_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Count('pk'))
+    
+    month_data = []
+    month_names = []
+
+    
+    for month in monthly_count:
+        #print month, int(month[1]), month[2]
+        #print 
+        month_datum = {
+        'count':month[2]
+        }
+        month_name = {
+        'name':month_name_array[int(month[1])]
+        }
+        month_data.append(month_datum)
+        month_names.append(month_name)
+        
+    print month_data, month_names
+            
+    return{
+    'month_data':month_data,
+    'month_names':month_names
+    }
+
+
+
