@@ -80,7 +80,7 @@ def index(request):
             'cachetime4':cachetime4,                        
             })
 
-def make_paginator_text(current_page, max_page):
+def make_paginator_text(base_html, current_page, max_page):
     #print current_page, max_page
     
     initial_page = current_page - 3
@@ -94,18 +94,18 @@ def make_paginator_text(current_page, max_page):
     
     return_html = ""
     if current_page > 1:
-        return_html += '<span class="prev"><a class="textReplace" href="/blogindex/?page=' + str(current_page-1) + '">Previous</a></span>'
+        return_html += '<span class="prev"><a class="textReplace" href="' + base_html + '?page=' + str(current_page-1) + '">Previous</a></span>'
         
     for i in range(initial_page, initial_page+6):
         return_html += '<span class="pageNum ' 
         if i==current_page:
             return_html += 'cur">'  + str(i) + '</span>'
         else:
-            return_html += '"><a href="/blogindex/?page=' + str(i) + '">' + str(i) + '</a></span>'
+            return_html += '"><a href="' + base_html + '?page=' + str(i) + '">' + str(i) + '</a></span>'
     
     
     if current_page < max_page:
-        return_html += '<span class="next"><a class="textReplace" href="/blogindex/?page=' + str(current_page+1) + '">Next</a></span>'
+        return_html += '<span class="next"><a class="textReplace" href="' + base_html + '?page=' + str(current_page+1) + '">Next</a></span>'
         
     return return_html
 
@@ -123,7 +123,7 @@ def blogindex(request):
     except (EmptyPage, InvalidPage):
         raise Http404
     
-    paginator_html = make_paginator_text(int(pagenum), max_page[0])
+    paginator_html = make_paginator_text('/blogindex/', int(pagenum), max_page[0])
     
     return render_to_response(
             'publicsite_redesign/blogindex.html', 

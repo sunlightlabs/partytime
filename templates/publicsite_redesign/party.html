@@ -3,15 +3,21 @@
 {% block title %}{% if doc.entertainment %}{{ doc.entertainment }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %} - {{ block.super }}{% endblock %}
 
 
-{% block headjs %}<script src="http://www.scribd.com/javascripts/view.js"></script>{% endblock %}
+{% block headjs %}<script src="http://www.scribd.com/javascripts/view.js"></script>
+<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>
+{% endblock %}
 
 {% block containerclass %}module nineCol colLt last event wSide{% endblock %}
 
-		
+
+
 {% block mainbar %}
 
 <div class="oneCol colLt">
 	<time pubdate=""><span class="month">{{ doc.start_date|date:"N"}}</span><span class="day">{{ doc.start_date|date:"j"}}</span><span class="year">{{ doc.start_date|date:"Y"}}</span></time>
+	<ul class="clearfix social tall">
+		<li id="share-buttons"></li>
+	</ul>
 
 </div>
 <div class="eightCol colRt">
@@ -71,4 +77,35 @@
 	</div>
 </div>
 
+{% endblock %}
+
+{% block js %}
+<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
+<script>
+    $(document).ready(function() {
+        var ua = new gigya.socialize.UserAction();
+        var params = {
+            containerID: 'share-buttons',
+            layout: 'vertical',
+            shareButtons: [
+                {
+                    provider: 'facebook-like',
+                },
+                {
+                    provider: 'google-plusone'
+                },
+                {
+                    provider: 'twitter-tweet',
+                    related: 'sunfoundation',
+                    via: 'sunfoundation'
+                },
+                {
+                    provider: 'email'
+                }
+            ],
+            userAction: ua
+        };
+        gigya.socialize.showShareBarUI(params);
+    });
+</script>
 {% endblock %}

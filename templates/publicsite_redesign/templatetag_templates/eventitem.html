@@ -1,11 +1,12 @@
 <li>
 	<time pubdate=""><span class="month">{{ event.start_date|date:"N" }}</span><span class="day">{{ event.start_date|date:"d" }}</span></time>
 	<div class="eventData">
-		<span class="type"><a href="{{ event.get_absolute_url }}">{{ event.truncated_name }}</a></span>
+		<span class="type">{{ event.truncated_name }}</span>
 		{% if event.beneficiaries %}<h5 class="beneficiary">
 			{% for beneficiary in event.beneficiaries.all %}{% if forloop.last %}{% else %}, {% endif %}<a href="{{ event.get_absolute_url }}">{{ beneficiary.titled_name }}</a>{% endfor %}
 		</h5>
 		{% endif %}
 		<a href="{{ event.get_absolute_url }}" class="location">{{ event.venue.state_full }}</a>
 	</div>
+	<div class="clear"></div>
 </li>
