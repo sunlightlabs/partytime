@@ -1,0 +1,86 @@
+{% extends "publicsite_redesign/sidebar_base.html" %}
+
+{% block title %}{% if doc.entertainment %}{{ doc.entertainment }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %} - {{ block.super }}{% endblock %}
+
+
+{% block headjs %}<script src="http://www.scribd.com/javascripts/view.js"></script>{% endblock %}
+
+{% block containerclass %}module nineCol colLt last event wSide{% endblock %}
+
+		
+{% block mainbar %}
+
+<div class="oneCol colLt">
+	<time pubdate=""><span class="month">{{ doc.start_date|date:"N"}}</span><span class="day">{{ doc.start_date|date:"j"}}</span><span class="year">{{ doc.start_date|date:"Y"}}</span></time>
+
+</div>
+<div class="eightCol colRt">
+	<div class="description">
+		<h2>
+			<span class="type">{% if doc.entertainment %}{{ doc.entertainment }}{% endif %}</span> {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}</a>
+		</h2>
+	</div>
+	<dl class="clearfix">
+		{% if hosts %}
+		<dt class="host description">
+			 Hosted by 
+		</dt>
+		<dd class="host description">
+			{% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}">{{ host }}</a> {% endfor %}
+		</dd>
+		{% endif %}
+		
+		<!--
+		{% if doc.venue.venue_name %}
+		<dt class="location description">
+			at 
+		</dt>
+		<dd  class="location description">
+			<a href="{% url partytime_search 'Venue_Name' doc.venue.venue_name|urlencode %}">{{ doc.venue.venue_name }}</a>
+		</dd>
+		{% endif %}
+		-->
+
+		{% if doc.venue.venue_address %} 
+		<dt class="address">
+			Address
+		</dt>
+		<dd class="address">
+				{{ doc.venue.venue_address }}
+			</a>
+		</dd>
+		{% endif %}
+		
+		
+		{% if doc.contributions_info %}
+		<dt class="contribute">
+			Contribution Information
+		</dt>
+		<dd class="contribute">
+			{{ doc.contributions_info }}
+		</dd>
+		{% endif %}
+		
+		{% if doc.rsvp_info %}
+		<dt class="rsvp">
+			RSVP
+		</dt>
+		<dd class="rsvp">
+			{{ doc.rsvp_info }}
+		</dd>
+		{% endif %}
+		
+	</dl>
+	<a class="contribute" href="mailto:partytime@sunlightfoundation.com">Suggest edits to event details</a>
+	<div class="module inviteDoc sevenCol" id="embedded_doc">	
+		<script type="text/javascript">
+	   		var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs{{ doc.pdf_document_link }}', 'pub-43329585085964116591');
+	   		scribd_doc.addParam("height", 700);
+	   		scribd_doc.addParam("width", 530);
+			scribd_doc.addParam("public", false);
+	   		scribd_doc.write('embedded_doc');
+		</script>	
+	</div>
+</div>
+
+{% endblock %}
