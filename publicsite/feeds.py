@@ -107,6 +107,19 @@ class NewFeed(Feed):
     def item_link(self, item):
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})
 
+class PresidentFeed(Feed):
+    title = "Party Time Presidential Fundraisers"
+    link = "/feeds/presidential/"
+    description = "Parties for presidential candidates"
+    title_template = "feeds/party_title.html"
+    description_template = "feeds/party_description.html"
+    today = datetime.date.today()
+    def items(self):
+        return Event.objects.presidential()[:10]
+
+    def item_link(self, item):
+        return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})
+
 class UpcomingFeed(Feed):
     title = "Party Time Upcoming Parties"
     link = "/feeds/upcoming/"

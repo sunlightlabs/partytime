@@ -16,7 +16,11 @@
 		
 		<div class="clear"></div>
 	{{ post.content|safe|linebreaks }}
-
+	{% if post_list %}
+	    <span class="comment_link">
+	        <a href="http://politicalpartytime.org{{ post.get_absolute_url }}#disqus_thread">Comments</a>
+	    </span>
+	{% endif %}
 	
 </article>
 <div class="tags">

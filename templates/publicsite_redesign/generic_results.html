@@ -1,0 +1,96 @@
+{% extends "publicsite_redesign/base.html" %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+		
+{% block container %}
+<div class="module nineCol colLt search">
+<h2 class="wHint wActions">
+	{{ title }}
+</h2>
+<div class="clear"></div>
+	<ul class="actions clearfix">
+		{% if rss_url %}
+		<li>
+			<a href="{{ rss_url }}" class="rss textReplace">rss</a>
+		</li>
+		{% endif %}
+		{# This should be tied to rss url #}
+		{% if alert_url %}
+		<li>
+			<a href="" class="">Create an alert</a>
+		</li>
+		{% endif %}
+		{% if widgeturl %}
+		<li>
+			<a href="{{ widget_url }}" class="">Share Widget</a>
+		</li>
+		{% endif %}
+	</ul>
+</div>
+
+<div class="colRt threeCol uploadSmall module">
+	<h3 class="textReplace">Extend an Invite</h3>
+	<a class="button" href="">Upload</a>
+</div>
+<div class="clear"></div>
+
+
+<section class="partyList module">
+
+{% if results %}
+
+<h3>
+	Events
+</h3>
+<table>
+	<thead>
+		<tr>
+			<th>
+				Date
+			</th>
+			<th>
+				Beneficiary
+			</th>
+			<th>
+				Event Type
+			</th>
+			<th>
+				Location
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for result in results %}
+		<tr class="{% cycle 'even' 'odd' %}">
+			<td>
+				{{ result.start_date|date:"m/d/y"}}
+			</td>
+			<td>
+				{% for ben in result.beneficiaries.all %}<a href="{{ben.get_absolute_url }}">{{ ben.name }}</a>{% endfor %}
+			</td>
+			<td>
+				<a href="{{result.get_absolute_url}}">{{ result.entertainment }}</a>
+			</td>
+			<td>
+				{{ result.venue.venue_name }} {% if result.venue.venue_address %} - {{ result.venue.venue_address }}{% endif %}
+			</td>
+		</tr>		
+		
+		{% endfor %}
+		
+	
+		</tbody>
+	</table>
+	
+	
+	<div class="pagination">
+			{{ paginator_html|safe }}
+	</div>
+	
+	{% else %}<h3>No results</h3>{% endif %}
+</section>
+</div>
+{% endblock %}
+	
+	

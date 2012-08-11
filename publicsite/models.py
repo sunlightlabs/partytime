@@ -126,6 +126,11 @@ class EventManager(models.Manager):
             events = events[:limit]
         return events
 
+    def presidential(self, limit=10):
+        events = Event.objects.filter(
+                    start_date__lt=datetime.datetime.now(),
+                    status='', is_presidential=True).order_by('-start_date', '-start_time')[:limit]
+        return events
 
     # this isn't, strictly speaking, the newest; it's the newest parties that haven't already happened. 
     def newest(self, limit=10):

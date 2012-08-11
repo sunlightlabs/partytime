@@ -33,7 +33,7 @@
 				<h5>
 					<a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
 				</h5>
-				<time pubdate="">{{ post.post_date|date:"F j, Y" }}</time>
+				<time pubdate="{{ post.post_date|date:"c" }}">{{ post.post_date|date:"F j, Y" }}</time>
 				<span class="author">By {{post.author.display_name }}</span>
 			</li>
 			
@@ -51,7 +51,7 @@
 			{% renderevent event %}
 			{% endfor %}
 		</ol>
-		<a href="" class="more">View more</a>
+		<a href="/newly-added/" class="more">View more</a>
 	</div>
 	<div class="colRt fourCol current events">
 		<h3>
@@ -62,7 +62,7 @@
 			{% renderevent event %}
 			{% endfor %}
 		</ol>
-		<a href="" class="more">View more</a>
+		<a href="/upcoming/" class="more">View more</a>
 	</div>
 	<div class="clear"></div>
 </div>

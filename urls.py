@@ -18,8 +18,10 @@ feeds = {
     'recent': RecentFeed,
     'upcoming': UpcomingFeed,
     'pol': PolFeed,
-    'newlyadded':NewFeed
+    'newlyadded':NewFeed,
+    'presidential':PresidentFeed,
 }
+# need to add presidential to feeds
 
 admin.autodiscover()
 
@@ -30,14 +32,27 @@ urlpatterns = patterns('',
     # there didn't use to *be* a blog home page -- it was instead the home page. 
     url(r'^blogindex/$', 'partytime.publicsite.views.blogindex', name='blogindex'),
     
+    # flattish nav pages
     url(r'^about/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/about.html'}),
     url(r'^FAQ/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/FAQ.html'}),
-    url(r'^about/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/about.html'}),
     url(r'^api/$', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/api.html'}),
     url(r'^upload/$', 'partytime.publicsite.views.upload', name='partytime_upload'),
+    url(r'^contact/', include('contact_form.urls'), {"form_class": PartyTimeContactForm, "fail_silently": False}, name='partytime_contact'),
+    
+    # results pages linked to from the home page
+    url(r'^recent/$', 'partytime.publicsite.views.recent', name='partytime_recent'),    
+    url(r'^upcoming/$', 'partytime.publicsite.views.upcoming', name='partytime_upcoming'), 
+    url(r'^newly-added/$', 'partytime.publicsite.views.newly_added', name='partytime_newly_added'),            
+    url(r'^committee-leadership/$', 'partytime.publicsite.views.committee_leadership', name='partytime_committee_leadership'),
+    url(r'^congressional-leadership/$', 'partytime.publicsite.views.congressional_leadership', name='partytime_congressional_leadership'),    
+    url(r'^hosted-by-congressional-leadership/$', 'partytime.publicsite.views.hosted_by_congressional_leadership', name='partytime_hosted_by_congressional_leadership'),
+    url(r'^presidential/$', 'partytime.publicsite.views.presidential', name='partytime_presidential'),
     
     
     
+    
+    
+    ### End redesigned views:
     
     url(r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search', name='partytime_search'),
     url(r'^search_embed/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed', name='partytime_search_embed'),
@@ -45,12 +60,10 @@ urlpatterns = patterns('',
     url(r'^upcoming_embed/$', 'partytime.publicsite.views.upcoming_embed', name='partytime_upcoming_embed'),
     url(r'^upcoming_embed2/$', 'partytime.publicsite.views.upcoming_embed2', name='partytime_upcoming_embed2'),
     url(r'^search/$', 'partytime.publicsite.views.search_proxy', name='partytime_search_proxy'),
-    url(r'^recent/$', 'partytime.publicsite.views.recent', name='partytime_recent'),
-    url(r'^upcoming/$', 'partytime.publicsite.views.upcoming', name='partytime_upcoming'),
+
     url(r'^bydate/(?P<start>\d{8})/(?P<end>\d{8})/$', 'partytime.publicsite.views.bydate', name='partytime_bydate'),
     url(r'^upload/thanks/$', 'partytime.publicsite.views.upload_thanks', name='partytime_uploadthanks'),
     url(r'^party/(?P<docid>\d+)/$', 'partytime.publicsite.views.party', name='partytime_party_detail'),
-    url(r'^contact/', include('contact_form.urls'), {"form_class": PartyTimeContactForm, "fail_silently": False}, name='partytime_contact'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='partytime_feeds'),
@@ -66,8 +79,7 @@ urlpatterns = patterns('',
     url(r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes', name='partytime_chamber_committees'),
     url(r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
     url(r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'}, name='partytime_committee_list'),
-    url(r'^committee-leadership/$', 'partytime.publicsite.views.committee_leadership', name='partytime_committee_leadership'),
-    url(r'^congressional-leadership/$', 'partytime.publicsite.views.congressional_leadership', name='partytime_congressional_leadership'),
+
     url(r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac', name='partytime_pol_detail'),
     url(r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all', name='partytime_leadpacs'),
     url(r'^ical/$', IcalFeed(), name='partytime_ical'),

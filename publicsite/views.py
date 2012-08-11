@@ -30,30 +30,11 @@ from partytime.publicsite.models import *
 from wordpress.models import Post
 from layar import LayarView, POI
 
-""" OLD
-def index(request):
-    term = None
-    now = datetime.datetime.now()
+# catch-all cache time
+# set low during development
+cache_time_minutes = 1
 
-    if request.method == "POST":
-        term = request.POST.get('term', None)
-
-    if request.method == "GET":
-        term = request.GET.get('term', None)
-
-    if term:        
-        blog_posts = Post.objects.published().filter(content__icontains=term).select_related()[:10]
-    else:
-        blog_posts = Post.objects.published().select_related()[:10]
-
-    return render_to_response(
-            'publicsite/index.html', 
-            {'post_list': blog_posts, }, 
-            context_instance = RequestContext(request)
-            )
-"""
-
-@cache_page(60*1)
+@cache_page(60*cache_time_minutes)
 def index(request):
 
 
@@ -96,7 +77,16 @@ def make_paginator_text(base_html, current_page, max_page):
     if current_page > 1:
         return_html += '<span class="prev"><a class="textReplace" href="' + base_html + '?page=' + str(current_page-1) + '">Previous</a></span>'
         
-    for i in range(initial_page, initial_page+6):
+    end_page = initial_page+6
+    if end_page > max_page:
+        end_page = max_page+1
+    
+    if initial_page < 1:
+        initial_page = 1
+    
+    for i in range(initial_page, max_page):
+        
+    
         return_html += '<span class="pageNum ' 
         if i==current_page:
             return_html += 'cur">'  + str(i) + '</span>'
@@ -135,6 +125,201 @@ def blogindex(request):
 def party(request, docid): 
     doc = get_object_or_404(Event, pk=docid)
     return render_to_response('publicsite_redesign/party.html', {"doc": doc}) 
+
+
+@cache_page(60*cache_time_minutes)
+def recent(request):
+    events = Event.objects.recent(60)
+    print "recent"
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+    max_page = paginator.num_pages
+    
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+        
+
+    paginator_html = make_paginator_text('/recent/', int(pagenum), max_page)
+    rss_url = "/feeds/recent/"
+     
+    return render_to_response(
+            'publicsite_redesign/generic_results.html', 
+            {'title': 'Recent events', 
+             'results': page.object_list,
+             'paginator_html':paginator_html,
+             'rss_url':rss_url,
+             }
+            )
+            
+@cache_page(60*cache_time_minutes)
+def upcoming(request):
+    events = Event.objects.upcoming(None)
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+
+    rss_url = "/feeds/upcoming/"
+        
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite_redesign/generic_results.html', 
+            {'title': 'Upcoming events', 
+             'results': page.object_list,
+             'paginator_html':paginator_html,
+             'rss_url':rss_url,
+             }
+            )
+
+@cache_page(60*cache_time_minutes)
+def newly_added(request):
+    events = Event.objects.newest(10)
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+
+    rss_url = "/feeds/newlyadded/"
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite_redesign/generic_results.html', 
+            {'title': 'Newly added events', 
+             'results': page.object_list,
+             'paginator_html':paginator_html,
+             'rss_url':rss_url,
+             }
+            )
+
+@cache_page(60*cache_time_minutes)
+def committee_leadership(request):
+
+    today = datetime.date.today()
+    pagenum = request.GET.get('page', 1)
+    crp_ids = list(CommitteeMembership.objects.values_list('member__crp_id', flat=True).exclude(position='Member'))
+    leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
+
+    events = Event.objects.filter(status="", beneficiaries__in=leadership_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+    
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+    paginator_html = make_paginator_text('/committee-leadership/', int(pagenum), max_page)    
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite_redesign/generic_results.html', 
+            {'title': 'Events held for committee leaders', 
+             'results': page.object_list,
+             'paginator_html':paginator_html,}
+            )
+            
+@cache_page(60*cache_time_minutes)
+def congressional_leadership(request):
+
+    today = datetime.date.today()
+    pagenum = request.GET.get('page', 1)
+    leader_ids = LeadershipPosition.objects.values_list('lawmaker_id', flat=True)
+    events = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+    
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+    paginator_html = make_paginator_text('/congressional-leadership/', int(pagenum), max_page)    
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite_redesign/generic_results.html', 
+            {'title': 'Parties Held for Congressional Leadership', 
+             'results': page.object_list,
+             'paginator_html':paginator_html,}
+            )      
+
+
+@cache_page(60*cache_time_minutes)
+def hosted_by_congressional_leadership(request):
+
+    today = datetime.date.today()
+    pagenum = request.GET.get('page', 1)
+    leader_ids = LeadershipPosition.objects.values_list('lawmaker__crp_id', flat=True)
+    events = Event.objects.filter(status="", other_members__crp_id__in=leader_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+    paginator_html = make_paginator_text('/hosted-by-congressional-leadership/', int(pagenum), max_page)    
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite_redesign/generic_results.html', 
+            {'title': 'Parties Hosted by Congressional Leadership', 
+             'results': page.object_list,
+             'paginator_html':paginator_html,}
+            )      
+
+
+@cache_page(60*cache_time_minutes)
+def presidential(request):
+
+    today = datetime.date.today()
+    pagenum = request.GET.get('page', 1)
+    events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+    paginator_html = make_paginator_text('/presidential/', int(pagenum), max_page)    
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+    
+    rss_url = '/feeds/presidential/'
+    
+    return render_to_response(
+            'publicsite_redesign/generic_results.html', 
+            {'title': 'Parties Hosted For Presidential Candidates', 
+             'results': page.object_list,
+             'paginator_html':paginator_html,
+             'rss_url':rss_url,}
+            )
 
 
 def search_proxy(request):
@@ -212,40 +397,9 @@ def convention_list(request, convention=''):
             )
 
 
-#
-# upcoming and recent events
-#
-
-def recent(request):
-    docset = Event.objects.recent(15)
-    paginator = Paginator(docset, 25, orphans=5)
-    pagenum = request.GET.get('page', 1)
-    try:
-        page = paginator.page(pagenum)
-    except (EmptyPage, InvalidPage):
-        raise Http404
-    return render_to_response(
-            'publicsite/snapshot.html', 
-            {'snapshot_image_name': 'recent', 
-             'page': page, }
-            )
 
 
-def upcoming(request):
-    docset = Event.objects.upcoming(None)
-    paginator = Paginator(docset, 25, orphans=5)
-    pagenum = request.GET.get('page', 1)
-    try:
-        page = paginator.page(pagenum)
-    except (EmptyPage, InvalidPage):
-        raise Http404
 
-    return render_to_response(
-            'publicsite/snapshot.html',
-            {'snapshot_image_name': 'upcoming', 
-             'page': page,
-             }
-            )
 
 
 def upcoming_embed(request):
@@ -523,59 +677,9 @@ def supercommittee(request):
              }
             )
 
-@cache_page(60*30)
-def committee_leadership(request):
-    """Turning the querysets into lists to avoid subqueries.
-    """
-    crp_ids = list(CommitteeMembership.objects.values_list('member__crp_id', flat=True).exclude(position='Member'))
-    leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
-
-    events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
-                        ).distinct().order_by('-start_date', 'start_time')
-
-    paginator = Paginator(events, 50, orphans=5)
-    pagenum = request.GET.get('page', 1)
-
-    try:
-        page = paginator.page(pagenum)
-    except (EmptyPage, InvalidPage):
-        raise Http404
-
-    return render_to_response(
-            'publicsite/leadership.html',
-            {'page': page,
-             'title': 'Events held for or attended by committee leaders',
-             'pagetype': 'committee',
-            },
-        )
 
 
-@cache_page(60*30)
-def congressional_leadership(request):
-    """Turning the querysets into lists to avoid subqueries.
-    """
-    crp_ids = list(LeadershipPosition.objects.values_list('lawmaker__crp_id', flat=True))
-    leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
 
-
-    events = Event.objects.filter(Q(beneficiaries__in=leadership_ids) | Q(other_members__in=leadership_ids)
-                        ).distinct().order_by('-start_date', 'start_time')
-
-    paginator = Paginator(events, 50, orphans=5)
-    pagenum = request.GET.get('page', 1)
-
-    try:
-        page = paginator.page(pagenum)
-    except (EmptyPage, InvalidPage):
-        raise Http404
-
-    return render_to_response(
-            'publicsite/leadership.html',
-            {'page': page,
-             'title': 'Events held for or attended by congressional leaders',
-             'pagetype': 'congressional',
-            },
-        )
 
 # Marked as temporary in urls.py; not sure if this is still being used.
 def updatecmtes(request,chamber):

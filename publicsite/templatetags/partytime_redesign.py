@@ -80,7 +80,7 @@ def renderevent(event):
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/indexpage_partylist.html')
 def partiesheldforleadership():
     title = "Parties Held for Congressional Leadership"
-    viewmorelink = ""
+    viewmorelink = "/congressional-leadership/"
     today = datetime.date.today()
 
     # what's the timing of all this stuff? 
@@ -98,7 +98,7 @@ def partiesheldforleadership():
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/indexpage_partylist.html')
 def partiesheldforcommitteeleadership():
     title = "Parties Held for Committee<br>Leadership"
-    viewmorelink = ""
+    viewmorelink = "/committee-leadership/"
     today = datetime.date.today()
 
     # what's the timing of all this stuff? 
@@ -118,7 +118,7 @@ def partiesheldforcommitteeleadership():
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/indexpage_partylist.html')
 def partieshostedbyleadership():
     title = "Parties Hosted by Congressional Leadership"
-    viewmorelink = ""
+    viewmorelink = "/hosted-by-congressional-leadership/"
     today = datetime.date.today()
 
     # what's the timing of all this stuff? 
@@ -138,12 +138,10 @@ def partieshostedbyleadership():
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/indexpage_partylist.html')
 def partiesforpresidentialcandidates():
     title = "Parties Held For Presidential<br>Candidates"
-    viewmorelink = ""
+    viewmorelink = "/presidential/"
     today = datetime.date.today()
-
-    events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().order_by('-start_date', 'start_time')
-
-    parties = events[:3]
+    
+    parties = Event.objects.presidential(3)
     #print parties
 
     return{
