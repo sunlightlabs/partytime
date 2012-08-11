@@ -1,0 +1,129 @@
+{% extends "publicsite_redesign/base.html" %}
+{% load partytime %}
+
+{% block title %}	{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}) - {{ block.super }}{% endblock %}
+
+		
+{% block container %}
+<div class="module nineCol colLt entity">
+		{% if image_url %}<img src="{{ image_url }}" alt="{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }})" class="oneCol colLt">{% endif %}
+		<div class="leg sevenCol colRt">
+			<h2 class="">
+				{{ lawmaker.title }} {{ lawmaker.name }} <span class="role">({{ lawmaker.party }}, {{ lawmaker.state }})</span>
+			</h2>
+			<div class="clear"></div>
+			<ul class="clearfix social">
+				<li>
+					<a href="" class="rss textReplace">rss</a>
+				</li>
+				<li>
+					<a href="" class="">Create Alert</a>
+				</li>
+				<li>
+					<a href="" class="">Share Widget</a>
+				</li>
+			</ul>
+			<div class="clear"></div>
+			{% if lawmaker.congressional_leadership_positions %}
+			<h4>Congressional Leadership</h4>
+		    <ul class="committees clearfix">
+				{% for position in lawmaker.congressional_leadership_positions %}
+				<li>{{ position }}</li>
+				{% endfor %}
+		    </ul>
+		    {% endif %}
+			
+			{% if lawmaker.committee_set.all %}
+			<h4>Committee Membership</h4>
+			<ul class="committees clearfix">
+				{% for committee in lawmaker.committee_set.all %}
+				<li>
+					{{committee.title}} <span class="role">{{ lawmaker|committee_position:committee }}</span>
+				</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+		</div>
+	</div>
+
+		<div class="uploadSmall module colRt threeCol ">
+			<h3 class="textReplace">Extend an Invite</h3>
+			<a class="button" href="">Upload</a>
+		</div>
+	<div class="clear"></div>
+
+	<div class="partyList last module">
+		<div class="tableHat twelveCol aboutParties">
+			<h3 class="">
+				Beneficiary of {{ event_count }} PT events <span class="role">since 2007</span>
+			</h3>
+			
+			<dl class="clearfix">
+				<dt>Parties Benefitting</dt>
+				<dd>
+					<ul>
+						<li>
+							Campaign Committee
+						</li>
+						{% if pacname %}
+						<li>
+							<a href="/search/Beneficiary/{{ pacname }}/">{{ pacname }}</a>
+						</li>
+						{% endif %}
+
+					</ul>
+				</dd>
+				{% if current_pagenum %}<dt>Showing page {{ current_pagenum}} of {{ max_pagenum }}</dt>{% endif %}
+			</dl>
+			<div class="clear"></div>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>
+						Date
+					</th>
+					<th>
+						Beneficiary
+					</th>
+					<th>
+						Event Type
+					</th>
+					<th>
+						Location
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for result in results %}
+				<tr class="{% cycle 'even' 'odd' %}">
+					<td>
+						{{ result.start_date|date:"m/d/y"}}
+					</td>
+					<td>
+						{% for ben in result.beneficiaries.all %}{%if ben.affiliate %}
+						<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}">{{ ben.affiliate }}</a>)
+						{%else%}
+						<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}">{{ ben }}</a>
+						{%endif%}{% endfor %}
+					</td>
+					<td>
+						<a href="{{result.get_absolute_url}}">{{ result.entertainment }}</a>
+					</td>
+					<td>
+						{{ result.venue.venue_name }} {% if result.venue.venue_address %} - {{ result.venue.venue_address }}{% endif %}
+					</td>
+				</tr>		
+
+				{% endfor %}
+
+			</tbody>
+		</table>
+		
+		<div class="pagination">
+				{{ paginator_html|safe }}
+		</div>
+	</div>
+{% endblock %}
+	
+	

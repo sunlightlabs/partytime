@@ -84,7 +84,7 @@ def make_paginator_text(base_html, current_page, max_page):
     if initial_page < 1:
         initial_page = 1
     
-    for i in range(initial_page, max_page):
+    for i in range(initial_page, end_page):
         
     
         return_html += '<span class="pageNum ' 
@@ -180,7 +180,7 @@ def upcoming(request):
 
 @cache_page(60*cache_time_minutes)
 def newly_added(request):
-    events = Event.objects.newest(10)
+    events = Event.objects.newest(10).select_related('beneficiaries', 'venue')
     paginator = Paginator(events, 10)
     pagenum = request.GET.get('page', 1)
     max_page = paginator.num_pages
@@ -211,7 +211,7 @@ def committee_leadership(request):
     crp_ids = list(CommitteeMembership.objects.values_list('member__crp_id', flat=True).exclude(position='Member'))
     leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
 
-    events = Event.objects.filter(status="", beneficiaries__in=leadership_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+    events = Event.objects.filter(status="", beneficiaries__in=leadership_ids, start_date__lte=today).select_related('beneficiaries', 'venue').distinct().order_by('-start_date', 'start_time')[:60]
 
     paginator = Paginator(events, 10)
     pagenum = request.GET.get('page', 1)
@@ -228,9 +228,11 @@ def committee_leadership(request):
 
     return render_to_response(
             'publicsite_redesign/generic_results.html', 
-            {'title': 'Events held for committee leaders', 
+            {'title': 'Recent Events held for committee leaders', 
              'results': page.object_list,
-             'paginator_html':paginator_html,}
+             'paginator_html':paginator_html,
+             'current_pagenum':pagenum,
+             'max_pagenum':'6'}
             )
             
 @cache_page(60*cache_time_minutes)
@@ -239,7 +241,7 @@ def congressional_leadership(request):
     today = datetime.date.today()
     pagenum = request.GET.get('page', 1)
     leader_ids = LeadershipPosition.objects.values_list('lawmaker_id', flat=True)
-    events = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+    events = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:60]
 
     paginator = Paginator(events, 10)
     pagenum = request.GET.get('page', 1)
@@ -256,9 +258,11 @@ def congressional_leadership(request):
 
     return render_to_response(
             'publicsite_redesign/generic_results.html', 
-            {'title': 'Parties Held for Congressional Leadership', 
+            {'title': 'Recent Parties Held for Congressional Leadership', 
              'results': page.object_list,
-             'paginator_html':paginator_html,}
+             'paginator_html':paginator_html,
+             'current_pagenum':pagenum,
+             'max_pagenum':'6'}
             )      
 
 
@@ -268,10 +272,9 @@ def hosted_by_congressional_leadership(request):
     today = datetime.date.today()
     pagenum = request.GET.get('page', 1)
     leader_ids = LeadershipPosition.objects.values_list('lawmaker__crp_id', flat=True)
-    events = Event.objects.filter(status="", other_members__crp_id__in=leader_ids, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+    events = Event.objects.filter(status="", other_members__crp_id__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:60]
 
     paginator = Paginator(events, 10)
-    pagenum = request.GET.get('page', 1)
 
     max_page = paginator.num_pages
     paginator_html = ""
@@ -285,9 +288,11 @@ def hosted_by_congressional_leadership(request):
 
     return render_to_response(
             'publicsite_redesign/generic_results.html', 
-            {'title': 'Parties Hosted by Congressional Leadership', 
+            {'title': 'Recent Parties Hosted by Congressional Leadership', 
              'results': page.object_list,
-             'paginator_html':paginator_html,}
+             'paginator_html':paginator_html,
+             'current_pagenum':pagenum,
+             'max_pagenum':'6'}
             )      
 
 
@@ -296,7 +301,7 @@ def presidential(request):
 
     today = datetime.date.today()
     pagenum = request.GET.get('page', 1)
-    events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().order_by('-start_date', 'start_time')[:60]
+    events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:60]
 
     paginator = Paginator(events, 10)
     pagenum = request.GET.get('page', 1)
@@ -315,10 +320,12 @@ def presidential(request):
     
     return render_to_response(
             'publicsite_redesign/generic_results.html', 
-            {'title': 'Parties Hosted For Presidential Candidates', 
+            {'title': 'Recent Parties Hosted For Presidential Candidates', 
              'results': page.object_list,
              'paginator_html':paginator_html,
-             'rss_url':rss_url,}
+             'rss_url':rss_url,
+             'current_pagenum':pagenum,
+             'max_pagenum':'6'}
             )
 
 
@@ -332,8 +339,116 @@ def search_proxy(request):
 
     return HttpResponseRedirect('/')
 
+field_name_fix={
+    'beneficiary':'beneficiary',
+    'host':'host',
+    'other_members_of_congress':'other member of congress',
+    'venue_name':'venue',
+    'entertainment_type':'entertainment type',
+    'tags':'tags'
+    }
 
 def search(request, field, args):
+    lawmakers = None
+
+    if field == 'Beneficiary':
+        lawmakers = Lawmaker.objects.filter(name__icontains=args)
+        if len(lawmakers)==1:
+            if lawmakers[0].crp_id and not lawmakers[0].affiliate:
+                return HttpResponseRedirect('/pol/'+lawmakers[0].crp_id)               
+
+    if lawmakers is not None:
+        lawmakers = lawmakers.filter(affiliate=None).exclude(crp_id=None)
+    
+    fixed_field = field.lower()
+    events = Event.objects.by_field(fixed_field, args)
+    formatted_field = field_name_fix[fixed_field]
+    title = "Search results for '%s' in %s" % (args, formatted_field)
+    
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+    search_url_base = "/search/%s/%s/" % (field, args)
+    paginator_html = make_paginator_text(search_url_base, int(pagenum), max_page)    
+    print "paginator: " + paginator_html
+    
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+    
+    
+    return render_to_response(
+            'publicsite_redesign/generic_results.html',
+            {'title':title,
+            'field':field,
+             'results': page.object_list,
+             'lawmakers': lawmakers, 
+             'paginator_html':paginator_html, 
+             'current_pagenum':pagenum,
+             'max_pagenum':max_page,
+             }
+            )
+            
+            
+
+def polwithpac(request, cid):
+    lawmaker = None
+    pacname = None
+
+    possible_lawmakers = Lawmaker.objects.filter(crp_id=cid).distinct()
+
+    if possible_lawmakers.count() == 0:
+        return HttpResponseRedirect('/')     
+
+    for this_lawmaker in possible_lawmakers:
+        if this_lawmaker.affiliate:
+            pacname = this_lawmaker.name
+        else:
+            lawmaker = this_lawmaker
+
+    events = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date', '-start_time').distinct()
+    
+    # need to get pictures of 'em
+    image_url = None
+    
+    event_count = events.count()
+    paginator = Paginator(events, 10)
+    pagenum = request.GET.get('page', 1)
+
+    max_page = paginator.num_pages
+    paginator_html = ""
+    # There typically aren't enough results for there to be multiple pages
+    search_url_base = "/pol/%s/" % (cid)
+    paginator_html = make_paginator_text(search_url_base, int(pagenum), max_page)    
+    print "paginator: " + paginator_html
+    
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+    
+    return render_to_response(
+            'publicsite_redesign/entity_politician.html',
+            {'results': page.object_list,
+             'lawmaker': lawmaker,
+             'pacname': pacname,
+             'image_url': image_url, 
+             'event_count':event_count,
+             'paginator_html':paginator_html, 
+             'current_pagenum':pagenum,
+             'max_pagenum':max_page,             
+             }
+            )
+
+            
+            
+            
+
+def search_old(request, field, args):
     lm = None
 
     if field == 'Beneficiary':
@@ -549,33 +664,6 @@ def leadpacs(request):
             {'docset': docset, })
 
 
-def polwithpac(request, cid):
-    lm = None
-    pacname = None
-    polname = None
-
-    l = Lawmaker.objects.filter(crp_id=cid) \
-                        .distinct()
-
-    if l.count() == 0:
-        return HttpResponseRedirect('/')     
-
-    for ll in l:
-        if ll.affiliate:
-            pacname = ll.name
-        else:
-            lm = ll
-      
-    eventlist = Event.objects.filter(status='', beneficiaries__crp_id=cid) \
-                             .order_by('-start_date', '-start_time').distinct()
-
-    return render_to_response(
-            'publicsite/polwithpac.html',
-            {'eventlist': eventlist,
-             'lm': lm,
-             'pacname': pacname,
-             'snapshot_image_name': '', }
-            )
 
 
 #

@@ -38,10 +38,12 @@
 
 <section class="partyList module">
 
+{% for lawmaker in lawmakers %} {{ lawmaker }}{% endfor %}
+
 {% if results %}
 
 <h3>
-	Events
+	Events {% if current_pagenum %}- page {{ current_pagenum}} of {{ max_pagenum }}{% endif %}
 </h3>
 <table>
 	<thead>
@@ -67,7 +69,11 @@
 				{{ result.start_date|date:"m/d/y"}}
 			</td>
 			<td>
-				{% for ben in result.beneficiaries.all %}<a href="{{ben.get_absolute_url }}">{{ ben.name }}</a>{% endfor %}
+				{% for ben in result.beneficiaries.all %}{%if ben.affiliate %}
+				<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}">{{ ben.affiliate }}</a>)
+				{%else%}
+				<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}">{{ ben }}</a>
+				{%endif%}{% endfor %}
 			</td>
 			<td>
 				<a href="{{result.get_absolute_url}}">{{ result.entertainment }}</a>

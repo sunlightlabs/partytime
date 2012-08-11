@@ -47,23 +47,27 @@ urlpatterns = patterns('',
     url(r'^congressional-leadership/$', 'partytime.publicsite.views.congressional_leadership', name='partytime_congressional_leadership'),    
     url(r'^hosted-by-congressional-leadership/$', 'partytime.publicsite.views.hosted_by_congressional_leadership', name='partytime_hosted_by_congressional_leadership'),
     url(r'^presidential/$', 'partytime.publicsite.views.presidential', name='partytime_presidential'),
+
+    # party page: 
+    url(r'^party/(?P<docid>\d+)/$', 'partytime.publicsite.views.party', name='partytime_party_detail'),
+    
+    # search by field page on new template
+    url(r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search', name='partytime_search'),
     
     
-    
+    url(r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac', name='partytime_pol_detail'),
     
     
     ### End redesigned views:
     
-    url(r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search', name='partytime_search'),
-    url(r'^search_embed/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed', name='partytime_search_embed'),
-    url(r'^search_embed_flex/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_embed_flex', name='partytime_search_embed_flex'),
-    url(r'^upcoming_embed/$', 'partytime.publicsite.views.upcoming_embed', name='partytime_upcoming_embed'),
-    url(r'^upcoming_embed2/$', 'partytime.publicsite.views.upcoming_embed2', name='partytime_upcoming_embed2'),
+    # old search views
+    url(r'^search_old/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_old', name='partytime_search_old'),
     url(r'^search/$', 'partytime.publicsite.views.search_proxy', name='partytime_search_proxy'),
+
 
     url(r'^bydate/(?P<start>\d{8})/(?P<end>\d{8})/$', 'partytime.publicsite.views.bydate', name='partytime_bydate'),
     url(r'^upload/thanks/$', 'partytime.publicsite.views.upload_thanks', name='partytime_uploadthanks'),
-    url(r'^party/(?P<docid>\d+)/$', 'partytime.publicsite.views.party', name='partytime_party_detail'),
+
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='partytime_feeds'),
@@ -80,7 +84,6 @@ urlpatterns = patterns('',
     url(r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
     url(r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'}, name='partytime_committee_list'),
 
-    url(r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac', name='partytime_pol_detail'),
     url(r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all', name='partytime_leadpacs'),
     url(r'^ical/$', IcalFeed(), name='partytime_ical'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
