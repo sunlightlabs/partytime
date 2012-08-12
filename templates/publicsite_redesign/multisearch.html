@@ -1,0 +1,192 @@
+{% extends "publicsite_redesign/base.html" %}
+
+{% block title %}Search results for '{{ query }}' - {{ block.super }}{% endblock %}
+
+		
+{% block container %}
+<div class="module nineCol colLt search">
+	<h2 class="wHint wActions">
+		Search results for '{{ query }}'
+	</h2>
+	<div class="clear"></div>
+
+</div>
+	<div class="colRt threeCol uploadSmall module">
+		<h3 class="textReplace">Extend an Invite</h3>
+		<a class="button" href="">Upload</a>
+	</div>
+<div class="clear"></div>
+
+{% if error_message %}
+<section class="partyList module">
+
+	
+	<h3>
+		{{ error_message }}
+	</h3>
+</section>
+{% endif %}
+
+{% if lawmakers %}
+<section class="partyList module">
+
+	
+	<h3>
+		PAC / Lawmaker matches
+	</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>
+					Name
+				</th>
+			
+			</tr>
+		</thead>
+		<tbody>
+			{% for ben in lawmakers %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				<td>
+					{%if ben.affiliate %}
+					<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}" style="display:inline;">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}" style="display:inline;">{{ ben.affiliate }}</a>)
+					{%else%}
+					<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}">{{ ben }}</a>
+					{%endif%}
+				</td>
+				
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		
+	</section>
+{% endif %}
+
+
+{% if hosts %}
+<section class="partyList module">
+
+	
+	<h3>
+		Host matches
+	</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>
+					Host name
+				</th>
+			
+			</tr>
+		</thead>
+		<tbody>
+			{% for host in hosts %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				<td>
+					<a href="/search/host/{{ host.name }}/" style="display:inline;">{{ host.name }}</a> 
+				</td>
+				
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		
+	</section>
+{% endif %}
+
+{% if venues %}
+<section class="partyList module">
+
+	
+	<h3>
+		Venue matches
+	</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>
+					Venue
+				</th>
+			
+			</tr>
+		</thead>
+		<tbody>
+			{% for venue in venues %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				<td>
+					<a href="/search/venue_name/{{ venue.venue_name }}/" style="display:inline;">{{ venue.venue_name }}</a>
+				</td>
+				
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		
+	</section>
+{% endif %}
+
+{% if cities %}
+<section class="partyList module">
+
+	
+	<h3>
+		City matches
+	</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>
+					City, State
+				</th>
+			
+			</tr>
+		</thead>
+		<tbody>
+			{% for city in cities %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				<td>
+					<a href="/search/city/{{ city.city }}-{{city.state}}/" style="display:inline;">{{ city.city }}, {{ city.state }}</a>
+				</td>
+				
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		
+	</section>
+{% endif %}
+
+{% if entertainments %}
+<section class="partyList module">
+
+	
+	<h3>
+		Entertainment matches
+	</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>
+					Entertainment type
+				</th>
+			
+			</tr>
+		</thead>
+		<tbody>
+			{% for entertainment in entertainments %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				<td>
+					<a href="/search/entertainment_type/{{ entertainment.entertainment }}/" style="display:inline;">{{ entertainment.entertainment }}</a> 
+				</td>
+				
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		
+	</section>
+{% endif %}
+
+{% endblock %}
+	
+	

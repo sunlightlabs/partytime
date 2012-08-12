@@ -55,7 +55,7 @@
 				Beneficiary
 			</th>
 			<th>
-				Event Type
+				Event
 			</th>
 			<th>
 				Location
@@ -70,7 +70,7 @@
 			</td>
 			<td>
 				{% for ben in result.beneficiaries.all %}{%if ben.affiliate %}
-				<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}">{{ ben.affiliate }}</a>)
+				<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}" style="display:inline;">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}" style="display:inline;">{{ ben.affiliate }}</a>)
 				{%else%}
 				<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}">{{ ben }}</a>
 				{%endif%}{% endfor %}

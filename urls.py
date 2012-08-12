@@ -58,12 +58,13 @@ urlpatterns = patterns('',
     url(r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac', name='partytime_pol_detail'),
     
     
+    url(r'^search/$', 'partytime.publicsite.views.search_proxy', name='partytime_search_proxy'),
+    url(r'^search-all/$', 'partytime.publicsite.views.multisearch', name='partytime_multisearch'),
     ### End redesigned views:
     
     # old search views
     url(r'^search_old/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_old', name='partytime_search_old'),
-    url(r'^search/$', 'partytime.publicsite.views.search_proxy', name='partytime_search_proxy'),
-
+    
 
     url(r'^bydate/(?P<start>\d{8})/(?P<end>\d{8})/$', 'partytime.publicsite.views.bydate', name='partytime_bydate'),
     url(r'^upload/thanks/$', 'partytime.publicsite.views.upload_thanks', name='partytime_uploadthanks'),

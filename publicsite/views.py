@@ -443,10 +443,47 @@ def polwithpac(request, cid):
              'max_pagenum':max_page,             
              }
             )
+# new search that looks in multiple places for matches and then does... something.... 
 
-            
-            
-            
+def multisearch(request):
+    query = request.GET.get('q')
+    error_message = None
+    lawmakers = None
+    venues = None
+    entertainments = None
+    hosts = None
+    
+    if not (query):
+        raise Http404
+    
+    if len(query)>3:
+    
+        lawmakers = Lawmaker.objects.filter(Q(name__icontains=query)|Q(affiliate__icontains=query)).distinct()
+    
+        hosts = Host.objects.filter(name__icontains=query).values('name').distinct()
+    
+        venues = Venue.objects.filter(venue_name__icontains=query).values('venue_name').distinct()
+    
+        entertainments = Event.objects.filter(entertainment__icontains=query).values('entertainment').distinct()
+        
+        cities = Venue.objects.filter(city__icontains=query).values('city', 'state').distinct()
+    else:
+        error_message = "Search term must be at least three letters long"
+    
+    if ( (len(lawmakers) + len(hosts) + len(venues) + len(entertainments) + len(cities)) == 0 ):
+        error_message = "No matches"
+    
+    return render_to_response(
+    'publicsite_redesign/multisearch.html', 
+    {'query':query,
+    'lawmakers':lawmakers,
+    'venues':venues,
+    'entertainments':entertainments,
+    'hosts':hosts, 
+    'cities':cities,
+    'error_message':error_message,
+    })
+           
 
 def search_old(request, field, args):
     lm = None
