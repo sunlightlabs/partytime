@@ -8,7 +8,7 @@
 	<div class="newest module eventCluster current">
 		<h3>
 			Newest Events
-			<a href="" class="rss textReplace">rss</a>
+			<a href="/newly-added/" class="rss textReplace">rss</a>
 		</h3>
 		<ol>
 		{% for event in newest_events %}
@@ -20,7 +20,7 @@
 	<div class="newest module eventCluster current">
 		<h3>
 			Upcoming Events
-			<a href="" class="rss textReplace">rss</a>
+			<a href="/upcoming/" class="rss textReplace">rss</a>
 		</h3>
 		<ol>
 		{% for event in upcoming_events %}
@@ -39,7 +39,7 @@
 		{% renderevent event %}
 		{% endfor %}
 		</ol>
-		<a href="" class="more">View more</a>
+		<a href="/recent/" class="more">View more</a>
 	</div>
 </div>
 <div class="clear"></div>
