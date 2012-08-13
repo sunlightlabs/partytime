@@ -3,10 +3,10 @@
 	<div class="eventData">
 		<span class="type">{{ event.truncated_name }}</span>
 		{% if event.beneficiaries %}<h5 class="beneficiary">
-			{% for beneficiary in event.beneficiaries.all %}{% if forloop.last %}{% else %}, {% endif %}<a href="{{ event.get_absolute_url }}">{{ beneficiary.titled_name }}</a>{% endfor %}
+			{% for beneficiary in event.beneficiaries.all %}{% if forloop.last %}{% else %}, {% endif %}<a href="{{ event.get_absolute_url }}" {% if new_window %}target="_blank"{% endif %}>{{ beneficiary.titled_name }}</a>{% endfor %}
 		</h5>
 		{% endif %}
-		<a href="{{ event.get_absolute_url }}" class="location">{{ event.venue.state_full }}</a>
+		<a href="{{ event.get_absolute_url }}" class="location" {% if new_window %}target="_blank"{% endif %}>{{ event.venue.state_full }}</a>
 	</div>
 	<div class="clear"></div>
 </li>

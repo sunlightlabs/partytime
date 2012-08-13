@@ -1,0 +1,120 @@
+{% load partytime_redesign %}
+<!doctype html>
+
+<html lang="en" class="no-js">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Sunlight Foundation's Political Party Time</title>
+	<style>	
+		body { 
+			background-color:#f4f3ef; 
+			margin:0; 
+			padding:0;
+			font-family: Georgia, "Times New Roman", serif;
+		}
+		#pp_header { 
+			background: #fbfafa url(http://assets.politicalpartytime.org/1.0/images/widget_ppt_bg_header.png) center top repeat-x; 
+			padding: 8px 8px 0 8px;
+			border-bottom: 1px solid #CECCCD;
+		}
+		h1.widgetPartyTime{
+			margin: 0 auto;
+			text-indent: -9999em;
+			background: url(http://assets.politicalpartytime.org/1.0/images/widget_ppt_logo.png) center top no-repeat;
+			width: 271px;
+			height: 59px;
+			margin-bottom: 15px;
+		}
+		h2 {
+			margin: 0;
+			font-size: 15px;
+			padding-bottom: 4px;
+		}
+		#pp_list{
+			list-style-type: none;
+			padding-left: 0;
+			margin: 0;
+		}
+		#pp_list li{
+			padding: 8px 0;
+			border-bottom: 1px solid #CECCCD;
+			border-top: 1px solid #FFFFFF;
+			font-size: 10px;
+			padding-left: 8px;
+		}
+		#pp_list li:hover {
+			background: #E9E8E2;
+		}
+		footer{
+			background: #fbfafa;
+			padding: 5px;
+		}
+		.widget_Sunlight{
+			background: url(http://assets.politicalpartytime.org/1.0/images/widget_ppt_logo_sunlight.png);
+			width: 95px;
+			height: 28px;
+			text-indent: -9999em;
+			display: block;
+			margin: 0 auto;
+		}
+		.clear{
+			clear: both;
+		}
+		#pp_list time, .pp_list .eventData{
+		  margin-top: 2px;
+		}
+		#pp_list time{
+		  float: left;
+		  margin-right: 12px;
+		  font-style: normal;
+		  color: #706e6e;
+		}
+		#pp_list .day, .pp_list .month {
+		  display: block;
+		  line-height: 1.1;
+		}
+		#pp_list .day{
+		  font-size: 19px;
+		  font-family: "Times New Roman", Georgia, serif;
+		}
+		#pp_list .eventData{
+		  float: left;
+		  margin-top: 0;
+		  line-height: 1.5;
+		}
+		.eventData .type, .eventData .beneficiary{
+		  margin: 0;
+		}
+		.eventData .type{
+		  color: #706e6e;
+		  text-transform: uppercase;
+		}
+		a:link, a:visited{
+		  color: #d62c00;
+		}
+		a:hover, a:active{
+		  color: #bc2502;
+		}
+	</style>
+</head>
+<body>
+	<div id="pp_header">
+		<a href="http://www.politicalpartytime.org" target="_top">
+			<h1 class="widgetPartyTime">Political Party Time</h1>
+		</a>
+		<h2>
+			{{ widget_title }}
+		</h2>
+	</div>
+	<div id="pp_upcoming">
+		<ul id="pp_list">
+			{% for event in events %}
+			{% renderevent event 'True' %}
+			{% endfor %}
+		</ul>
+	</div>
+	<footer>
+		<a href="http://www.sunlightfoundation.com" target="_blank" class="widget_Sunlight">Sunlight Foundation</a>
+	</footer>
+</body>
+</html>

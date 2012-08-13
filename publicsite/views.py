@@ -62,7 +62,9 @@ def index(request):
             })
 
 def make_paginator_text(base_html, current_page, max_page):
-    #print current_page, max_page
+    
+    if max_page==1:
+        return ""
     
     initial_page = current_page - 3
     
@@ -150,6 +152,7 @@ def recent(request):
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
+             'widget_url':'/widget/recent/',
              }
             )
             
@@ -175,6 +178,7 @@ def upcoming(request):
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
+             'widget_url':'/widget/upcoming/',
              }
             )
 
@@ -200,6 +204,7 @@ def newly_added(request):
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
+             'widget_url':'/widget/newly-added/',
              }
             )
 
@@ -325,7 +330,8 @@ def presidential(request):
              'paginator_html':paginator_html,
              'rss_url':rss_url,
              'current_pagenum':pagenum,
-             'max_pagenum':'6'}
+             'max_pagenum':'6',
+             'widget_url':'/widget/presidential/'}
             )
 
 
@@ -549,6 +555,74 @@ def calendar(request, datestring):
     }
     )
            
+
+
+def widget_upcoming(request):
+    events = Event.objects.upcoming(5)
+    widget_title = "Upcoming events"
+    return render_to_response(
+    'publicsite_redesign/widget.html', 
+    {
+    'events':events,
+    'widget_title':widget_title,
+    })
+
+def widget_recent(request):
+    events = Event.objects.recent(5)
+    widget_title = "Recent events"
+    return render_to_response(
+    'publicsite_redesign/widget.html', 
+    {
+    'events':events,
+    'widget_title':widget_title,
+    })
+
+def widget_newly_added(request):
+    events = Event.objects.newest(5)
+    widget_title = "Newly added events"
+    return render_to_response(
+    'publicsite_redesign/widget.html', 
+    {
+    'events':events,
+    'widget_title':widget_title,
+    })
+
+def widget_presidential(request):
+    today = datetime.date.today()
+    events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:5]
+    widget_title = "Recent presidential events"
+    return render_to_response(
+    'publicsite_redesign/widget.html', 
+    {
+    'events':events,
+    'widget_title':widget_title,
+    })        
+
+def widget_pol(request, crp_id):
+    possible_lawmakers = Lawmaker.objects.filter(crp_id=crp_id).distinct()
+
+    lawmaker = None
+    
+    if possible_lawmakers.count() == 0:
+        return Http404     
+
+    for this_lawmaker in possible_lawmakers:
+        if this_lawmaker.affiliate:
+            pacname = this_lawmaker.name
+        else:
+            lawmaker = this_lawmaker
+
+    events = Event.objects.filter(status='', beneficiaries__crp_id=crp_id).order_by('-start_date', '-start_time').distinct()[:5]
+    
+    lawmaker_name = lawmaker.titled_name()
+    widget_title = "Events for %s" % (lawmaker_name)
+    
+    return render_to_response(
+    'publicsite_redesign/widget.html', 
+    {
+    'events':events,
+    'widget_title':widget_title,
+    })
 
 def search_old(request, field, args):
     lm = None

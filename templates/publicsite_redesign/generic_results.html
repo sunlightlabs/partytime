@@ -14,14 +14,11 @@
 		<li>
 			<a href="{{ rss_url }}" class="rss textReplace">rss</a>
 		</li>
-		{% endif %}
-		{# This should be tied to rss url #}
-		{% if alert_url %}
 		<li>
-			<a href="" class="">Create an alert</a>
+			<a href="javascript:gotoscout('http://politicalpartytime.org{{rss_url }}')" class="">Create an alert</a>
 		</li>
 		{% endif %}
-		{% if widgeturl %}
+		{% if widget_url %}
 		<li>
 			<a href="{{ widget_url }}" class="">Share Widget</a>
 		</li>
@@ -55,6 +52,9 @@
 				Beneficiary
 			</th>
 			<th>
+				Host
+			</th>
+			<th>
 				Event
 			</th>
 			<th>
@@ -72,14 +72,21 @@
 				{% for ben in result.beneficiaries.all %}{%if ben.affiliate %}
 				<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}" style="display:inline;">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}" style="display:inline;">{{ ben.affiliate }}</a>)
 				{%else%}
-				<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}">{{ ben }}</a>
+				<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}" style="display:inline;">{{ ben }}</a>
 				{%endif%}{% endfor %}
 			</td>
 			<td>
-				<a href="{{result.get_absolute_url}}">{{ result.entertainment }}</a>
+				{% with result.hosts.all as hosts %}
+				{% if hosts %}
+			    {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}" style="display:inline;">{{ host }}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}
+				{% endif %}
+				{% endwith %}
 			</td>
 			<td>
-				{{ result.venue.venue_name }} {% if result.venue.venue_address %} - {{ result.venue.venue_address }}{% endif %}
+				<a href="{{result.get_absolute_url}}">{% if result.entertainment %}{{ result.entertainment }}{% else %}Fundraiser{% endif %}</a>
+			</td>
+			<td>
+				{{ result.venue.venue_name }}{% if result.venue.address1 %}, {{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city }}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
 			</td>
 		</tr>		
 		
@@ -97,6 +104,24 @@
 	{% else %}<h3>No results</h3>{% endif %}
 </section>
 </div>
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript">
+
+function gotoscout(feedurl) {
+	scouturl = "http://scout.sunlightfoundation.com/import/feed?url=" + encodeURIComponent(feedurl);
+	appended_url = feedurl.replace("http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/","");
+	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for your selections. If you don't have an account with Scout you'll be prompted to create one.");
+	if (gotoscout) {
+		window.location = scouturl;
+		return false;
+	}
+	return false;
+}
+
+</script>
 {% endblock %}
 	
 	

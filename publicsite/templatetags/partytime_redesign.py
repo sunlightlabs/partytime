@@ -71,11 +71,14 @@ def sidebarcontent():
     }
 
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/eventitem.html')
-def renderevent(event):
+def renderevent(event, new_window=False):
     """ Kick this all out to a common template """
     return{
     'event':event,
+    'new_window':new_window,
     }
+    
+  
 
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/indexpage_partylist.html')
 def partiesheldforleadership():

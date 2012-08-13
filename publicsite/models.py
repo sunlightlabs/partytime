@@ -532,8 +532,10 @@ class Event(models.Model):
 
     def event_title(self):
         title = ''
-        if self.entertainment:
+        if len(self.entertainment) > 2:
             title += self.entertainment
+        else:
+            title += 'Fundraiser'
         if self.beneficiaries.all():
             title += ' for %s ' % ', '.join([x.name for x in self.beneficiaries.all()])
         return title

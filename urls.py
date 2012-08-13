@@ -68,6 +68,20 @@ urlpatterns = patterns('',
     # old search views
     url(r'^search_old/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_old', name='partytime_search_old'),
     
+    url(r'^widget/upcoming/$', 'partytime.publicsite.views.widget_upcoming'),
+    url(r'^widget/recent/$', 'partytime.publicsite.views.widget_recent'),
+    url(r'^widget/newly-added/$', 'partytime.publicsite.views.widget_newly_added'),
+    url(r'^widget/presidential/$', 'partytime.publicsite.views.widget_presidential'),
+    url(r'^widget/pol/(?P<crp_id>.+)/$', 'partytime.publicsite.views.widget_pol'),
+
+            
+    #old widget views
+    #url(r'^widget/abc_convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.abc_convention', name='partytime_abc_convention_detail'),
+    #url(r'^widget/abc_convention/$', 'partytime.publicsite.views.abc_convention', name='partytime_abc_convention'),
+    #url(r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming', name='partytime_widget_180'),
+    #url(r'^widget/leadpacs/$', 'partytime.publicsite.views.leadpacs', name='partytime_leadpacs'),
+    #url(r'^widget/(?P<state>\w{2})/$', 'partytime.publicsite.views.widget_state', name='partytime_widget_state'),
+        
 
     url(r'^bydate/(?P<start>\d{8})/(?P<end>\d{8})/$', 'partytime.publicsite.views.bydate', name='partytime_bydate'),
     url(r'^upload/thanks/$', 'partytime.publicsite.views.upload_thanks', name='partytime_uploadthanks'),
@@ -77,11 +91,7 @@ urlpatterns = patterns('',
     url(r'^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='partytime_feeds'),
     url(r'^convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.convention_list', name='partytime_convention_detail'),
     url(r'^convention/$', 'partytime.publicsite.views.convention_list', name='partytime_convention_events'),
-    url(r'^widget/abc_convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.abc_convention', name='partytime_abc_convention_detail'),
-    url(r'^widget/abc_convention/$', 'partytime.publicsite.views.abc_convention', name='partytime_abc_convention'),
-    url(r'^widget/widget_180/$', 'partytime.publicsite.views.widget180_upcoming', name='partytime_widget_180'),
-    url(r'^widget/leadpacs/$', 'partytime.publicsite.views.leadpacs', name='partytime_leadpacs'),
-    url(r'^widget/(?P<state>\w{2})/$', 'partytime.publicsite.views.widget_state', name='partytime_widget_state'),
+   
     url(r'^committee/(?P<cmteid>\w{4})/$', 'partytime.publicsite.views.cmtedetail', name='partytime_committee_detail'),
     url(r'^supercommittee/$', 'partytime.publicsite.views.supercommittee', name='partytime_supercommittee'),
     url(r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes', name='partytime_chamber_committees'),
