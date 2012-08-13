@@ -2,11 +2,11 @@
 	<time pubdate=""><span class="month">{{ event.start_date|date:"N" }}</span><span class="day">{{ event.start_date|date:"d" }}</span></time>
 	<div class="eventData">
 		<span class="type">{{ event.truncated_name }}</span>
-		{% if event.beneficiaries %}<h5 class="beneficiary">
+		{% if event.beneficiaries %}{% if new_window %}<h3{% else %}<h5{% endif %} class="beneficiary">
 			{% for beneficiary in event.beneficiaries.all %}{% if forloop.last %}{% else %}, {% endif %}<a href="{{ event.get_absolute_url }}" {% if new_window %}target="_blank"{% endif %}>{{ beneficiary.titled_name }}</a>{% endfor %}
-		</h5>
+		{% if new_window %}</h3>{% else %}</h5>{% endif %}
 		{% endif %}
-		<a href="{{ event.get_absolute_url }}" class="location" {% if new_window %}target="_blank"{% endif %}>{{ event.venue.state_full }}</a>
+		{% if new_window %}{% else %}<a href="{{ event.get_absolute_url }}" class="location">{{ event.venue.state_full }}</a>{% endif %}
 	</div>
 	<div class="clear"></div>
 </li>
