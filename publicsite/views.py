@@ -483,6 +483,71 @@ def multisearch(request):
     'cities':cities,
     'error_message':error_message,
     })
+
+def calendar_today(request):
+    today = datetime.date.today()
+    dayofweek = today.weekday()
+    
+    week_start = today - datetime.timedelta(days=dayofweek)
+    
+    response = calendar(request, week_start.strftime("%Y%m%d"))
+    return response
+    
+def calendar(request, datestring):
+    # looking for queryarg: q=YYYYMMDD
+    startdate = None
+    try:
+        startdate = datetime.date(int(datestring[0:4]), int(datestring[4:6]), int(datestring[6:8]))
+    except ValueError:
+        raise Http404
+    
+    dayofweek = startdate.weekday()
+    
+    
+    week_start = startdate - datetime.timedelta(days=dayofweek)
+    
+    # redirect if the start date isn't a sunday. 
+    
+    if (dayofweek != 0):
+        newurl = "/calendar/%s/" % (week_start.strftime("%Y%m%d"))
+        return HttpResponseRedirect(newurl) 
+    
+    week_end = week_start + datetime.timedelta(days=6)
+    
+    this_day = week_start
+    week_data = []
+    
+    nextweekstart = week_start + datetime.timedelta(days=7)
+    lastweekstart = week_start - datetime.timedelta(days=7)
+    
+    next_week_url = "/calendar/%s/" % (nextweekstart.strftime("%Y%m%d"))
+    last_week_url = "/calendar/%s/" % (lastweekstart.strftime("%Y%m%d"))
+    
+    for day in ('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'):
+        events = Event.objects.filter(start_date=this_day, status='').order_by('start_time')
+        todays_data = {
+        'dayname':day,
+        'date':this_day,
+        'events':events,
+        }
+        week_data.append(todays_data)
+        this_day = this_day + datetime.timedelta(days=1)
+    
+    
+    
+    return render_to_response(
+    'publicsite_redesign/calendar.html', 
+    {
+    'week_data':week_data,
+    'week_start':week_start,
+    'week_end':week_end,
+    'next_week_url':next_week_url,
+    'last_week_url':last_week_url,
+    'datestring':datestring,
+    'cache_key':'calendar-' + datestring,
+    'cache_time':10,
+    }
+    )
            
 
 def search_old(request, field, args):

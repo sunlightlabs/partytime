@@ -1,7 +1,7 @@
 import datetime
 
 from django.template import Library
-from django.db.models import Count, Q
+from django.db.models import Count, Sum, Q
 
 from publicsite.models import * 
 
@@ -187,5 +187,58 @@ def yearinpartiesjs():
     'month_names':month_names
     }
 
-
-
+# prints a list of days 
+def get_date_list(start_date, end_date):
+    if end_date <= start_date:
+        raise Exception("End date must be less than start date")
+    this_date = start_date
+    results = []
+    while (this_date <= end_date):
+        results.append(this_date)
+        this_date = this_date + datetime.timedelta(days=1)
+    return results
+    
+# It's really three weeks in parties, because we gotta show the preceding weeks as well
+@register.inclusion_tag('publicsite_redesign/templatetag_templates/week_in_parties.js')
+def weekinpartiesjs(startingdate):
+    # start date is YYYYMMDD of the start date of the week--but we really want to start almost one week before the week starts--and end almost one week *after* the week ends. Hence:
+    startdate = datetime.date(int(startingdate[0:4]), int(startingdate[4:6]), int(startingdate[6:8]))
+    realstart = startdate - datetime.timedelta(days=6)
+    realend = startdate + datetime.timedelta(days=13)
+    dates = get_date_list(realstart, realend)
+    
+    # get the count of parties during this time period. We still have to account for days where there are no parties though.
+    
+    date_summary = Event.objects.daterange(realstart.strftime("%Y%m%d"), realend.strftime("%Y%m%d")).extra(select={'year': 'EXTRACT(year FROM start_date)','month': 'EXTRACT(month FROM start_date)','day': 'EXTRACT(day FROM start_date)'}).values_list('year', 'month', 'day').order_by('year', 'month', 'day').annotate(Count('pk'))
+    #print date_summary
+    
+    # hash it
+    summary_dict = {}
+    for date in date_summary:
+        this_date_string = "%s%s%s" % (date[0], date[1], date[2])
+        summary_dict[this_date_string]=date[3]
+    
+    #print summary_dict
+    
+    data_dict = []
+    for day in dates:
+    
+        year = day.strftime("%Y") 
+        month =  int(day.strftime("%m"))
+        day = int(day.strftime("%e"))
+        date_key = "%s%s%s" % (year, month, day)
+        this_sum = 0
+        #print "'%s'" % (date_key)
+        try:
+            this_sum = summary_dict[date_key]
+        except KeyError:
+            pass
+        data_dict.append(this_sum)
+        
+    #print data_dict
+                
+            
+    return{
+       'dates':dates,
+       'data_dict':data_dict,
+    }

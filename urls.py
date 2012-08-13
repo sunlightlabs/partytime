@@ -60,6 +60,9 @@ urlpatterns = patterns('',
     
     url(r'^search/$', 'partytime.publicsite.views.search_proxy', name='partytime_search_proxy'),
     url(r'^search-all/$', 'partytime.publicsite.views.multisearch', name='partytime_multisearch'),
+    
+    url(r'^calendar/$', 'partytime.publicsite.views.calendar_today', name='partytime_calendar'),
+    url(r'^calendar/(?P<datestring>\d+)/$', 'partytime.publicsite.views.calendar', name='partytime_calendar'),    
     ### End redesigned views:
     
     # old search views
