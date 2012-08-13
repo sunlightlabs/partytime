@@ -25,12 +25,12 @@
 	</ul>
 	
 	<div class="clear"></div>
-{{ post.content|safe|linebreaks }}
-<!--
+{{ post.content|removetags:"img iframe object"|truncatewords:100|safe|linebreaks }}
+
 		<div class="pagination clearfix">
 			<span class="next"> <a class="more textReplace" href="{{post.get_absolute_url}}">View More</a></span>
 		</div>
--->
+
 </article>
 {% endfor %}
 
