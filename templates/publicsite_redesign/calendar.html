@@ -4,6 +4,9 @@
 
 {% block title %}Calendar {{ week_start|date:"N jS" }} - {{ week_end|date:"N jS" }} - {{block.super}}{% endblock %}
 
+{# Set the nav highlight #}
+{% block nav-calendar %}class="active"{% endblock %}
+
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
 
 {% block container %}
