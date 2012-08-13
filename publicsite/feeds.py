@@ -107,6 +107,9 @@ class NewFeed(Feed):
     def item_link(self, item):
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})
 
+    def item_pubdate(self, item):
+        return item.added
+
 class PresidentFeed(Feed):
     title = "Party Time Presidential Fundraisers"
     link = "/feeds/presidential/"
@@ -119,6 +122,9 @@ class PresidentFeed(Feed):
 
     def item_link(self, item):
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})
+        
+    def item_pubdate(self, item):
+        return item.added
 
 class UpcomingFeed(Feed):
     title = "Party Time Upcoming Parties"
@@ -134,6 +140,8 @@ class UpcomingFeed(Feed):
     def item_link(self, item):
         return urlresolvers.reverse('partytime.publicsite.views.party', kwargs={'docid': item.id})  
 
+    def item_pubdate(self, item):
+        return item.added
 
 class PolFeed(Feed):
     description_template = "feeds/party_description.html"
@@ -157,6 +165,8 @@ class PolFeed(Feed):
             print '2: %s' % (e)
             raise Http404
 
+    def item_pubdate(self, item):
+        return item.added
 
     def title(self, obj):
         if not obj:
