@@ -492,8 +492,9 @@ def multisearch(request):
 
 def calendar_today(request):
     today = datetime.date.today()
-    dayofweek = today.weekday()
+    dayofweek = today.weekday() + 1
     
+    # fix to make sunday 0
     week_start = today - datetime.timedelta(days=dayofweek)
     
     response = calendar(request, week_start.strftime("%Y%m%d"))
@@ -506,17 +507,19 @@ def calendar(request, datestring):
         startdate = datetime.date(int(datestring[0:4]), int(datestring[4:6]), int(datestring[6:8]))
     except ValueError:
         raise Http404
-    
-    dayofweek = startdate.weekday()
-    
+
+    # fix to make sunday 0    
+    dayofweek = startdate.weekday() + 1
     
     week_start = startdate - datetime.timedelta(days=dayofweek)
     
     # redirect if the start date isn't a sunday. 
     
-    if (dayofweek != 0):
+    if (dayofweek != 7):
         newurl = "/calendar/%s/" % (week_start.strftime("%Y%m%d"))
         return HttpResponseRedirect(newurl) 
+    
+    week_start = week_start + datetime.timedelta(days=7)
     
     week_end = week_start + datetime.timedelta(days=6)
     

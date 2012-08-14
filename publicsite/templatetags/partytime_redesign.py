@@ -17,7 +17,7 @@ def partystats():
     today = datetime.date.today()
     year = today.year
     month = today.month
-    dayofweek = today.weekday() # 0 = Sunday
+    dayofweek = today.weekday() + 1 # Fix to make Sunday = 0
     
     yearstart = "%s0101" % year
     yearend = "%s1231" % year
