@@ -3,6 +3,8 @@ import time
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.decorators.cache import cache_page
+# for staticfiles. 
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from publicsite.feeds import *
 from settings import *
@@ -107,7 +109,7 @@ urlpatterns = patterns('',
     url(r'^accounts/replacelm/(?P<original>\d+)$', 'partytime.publicsite.views.admin_mergelm'),
     url(r'^accounts/replacelm/(?P<original>\d+)/(?P<replacement>\d+)/$', 'partytime.publicsite.views.admin_mergelm_confirmed'),
     url(r'^ajax/checkfordupes/$', 'partytime.publicsite.views.admin_checkfordupes'),
-    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/partytime/partytime/media/' }),
+
     url(r'^json/(?P<CID>.+)/', 'partytime.publicsite.views.jsonCID'),
 #    url(r'^layar/$', 'partytime.publicsite.views.partytime_layar', name='partytime_layar'),
     url(r'^emailalerts/', 'partytime.publicsite.views.email_subscribe'),
@@ -133,3 +135,6 @@ urlpatterns += patterns('',
     (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.index', {'sitemaps': sitemaps}),
     (r'^sitemap-(?P<section>.+)\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps})
 )
+
+# for staticfiles
+urlpatterns += staticfiles_urlpatterns()
