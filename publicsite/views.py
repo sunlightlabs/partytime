@@ -51,7 +51,7 @@ def index(request):
     
     
     return render_to_response(
-            'publicsite_redesign/indextest.html', 
+            'publicsite_redesign/index.html', 
             {'post_list': blog_posts,
             'upcoming_events':upcoming_events,
             'newest_events':newest_events, 
