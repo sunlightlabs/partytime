@@ -329,7 +329,9 @@ nav a:link, nav a:visited { color: #4a4a4a;}
 nav a:hover, nav a:active{ color: #c92500; } 
 nav li.active a:link { color: #c92500; }
 /* doesn't seem to work--hit with stick: */
+/*li.active a { color: #c92500; } */
 li.active a { color: #c92500; }
+
 
 #searchform button { 
   width: 58px; 
@@ -579,7 +581,7 @@ dl.api dd{
   border-bottom: 1px solid #CECCCD;
   border-left: 1px solid #F4F3EF;
   border-right: 1px solid #F4F3EF;
-  background: #e9e8e2 url(../images/sort.png) right center no-repeat; /* Old browsers */
+  background: #e9e8e2; /* Old browsers */
   padding: 4px;
 }
 .partyList thead th:hover{
@@ -606,9 +608,14 @@ dl.api dd{
   border-bottom: 1px dotted #93D2D1;
 }
 .partyList thead th.sort {
+  background: #e9e8e2 url(../images/sort.png) right center no-repeat; /* Old browsers */
+}
+.partyList thead th.sort.down {
   background: #dcdbd2 url(../images/sort.png) right bottom no-repeat; /* Old browsers */
 }
-
+.partyList thead th.sort.up {
+  background: #dcdbd2 url(../images/sort.png) right top no-repeat; /* Old browsers */
+}
 
 
 
@@ -773,7 +780,7 @@ footer .join form{
   width: 290px;
 }
 .current .blog li{
-  margin-bottom: 20px;
+  margin-bottom: ;
 }
 .current .blog h3{
   margin-right: 10px;
@@ -826,7 +833,6 @@ footer .join form{
 }
 .events time, .events .eventData{
   margin-top: 2px;
-  margin-bottom: 18px;
 }
 .events time{
   float: left;
@@ -841,6 +847,9 @@ footer .join form{
   font-style: normal;
   color: #706e6e;
   width: 27px;
+}
+.event time{
+  width: auto;
 }
 .events .day, .events .month, .event .day, .event .month, .event .year{
   display: block;
