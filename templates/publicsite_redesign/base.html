@@ -10,7 +10,6 @@
 
         {% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
-		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
 		
         {% block css %}{% endblock %}
 
@@ -21,7 +20,7 @@
         {% if not debug %}
         <script>
             var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', '{% block ga %}{% endblock %}']);
+            _gaq.push(['_setAccount', 'UA-1265484-20']);
             _gaq.push(['_trackPageview']);
             (function() {
                 var ga = document.createElement('script');
