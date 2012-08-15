@@ -6,7 +6,24 @@
     <head>
         <meta charset="utf-8">
         <title>{% block title %}Political Party Time{% endblock %}</title>
-        {% block og %}{% endblock %}
+
+	    <meta name="description" content="{% block description %}From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.{% endblock  %}">
+	    <meta name="author" content="Sunlight Foundation">
+
+	    <meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=">
+
+		<meta property="og:site_name" content="Sunlight Foundation's Party Time">
+		<meta property="og:title" content="Political Party Time">
+		{# really django? This is a pretty whack way to use the same block twice. #}
+		{% with description as og_description %}<meta property="og:description" content="{% if og_description %}{{ og_description }}{% else %}From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.{% endif %}">{% endwith %}
+        <meta property="og:type" content="cause">
+        <meta property="og:image" content="http://assets.politicalpartytime.org/1.0/images/widget_ppt_logo.png">
+		<meta property="fb:admins" content="7812952">
+        
+		<link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="/feeds/upcoming/">
+		<link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="/feeds/recent/">
+		<link rel="shortcut icon" href="{% get_static_prefix %}images/favicon.ico">
+
 
         {% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
