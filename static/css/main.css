@@ -685,14 +685,14 @@ footer .join form{
 .partyStats dd{
   font-weight: bold;
   float: none;
-  margin-left: 2px;
+  margin-left: 0;
   width: 100%;
   text-align: right;
   background: url(../images/ticker.png) right 13px repeat-x;
 }
 .partyStats dd span{
   background: #F4F3EF;
-  padding-right: 3px;
+  padding-left: 5px;
 }
 
 
@@ -704,9 +704,9 @@ footer .join form{
 
 .callOut{
   font-family: "Times New Roman", "Georgia", serif;
-  font-size: 183%;
+  font-size: 160%;
   color: #706e6e;
-  line-height: 1.6;
+  line-height: 1.8;
   padding-bottom: 70px;
 }
 .callOut p{
@@ -715,12 +715,12 @@ footer .join form{
 .callOut h2.tagline {
   font-weight: 400;
   font-size: normal;
-  font-size: 135%;
+  font-size: 170%;
   text-transform: uppercase;
   font-family: "prenton-condensed", "droid-sans", "helvetica neue", sans-serif;
   color: #3b3939;
-  letter-spacing: .05em;
-  line-height: 1.5;
+  letter-spacing: .07em;
+  line-height: 1.8;
   margin-bottom: 0;
 }
 .uploadLarge{
@@ -1226,6 +1226,7 @@ article .entryMetaData address, article .entryMetaData time{
 }
 article .entryMetaData address{
   margin-right: 10px;
+  font-weight: bold;
 }
 article .social{
   float: right;
@@ -1237,7 +1238,7 @@ article .update{
   font-style: italic;
 }
 .tags{
-  padding: 0 0 14px 0;
+  padding: 0 0 25px 0;
   border-bottom: 1px dotted #CECCCD;
 
 }
@@ -1249,7 +1250,7 @@ article .update{
 .tags ul{
   padding-left: 0;
   float: left;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 0;
 }
 .tags li{
@@ -1276,3 +1277,23 @@ img.alignright{
 img.alignleft{
     float:left;
 }
+
+
+
+
+#LikePluginPagelet{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

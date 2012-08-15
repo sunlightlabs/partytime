@@ -13,7 +13,7 @@
 		<a href="{{post.get_absolute_url}}">{{ post.title }}</a>
 	</h1>
 	<div class="entryMetaData">
-		<address class="author"><a rel="author" href="">{{post.author.display_name }}</a></address>
+		<address class="author">{{post.author.display_name }}</address>
 		<time datetime="{{ post.post_date|date:"c"}}" class="published" pubdate="">
 		{{ post.post_date|date:"F j, Y, P" }}
 		</time>
