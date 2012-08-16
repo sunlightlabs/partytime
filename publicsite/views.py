@@ -398,7 +398,6 @@ def presidential(request):
     events = sort_events( events_all, sortfield, sortorder)
 
     paginator = Paginator(events, 20)
-    pagenum = request.GET.get('page', 1)
 
     max_page = paginator.num_pages
     paginator_html = ""
@@ -444,11 +443,15 @@ field_name_fix={
     'host':'host',
     'other_members_of_congress':'other member of congress',
     'venue_name':'venue',
-    'entertainment_type':'entertainment type',
+    'entertainment_type':'entertainment',
     'tags':'tags'
     }
 
 def search(request, field, args):
+    pagenum = request.GET.get('page', 1)
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
+    
     lawmakers = None
 
     if field == 'Beneficiary':
@@ -461,18 +464,24 @@ def search(request, field, args):
         lawmakers = lawmakers.filter(affiliate=None).exclude(crp_id=None)
     
     fixed_field = field.lower()
-    events = Event.objects.by_field(fixed_field, args)
+    events_all = Event.objects.by_field(fixed_field, args)
+    events = sort_events( events_all, sortfield, sortorder)
     formatted_field = field_name_fix[fixed_field]
     title = "Search results for '%s' in %s" % (args, formatted_field)
     
-    paginator = Paginator(events, 10)
-    pagenum = request.GET.get('page', 1)
+    
+    paginator = Paginator(events, 20)
 
     max_page = paginator.num_pages
-    paginator_html = ""
-    # There typically aren't enough results for there to be multiple pages
-    search_url_base = "/search/%s/%s/?" % (field, args)
-    paginator_html = make_paginator_text(search_url_base, int(pagenum), max_page)    
+
+
+#    search_url_base = "/search/%s/%s/?" % (field, args)
+    
+    page_url_base = "/search/%s/%s/?page=%s&" % (field, args, pagenum)
+    pageless_url_base = "/search/%s/%s/?sort=start_date&order=%s&" % (field, args, sortorder)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
+     
     print "paginator: " + paginator_html
     
     try:
@@ -490,6 +499,8 @@ def search(request, field, args):
              'paginator_html':paginator_html, 
              'current_pagenum':pagenum,
              'max_pagenum':max_page,
+             'table_header':table_header,
+             'query':args,
              }
             )
             

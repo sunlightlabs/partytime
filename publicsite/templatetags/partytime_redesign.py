@@ -1,7 +1,8 @@
-import datetime
+import datetime, re
 
 from django.template import Library
 from django.db.models import Count, Sum, Q
+from django.template.defaultfilters import stringfilter
 
 from publicsite.models import * 
 
@@ -245,3 +246,12 @@ def weekinpartiesjs(startingdate):
        'dates':dates,
        'data_dict':data_dict,
     }
+    
+@register.filter
+@stringfilter
+def highlightsearchterm(value, searchterm):
+    # Ignore case in return emphasis
+    search_regex = re.compile(r"(" + re.escape(searchterm) + r")", re.I)
+    result = re.sub(search_regex, r'<em>\1</em>', value)
+    return result
+    
