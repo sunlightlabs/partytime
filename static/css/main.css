@@ -282,8 +282,8 @@ time{
 a.facebook { 
   background: url("../images/facebook.png") left bottom no-repeat;
 }
-a.twitter { 
-  background: url("../images/twitter.png") left bottom no-repeat; 
+a.twitter, span.twitter{ 
+  background: url("../images/twitter.png") 1px bottom no-repeat; 
 }
 .rss, .twitter, .facebook{
   width: 19px;
@@ -315,6 +315,14 @@ a.twitter {
 .rss:hover, .twitter:hover, .facebook:hover{
   background-position: center top;
 }
+.twitter:hover{
+  background-position: 1px 1px;
+}
+
+
+
+
+
 
 
 /* header */
@@ -670,7 +678,7 @@ footer .about p{
 }
 footer .join{
   background: url(../images/bg_footer_right.png) top left no-repeat;
-  padding: 20px;
+  padding: 0 0 0 20px;
 }
 footer .join h2{
   margin-top: 10px;
@@ -717,6 +725,19 @@ footer .partyStats{
 .partyStats dd span{
   background: #F4F3EF;
   padding-left: 5px;
+}
+footer .follow{
+  text-align: center;
+  width: 240px;
+  padding-top: 10px;
+  margin-top: 5px;
+  border-top: 1px dashed #CECCCD;
+}
+
+footer .twitter{
+  padding-left: 25px;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 
