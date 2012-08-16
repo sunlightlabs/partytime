@@ -512,8 +512,8 @@ class Event(models.Model):
     def truncated_name(self):
         name = self.__unicode__()
         #print name
-        if len(name)> 22:
-            return name[:22] + "..."
+        if len(name)> 21:
+            return name[:21] + "..."
         else:
             return name
 
