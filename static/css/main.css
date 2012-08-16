@@ -1286,6 +1286,24 @@ img.alignleft{
 }
 
 
+/* wp image styles */
+.specialEvent{
+  position: relative;
+}
+.specialEvent .convention.badge{
+  width: 140px;
+  height: 140px;
+  display: block;
+  text-indent: -9999em;
+  top: -15px;
+  right: -15px;
+  position: absolute;
+  background: url(../images/conventionBadge.png) left top no-repeat;
+}
+.specialEvent .convention.badge:hover{
+  background: url(../images/conventionBadge.png) right top no-repeat;
+  cursor: pointer;
+}
 
 
 
