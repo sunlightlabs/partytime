@@ -50,7 +50,7 @@
 		{% for result in results %}
 		<tr class="{% cycle 'even' 'odd' %}">
 			<td>
-				{{ result.start_date|date:"m/d/y"}}
+				{{ result.start_date|date:"m/d/y"}}<a href="{{result.get_absolute_url}}">See&nbsp;invite</a>
 			</td>
 			<td>
 				{% for ben in result.beneficiaries.all %}{%if ben.affiliate %}

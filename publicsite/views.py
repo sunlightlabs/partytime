@@ -496,6 +496,9 @@ def search(request, field, args):
             
 
 def polwithpac(request, cid):
+    
+    
+    
     lawmaker = None
     pacname = None
 
@@ -510,20 +513,28 @@ def polwithpac(request, cid):
         else:
             lawmaker = this_lawmaker
 
-    events = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date', '-start_time').distinct()
+    pagenum = request.GET.get('page', 1)
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
+
+    events_all = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date', '-start_time').distinct()
+    events = sort_events( events_all, sortfield, sortorder)
     
     # need to get pictures of 'em
     image_url = None
     
     event_count = events.count()
-    paginator = Paginator(events, 10)
-    pagenum = request.GET.get('page', 1)
+    paginator = Paginator(events, 20)
+
 
     max_page = paginator.num_pages
-    paginator_html = ""
-    # There typically aren't enough results for there to be multiple pages
-    search_url_base = "/pol/%s/?" % (cid)
-    paginator_html = make_paginator_text(search_url_base, int(pagenum), max_page)    
+
+
+    page_url_base = "/pol/%s/?page=%s&" % (cid, pagenum)
+    pageless_url_base = "/pol/%s/?sort=start_date&order=%s&" % (cid, sortorder)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+    
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
     print "paginator: " + paginator_html
     
     try:
@@ -540,7 +551,8 @@ def polwithpac(request, cid):
              'event_count':event_count,
              'paginator_html':paginator_html, 
              'current_pagenum':pagenum,
-             'max_pagenum':max_page,             
+             'max_pagenum':max_page,
+             'table_header':table_header,             
              }
             )
 # new search that looks in multiple places for matches and then does... something.... 
