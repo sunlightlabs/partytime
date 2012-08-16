@@ -15,6 +15,7 @@
 
 <div class="oneCol colLt">
 	<time pubdate=""><span class="month">{{ doc.start_date|date:"N"}}</span><span class="day">{{ doc.start_date|date:"d"}}</span><span class="year">{{ doc.start_date|date:"Y"}}</span></time>
+	<div class="gigya party" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"></div>
 
 	
 </div>
@@ -23,7 +24,7 @@
 		<h2>
 			<span class="type">{% if doc.entertainment %}{{ doc.entertainment }}{% endif %}</span> {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}</a>
 		</h2>
-		<div class="gigya party" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"></div>
+
 	</div>
 	<dl class="clearfix">
 
@@ -85,23 +86,26 @@
         var ua = new gigya.socialize.UserAction();
         var params = {
             containerID: 'share-buttons',
-            layout: 'horizontal',
+            iconsOnly: true,
+            noButtonBorders: true,
+            layout: 'vertical',
             shareButtons: [
                 {
-                    provider: 'facebook-like',
+                    provider: 'facebook',
                 },
                 {
-                    provider: 'google-plusone'
-                },
-                {
-                    provider: 'twitter-tweet',
+                    provider: 'twitter',
                     related: 'sunfoundation',
                     via: 'sunfoundation'
+                },
+                {
+                    provider: 'googleplus'
                 },
                 {
                     provider: 'email'
                 }
             ],
+            showCounts: 'right',
             userAction: ua
         };
         gigya.socialize.showShareBarUI(params);

@@ -38,33 +38,36 @@
         })();
     </script>
 	<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
-	<script>
-	    $(document).ready(function() {
-	        var ua = new gigya.socialize.UserAction();
-	        var params = {
-	            containerID: 'share-buttons',
-	            layout: 'horizontal',
-	            shareButtons: [
-	                {
-	                    provider: 'facebook-like',
-	                },
-	                {
-	                    provider: 'google-plusone'
-	                },
-	                {
-	                    provider: 'twitter-tweet',
-	                    related: 'sunfoundation',
-	                    via: 'sunfoundation'
-	                },
-	                {
-	                    provider: 'email'
-	                }
-	            ],
-	            userAction: ua
-	        };
-	        gigya.socialize.showShareBarUI(params);
-	    });
-	</script>
+<script>
+    $(document).ready(function() {
+        var ua = new gigya.socialize.UserAction();
+        var params = {
+            containerID: 'share-buttons',
+            iconsOnly: true,
+            noButtonBorders: true,
+            layout: 'horizontal',
+            shareButtons: [
+                {
+                    provider: 'facebook',
+                },
+                {
+                    provider: 'twitter',
+                    related: 'sunfoundation',
+                    via: 'sunfoundation'
+                },
+                {
+                    provider: 'googleplus'
+                },
+                {
+                    provider: 'email'
+                }
+            ],
+            showCounts: 'right',
+            userAction: ua
+        };
+        gigya.socialize.showShareBarUI(params);
+    });
+</script>
 {% endblock %}
 
 

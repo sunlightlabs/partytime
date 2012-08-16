@@ -1330,10 +1330,15 @@ img.alignleft{
 }
 
 
+/* gigya related styles */
 
 
-
-
+.gigya.entity{
+  float: left;
+}
+.event time{
+  margin-bottom: 20px;
+}
 
 
 

@@ -15,6 +15,7 @@
 				{{ lawmaker.title }} {{ lawmaker.name }} <span class="role">({{ lawmaker.party }}, {{ lawmaker.state }})</span>
 			</h2>
 			<div class="clear"></div>
+			<div class="gigya entity" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"></div>
 			<ul class="clearfix social">
 				{% if lawmaker.crp_id %}
 				<li>
@@ -30,7 +31,7 @@
 				</li>
 				{% endif %}
 			</ul>
-			<div class="gigya party" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"></div>
+			
 			<div class="clear"></div>
 			{% if lawmaker.congressional_leadership_positions %}
 			<h4>Congressional Leadership</h4>
@@ -149,13 +150,12 @@ function gotoscout(feedurl) {
         var ua = new gigya.socialize.UserAction();
         var params = {
             containerID: 'share-buttons',
+            iconsOnly: true,
+            noButtonBorders: true,
             layout: 'horizontal',
             shareButtons: [
                 {
                     provider: 'facebook',
-                },
-                {
-                    provider: 'googleplus'
                 },
                 {
                     provider: 'twitter',
@@ -163,9 +163,13 @@ function gotoscout(feedurl) {
                     via: 'sunfoundation'
                 },
                 {
+                    provider: 'googleplus'
+                },
+                {
                     provider: 'email'
                 }
             ],
+            showCounts: 'right',
             userAction: ua
         };
         gigya.socialize.showShareBarUI(params);
