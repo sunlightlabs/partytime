@@ -535,33 +535,46 @@ dt { font-weight: bold; float: left; padding-right: 15px; display: block; clear:
 dd { display: block; float: left; line-height: 1.8;}
 ul li { margin-bottom: 20px; }
 ol li { }
-dl.api{
+dl {
   margin-bottom: 40px;
 }
-dl.api dt, dl.api dd{
+dl dt, dl dd{
   display: block;
   float: none;
   line-height: 1.5;
 }
-dl.api dd{
+dl dd{
   margin-left: 20px;
   margin-bottom: 15px;
 }
+.event dl
+{
+  width: 520px;
+  margin: 20px 0 40px 0;
+  padding: 0;
+  border-top: 1px solid #CECCCD;
+}
 
-.event dl{
-  margin: 0 0 30px 0;
-}
-.event dt {
+.event dt
+{
+  clear: left;
   float: left;
-  margin-right: 10px;
+  width: 200px;
+  margin: 0;
+  padding: 5px;
+  font-weight: bold;
 }
-.event dd {
-  margin-left: 0;
-  margin-bottom: 15px;
+
+.event dd
+{
+  float: none;
+  width: 100%;
+  margin: 0;
+  padding: 5px;
+  border-bottom: 1px solid #CECCCD;
+border-top: 1px solid white;
 }
-.event dd, .event dt{
-  margin-top: 10px;
-}
+
 
 
 .fileUpload label{
@@ -615,6 +628,9 @@ dl.api dd{
 }
 .partyList thead th.sort.up {
   background: #dcdbd2 url(../images/sort.png) right top no-repeat; /* Old browsers */
+}
+.partyList em{
+  font-weight: bold;
 }
 
 
@@ -928,30 +944,7 @@ footer .join form{
   margin-right: 3px;
 }
 
-.event dt.description:after{
-  content: none;
-}
 
-.event dt:after{
-  content: ":";
-}
-.event dd{
-  margin-bottom: 5px;
-  float: left;
-}
-.event dt.address{
-  display: none;
-}
-.event dd.address{
-  float: none;
-  padding: 10px 0;
-}
-.host, .location{
-  padding-top: 6px;
-}
-.contribute{
-  text-align: right;
-}
 
 
 
