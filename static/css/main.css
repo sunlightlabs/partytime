@@ -814,8 +814,10 @@ footer .twitter{
   padding-left: 10px;
 }
 .current ol li, .events ol li{
-  margin-right: 10px;
   padding: 10px;
+}
+.current .blog ol li{
+  margin-right: 10px;
 }
 
 .current ol li:hover, .events ol li:hover{
