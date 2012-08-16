@@ -44,23 +44,7 @@
 </h3>
 <table>
 	<thead>
-		<tr>
-			<th>
-				Date
-			</th>
-			<th>
-				Beneficiary
-			</th>
-			<th>
-				Host
-			</th>
-			<th>
-				Event
-			</th>
-			<th>
-				Location
-			</th>
-		</tr>
+		{{ table_header|safe}}
 	</thead>
 	<tbody>
 		{% for result in results %}

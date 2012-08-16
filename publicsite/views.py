@@ -34,6 +34,12 @@ from layar import LayarView, POI
 # set low during development
 cache_time_minutes = 1
 
+unsortable_table_header = "<tr><th class='unsortable'>Date</th><th class='unsortable'>Beneficiary</th><th class='unsortable'>Host</th><th class='unsortable'>Event</th><th class='unsortable'>Location</th></tr>"
+
+unsortable_date_down_header = "<tr><th class='sort down'>Date</th><th class='unsortable'>Beneficiary</th><th class='unsortable'>Host</th><th class='unsortable'>Event</th><th class='unsortable'>Location</th></tr>"
+
+unsortable_date_up_header = "<tr><th class='sort up'>Date</th><th class='unsortable'>Beneficiary</th><th class='unsortable'>Host</th><th class='unsortable'>Event</th><th class='unsortable'>Location</th></tr>"
+
 @cache_page(60*cache_time_minutes)
 def index(request):
 
@@ -61,6 +67,26 @@ def index(request):
             'cachetime4':cachetime4,                        
             })
 
+def make_sortable_table_header(url_base, sort_order):
+    
+    table_html = "<tr>"
+    
+    if sort_order == '1':
+        href_url = url_base + "sort=start_date&order=0" 
+        table_html += "<th class='%s'><a href='%s'>Date</a></th>" % ("sort up", href_url)
+    else:
+        href_url = url_base + "sort=start_date&order=1" 
+        
+        table_html += "<th class='%s'><a href='%s'>Date</a></th>" % ("sort down", href_url)
+
+
+    for field_name in ('Beneficiary', 'Host', 'Event', 'Location'):
+            table_html += "<th class='unsortable'>%s</th>" % field_name
+    
+    return table_html
+    
+
+
 def make_paginator_text(base_html, current_page, max_page):
     
     if max_page==1:
@@ -77,7 +103,7 @@ def make_paginator_text(base_html, current_page, max_page):
     
     return_html = ""
     if current_page > 1:
-        return_html += '<span class="prev"><a class="textReplace" href="' + base_html + '?page=' + str(current_page-1) + '">Previous</a></span>'
+        return_html += '<span class="prev"><a class="textReplace" href="' + base_html + 'page=' + str(current_page-1) + '">Previous</a></span>'
         
     end_page = initial_page+6
     if end_page > max_page:
@@ -93,11 +119,11 @@ def make_paginator_text(base_html, current_page, max_page):
         if i==current_page:
             return_html += 'cur">'  + str(i) + '</span>'
         else:
-            return_html += '"><a href="' + base_html + '?page=' + str(i) + '">' + str(i) + '</a></span>'
+            return_html += '"><a href="' + base_html + 'page=' + str(i) + '">' + str(i) + '</a></span>'
     
     
     if current_page < max_page:
-        return_html += '<span class="next"><a class="textReplace" href="' + base_html + '?page=' + str(current_page+1) + '">Next</a></span>'
+        return_html += '<span class="next"><a class="textReplace" href="' + base_html + 'page=' + str(current_page+1) + '">Next</a></span>'
         
     return return_html
 
@@ -115,7 +141,7 @@ def blogindex(request):
     except (EmptyPage, InvalidPage):
         raise Http404
     
-    paginator_html = make_paginator_text('/blogindex/', int(pagenum), max_page[0])
+    paginator_html = make_paginator_text('/blogindex/?', int(pagenum), max_page[0])
     
     return render_to_response(
             'publicsite_redesign/blogindex.html', 
@@ -128,13 +154,27 @@ def party(request, docid):
     doc = get_object_or_404(Event, pk=docid)
     return render_to_response('publicsite_redesign/party.html', {"doc": doc}) 
 
+def sort_events(event_query_set, sortfield, sortorder):
+    sort_directive = sortfield
+    if sortorder == '1':
+        sort_directive = "-%s" % (sortfield)
+    return event_query_set.order_by(sort_directive)
+
 
 @cache_page(60*cache_time_minutes)
 def recent(request):
-    events = Event.objects.recent(60)
-    print "recent"
-    paginator = Paginator(events, 10)
+
     pagenum = request.GET.get('page', 1)
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
+    today = datetime.date.today()
+    a_month_ago = today - datetime.timedelta(days=30)
+
+    events = sort_events(Event.objects.daterange(a_month_ago.strftime("%Y%m%d"), today.strftime("%Y%m%d")), sortfield, sortorder)[:120]
+    print "recent"
+    paginator = Paginator(events, 20)
+
+    
     max_page = paginator.num_pages
     
     try:
@@ -143,12 +183,16 @@ def recent(request):
         raise Http404
         
 
-    paginator_html = make_paginator_text('/recent/', int(pagenum), max_page)
+    paginator_html = make_paginator_text('/recent/?', int(pagenum), max_page)
+    page_url_base = "/recent/?page=%s&" % (pagenum)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+
     rss_url = "/feeds/recent/"
      
     return render_to_response(
             'publicsite_redesign/generic_results.html', 
-            {'title': 'Recent events', 
+            {'title': 'Events in the last month', 
+             'table_header':table_header,
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
@@ -158,14 +202,19 @@ def recent(request):
             
 @cache_page(60*cache_time_minutes)
 def upcoming(request):
-    events = Event.objects.upcoming(None)
-    paginator = Paginator(events, 10)
     pagenum = request.GET.get('page', 1)
-    max_page = paginator.num_pages
-    paginator_html = ""
-    # There typically aren't enough results for there to be multiple pages
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '0')
 
+    events = events = sort_events(Event.objects.upcoming(None), sortfield, sortorder)
+    paginator = Paginator(events, 20)
+
+    max_page = paginator.num_pages
+    
     rss_url = "/feeds/upcoming/"
+    
+    page_url_base = "/upcoming/?"
+    paginator_html = make_paginator_text('/upcoming/?', int(pagenum), max_page)
         
     try:
         page = paginator.page(pagenum)
@@ -179,19 +228,22 @@ def upcoming(request):
              'paginator_html':paginator_html,
              'rss_url':rss_url,
              'widget_url':'/widget/upcoming/',
+             'table_header':unsortable_date_down_header,
              }
             )
 
 @cache_page(60*cache_time_minutes)
 def newly_added(request):
-    events = Event.objects.newest(10).select_related('beneficiaries', 'venue')
-    paginator = Paginator(events, 10)
     pagenum = request.GET.get('page', 1)
+
+    
+    events = Event.objects.newest(None).select_related('beneficiaries', 'venue')
+    paginator = Paginator(events, 20)
     max_page = paginator.num_pages
     paginator_html = ""
-    # There typically aren't enough results for there to be multiple pages
 
     rss_url = "/feeds/newlyadded/"
+    
 
     try:
         page = paginator.page(pagenum)
@@ -200,31 +252,40 @@ def newly_added(request):
 
     return render_to_response(
             'publicsite_redesign/generic_results.html', 
-            {'title': 'Newly added events', 
+            {'title': 'The most recently added 20 events', 
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
              'widget_url':'/widget/newly-added/',
+             'table_header':unsortable_table_header,
              }
             )
 
 @cache_page(60*cache_time_minutes)
 def committee_leadership(request):
+    pagenum = request.GET.get('page', 1)
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
 
     today = datetime.date.today()
-    pagenum = request.GET.get('page', 1)
     crp_ids = list(CommitteeMembership.objects.values_list('member__crp_id', flat=True).exclude(position='Member'))
     leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
-
-    events = Event.objects.filter(status="", beneficiaries__in=leadership_ids, start_date__lte=today).select_related('beneficiaries', 'venue').distinct().order_by('-start_date', 'start_time')[:60]
-
-    paginator = Paginator(events, 10)
+    
+    events_all = Event.objects.filter(status="", beneficiaries__in=leadership_ids, start_date__lte=today).select_related('beneficiaries', 'venue').distinct().order_by('-start_date', 'start_time')
+    
+    events = sort_events( events_all, sortfield, sortorder)
+    
+    paginator = Paginator(events, 20)
     pagenum = request.GET.get('page', 1)
     
+    page_url_base = "/committee-leadership/?page=%s&" % (pagenum)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+    
     max_page = paginator.num_pages
-    paginator_html = ""
-    # There typically aren't enough results for there to be multiple pages
-    paginator_html = make_paginator_text('/committee-leadership/', int(pagenum), max_page)    
+
+    pageless_url_base = "/committee-leadership/?sort=start_date&order=%s&" % (sortorder)
+
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
 
     try:
         page = paginator.page(pagenum)
@@ -237,24 +298,35 @@ def committee_leadership(request):
              'results': page.object_list,
              'paginator_html':paginator_html,
              'current_pagenum':pagenum,
-             'max_pagenum':'6'}
+             'max_pagenum':max_page,
+             'table_header':table_header,}
             )
             
 @cache_page(60*cache_time_minutes)
 def congressional_leadership(request):
+    pagenum = request.GET.get('page', 1)
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
+
 
     today = datetime.date.today()
-    pagenum = request.GET.get('page', 1)
     leader_ids = LeadershipPosition.objects.values_list('lawmaker_id', flat=True)
-    events = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:60]
+    events_all = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')
+    
+    events = sort_events( events_all, sortfield, sortorder)
+    
+    page_url_base = "/congressional-leadership/?page=%s&" % (pagenum)
+    
+    paginator = Paginator(events, 20)
+    pageless_url_base = "/congressional-leadership/?sort=start_date&order=%s&" % (sortorder)
 
-    paginator = Paginator(events, 10)
-    pagenum = request.GET.get('page', 1)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+
     
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    paginator_html = make_paginator_text('/congressional-leadership/', int(pagenum), max_page)    
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
 
     try:
         page = paginator.page(pagenum)
@@ -263,28 +335,39 @@ def congressional_leadership(request):
 
     return render_to_response(
             'publicsite_redesign/generic_results.html', 
-            {'title': 'Recent Parties Held for Congressional Leadership', 
+            {'title': 'Parties Held for Congressional Leadership', 
              'results': page.object_list,
              'paginator_html':paginator_html,
              'current_pagenum':pagenum,
-             'max_pagenum':'6'}
+             'max_pagenum':max_page,
+             'table_header':table_header,}
             )      
 
 
 @cache_page(60*cache_time_minutes)
 def hosted_by_congressional_leadership(request):
+    pagenum = request.GET.get('page', 1)
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
+
+
 
     today = datetime.date.today()
-    pagenum = request.GET.get('page', 1)
     leader_ids = LeadershipPosition.objects.values_list('lawmaker__crp_id', flat=True)
-    events = Event.objects.filter(status="", other_members__crp_id__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:60]
+    events_all = Event.objects.filter(status="", other_members__crp_id__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')
 
-    paginator = Paginator(events, 10)
+    events = sort_events(events_all, sortfield, sortorder)
+    
+    paginator = Paginator(events, 20)
 
+    page_url_base = "/hosted-by-congressional-leadership/?page=%s&" % (pagenum)
+    pageless_url_base = "/hosted-by-congressional-leadership/?sort=start_date&order=%s&" % (sortorder)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+    
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    paginator_html = make_paginator_text('/hosted-by-congressional-leadership/', int(pagenum), max_page)    
+    paginator_html = make_paginator_text(page_url_base, int(pagenum), max_page)    
 
     try:
         page = paginator.page(pagenum)
@@ -297,24 +380,34 @@ def hosted_by_congressional_leadership(request):
              'results': page.object_list,
              'paginator_html':paginator_html,
              'current_pagenum':pagenum,
-             'max_pagenum':'6'}
+             'max_pagenum':max_page,
+             'table_header':table_header,}
             )      
 
 
 @cache_page(60*cache_time_minutes)
 def presidential(request):
 
-    today = datetime.date.today()
     pagenum = request.GET.get('page', 1)
-    events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:60]
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
 
-    paginator = Paginator(events, 10)
+    today = datetime.date.today()
+
+    events_all  = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')
+    events = sort_events( events_all, sortfield, sortorder)
+
+    paginator = Paginator(events, 20)
     pagenum = request.GET.get('page', 1)
 
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    paginator_html = make_paginator_text('/presidential/', int(pagenum), max_page)    
+    
+    page_url_base = "/presidential/?page=%s&" % (pagenum)
+    pageless_url_base = "/presidential/?sort=start_date&order=%s&" % (sortorder)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
 
     try:
         page = paginator.page(pagenum)
@@ -330,8 +423,9 @@ def presidential(request):
              'paginator_html':paginator_html,
              'rss_url':rss_url,
              'current_pagenum':pagenum,
-             'max_pagenum':'6',
-             'widget_url':'/widget/presidential/'}
+             'max_pagenum':max_page,
+             'widget_url':'/widget/presidential/',
+             'table_header':table_header,}
             )
 
 
@@ -377,7 +471,7 @@ def search(request, field, args):
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    search_url_base = "/search/%s/%s/" % (field, args)
+    search_url_base = "/search/%s/%s/?" % (field, args)
     paginator_html = make_paginator_text(search_url_base, int(pagenum), max_page)    
     print "paginator: " + paginator_html
     
@@ -428,7 +522,7 @@ def polwithpac(request, cid):
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    search_url_base = "/pol/%s/" % (cid)
+    search_url_base = "/pol/%s/?" % (cid)
     paginator_html = make_paginator_text(search_url_base, int(pagenum), max_page)    
     print "paginator: " + paginator_html
     
