@@ -55,23 +55,23 @@
 			</td>
 			<td>
 				{% for ben in result.beneficiaries.all %}{%if ben.affiliate %}
-				<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}" style="display:inline;">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}" style="display:inline;">{{ ben.affiliate|highlightsearchterm:query|safe }}</a>)
+				<a href="{% url partytime_search 'Beneficiary' ben.name|urlencode %}" style="display:inline;">{{ ben.name }}</a> (<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.affiliate|urlencode %}{% endif %}" style="display:inline;">{% if query %}{{ ben.affiliate|highlightsearchterm:query|safe }}{% else %}{{ben.affiliate}}{% endif %}</a>)
 				{%else%}
-				<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}" style="display:inline;">{{ ben|highlightsearchterm:query|safe }}</a>
+				<a href="{% if ben.crp_id %}{% url partytime_pol_detail ben.crp_id %}{% else %}{% url partytime_search 'Beneficiary' ben.name|urlencode %}{%endif%}" style="display:inline;">{% if query %}{{ ben|highlightsearchterm:query|safe }}{% else %}{{ben}}{% endif %}</a>
 				{%endif%}{% endfor %}
 			</td>
 			<td>
 				{% with result.hosts.all as hosts %}
 				{% if hosts %}
-			    {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}" style="display:inline;">{{ host|highlightsearchterm:query|safe }}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}
+			    {% for host in hosts %}<a href="{% url partytime_search 'Host' host|urlencode %}" style="display:inline;">{% if query %}{{ host|highlightsearchterm:query|safe }}{% else %}{{host}}{% endif %}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}
 				{% endif %}
 				{% endwith %}
 			</td>
 			<td>
-				<a href="{{result.get_absolute_url}}">{% if result.entertainment %}{{ result.entertainment|highlightsearchterm:query|safe }}{% else %}Fundraiser{% endif %}</a>
+				<a href="{{result.get_absolute_url}}">{% if result.entertainment %}{% if query %}{{ result.entertainment|highlightsearchterm:query|safe }}{% else %}{{result.entertainment}} {% endif %}{% else %}Event{% endif %}</a>
 			</td>
 			<td>
-				{{ result.venue.venue_name|highlightsearchterm:query|safe }}{% if result.venue.address1 %}, {{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city|highlightsearchterm:query|safe }}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
+				{% if query %}{{ result.venue.venue_name|highlightsearchterm:query|safe }}{% else %}{{ result.venue.venue_name}}{% endif %}{% if result.venue.address1 %}, {{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city}}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
 			</td>
 		</tr>		
 		
