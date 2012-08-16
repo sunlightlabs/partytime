@@ -14,12 +14,8 @@
 {% block mainbar %}
 
 <div class="oneCol colLt">
-	<time pubdate=""><span class="month">{{ doc.start_date|date:"N"}}</span><span class="day">{{ doc.start_date|date:"j"}}</span><span class="year">{{ doc.start_date|date:"Y"}}</span></time>
-	<!--
-	<ul class="clearfix social tall">
-		<li id="share-buttons"></li>
-	</ul>
-	-->
+	<time pubdate=""><span class="month">{{ doc.start_date|date:"N"}}</span><span class="day">{{ doc.start_date|date:"d"}}</span><span class="year">{{ doc.start_date|date:"Y"}}</span></time>
+
 	
 </div>
 <div class="eightCol colRt">
@@ -27,6 +23,7 @@
 		<h2>
 			<span class="type">{% if doc.entertainment %}{{ doc.entertainment }}{% endif %}</span> {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}</a>
 		</h2>
+		<div class="needs styling, dammit" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"></div>
 	</div>
 	<dl class="clearfix">
 
@@ -88,7 +85,7 @@
         var ua = new gigya.socialize.UserAction();
         var params = {
             containerID: 'share-buttons',
-            layout: 'vertical',
+            layout: 'horizontal',
             shareButtons: [
                 {
                     provider: 'facebook-like',

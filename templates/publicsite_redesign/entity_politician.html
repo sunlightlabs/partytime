@@ -59,7 +59,7 @@
 	<div class="partyList last module">
 		<div class="tableHat twelveCol aboutParties">
 			<h3 class="">
-				Beneficiary of {{ event_count }} PT events <span class="role">since 2007</span>
+				Beneficiary of {{ event_count }} PT events
 			</h3>
 			
 			<dl class="clearfix">
@@ -83,29 +83,13 @@
 		</div>
 		<table>
 			<thead>
-				<tr>
-					<th>
-						Date
-					</th>
-					<th>
-						Beneficiary
-					</th>
-					<th>
-						Host
-					</th>
-					<th>
-						Event
-					</th>
-					<th>
-						Location
-					</th>
-				</tr>
+				{{ table_header|safe}}
 			</thead>
 			<tbody>
 				{% for result in results %}
 				<tr class="{% cycle 'even' 'odd' %}">
 					<td>
-						{{ result.start_date|date:"m/d/y"}}
+						{{ result.start_date|date:"m/d/y"}}<br><a href="{{result.get_absolute_url}}">See&nbsp;invite</a>
 					</td>
 					<td>
 						{% for ben in result.beneficiaries.all %}{%if ben.affiliate %}
