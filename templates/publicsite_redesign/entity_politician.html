@@ -1,6 +1,9 @@
 {% extends "publicsite_redesign/base.html" %}
 {% load partytime %}
 
+{% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>
+{% endblock %}
+
 {% block title %}	{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}) - {{ block.super }}{% endblock %}
 
 		
@@ -27,6 +30,7 @@
 				</li>
 				{% endif %}
 			</ul>
+			<div class="gigya party" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"></div>
 			<div class="clear"></div>
 			{% if lawmaker.congressional_leadership_positions %}
 			<h4>Congressional Leadership</h4>
@@ -106,10 +110,10 @@
 						{% endwith %}
 					</td>
 					<td>
-						<a href="{{result.get_absolute_url}}">{% if result.entertainment %}{{ result.entertainment }}{% else %}Fundraiser{% endif %}</a>
+						{% if result.entertainment %}{{ result.entertainment }}{% else %}Fundraiser{% endif %}
 					</td>
 					<td>
-						{% if result.venue.venue_name %}{{ result.venue.venue_name }}{% endif %}{% if result.venue.address1 %}{% if result.venue.venue_name %}, {% endif %}{{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city }}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
+						{% if result.venue.venue_name %}<a href="{% url partytime_search 'Venue_Name' result.venue.venue_name|urlencode %}" style="display:inline">{{ result.venue.venue_name }}</a>{% endif %}{% if result.venue.address1 %}{% if result.venue.venue_name %}, {% endif %}{{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city }}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
 					</td>
 				</tr>		
 
@@ -139,5 +143,34 @@ function gotoscout(feedurl) {
 }
 
 </script>
+<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
+<script>
+    $(document).ready(function() {
+        var ua = new gigya.socialize.UserAction();
+        var params = {
+            containerID: 'share-buttons',
+            layout: 'horizontal',
+            shareButtons: [
+                {
+                    provider: 'facebook-like',
+                },
+                {
+                    provider: 'google-plusone'
+                },
+                {
+                    provider: 'twitter-tweet',
+                    related: 'sunfoundation',
+                    via: 'sunfoundation'
+                },
+                {
+                    provider: 'email'
+                }
+            ],
+            userAction: ua
+        };
+        gigya.socialize.showShareBarUI(params);
+    });
+</script>
+
 {% endblock %}
 	
