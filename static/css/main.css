@@ -689,7 +689,15 @@ footer .join form{
   border: 0;
 }
 .partyStats{
-  margin-top: 30px;
+  padding-top: 30px;
+  padding-bottom: 40px;
+  background: #F4F3EF;
+}
+footer .partyStats{
+  padding-bottom: 0;
+}
+.partyStats .fourCol{
+  margin-bottom: 0;
 }
 .partyStats dt{
   font-weight: normal;
@@ -981,7 +989,7 @@ footer .join form{
   background: -ms-linear-gradient(left, #f5f4f1 0%,#e9e8e2 50%,#f5f4f1 100%); /* IE10+ */
   background: linear-gradient(to right, #f5f4f1 0%,#e9e8e2 50%,#f5f4f1 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f4f1', endColorstr='#f5f4f1',GradientType=1 ); /* IE6-9 */
-  padding-bottom: 40px;
+  padding-bottom: 0;
 }
 #yearInParties{
   border-top: 1px solid #cecccd;
