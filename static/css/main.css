@@ -6,7 +6,7 @@ audio:not([controls]) { display: none; }
 [hidden] { display: none; }
 
 html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-html, button, input, select, textarea { font-family: sans-serif; color: #222; }
+html, button, input, select, textarea { font-family: sans-serif; *color: rgba(255, 51, 0, 0.8);}
 body { margin: 0; font-size: 1em; line-height: 1.4; }
 
 ::-moz-selection { background: #5ad4d2; color: #fff; text-shadow: none; }
@@ -341,20 +341,29 @@ nav li.active a:link { color: #c92500; }
 li.active a { color: #c92500; }
 
 
-#searchform button { 
+#searchform button.button { 
   width: 58px; 
   height: 58px; 
-  float: right; 
-  background: url(../images/btn_search.png) top left no-repeat; 
-  border: none; 
-  box-shadow: none; 
+  float: right;
+  background-color: none; 
+  background: url(../images/btn_search.png) left top no-repeat; 
   font-size: 18px; 
   margin-top: -3px; 
-  margin-left: -27px; 
-  padding-left: 7px;
+  margin-left: -27px;
+  padding: 0; 
+  padding-left: 12px;
+  color: rgba(214,44,0, 0.8);
+  border-top: 0; 
+  border-left: 0; 
+  border-right: 0; 
+  border-bottom: 0; 
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  text-align: left;
+  filter: none;
 }
-#searchform button:hover { 
-  background: url(../images/btn_search.png) bottom left no-repeat;
+#searchform button.button:hover { 
+  background: url(./images/btn_search.png) left bottom no-repeat;
 }
 .join input[name="zip"] {
   width: 104px;
@@ -438,7 +447,7 @@ button, a.button, .button {
   font-family: "droid-sans", "helvetica neue", sans-serif;
   font-weight: bold;
   font-size: 23px;
-  text-transform: uppercase; 
+  text-transform: uppercase;
   color: rgba(214,44,0, 0.8);
   text-shadow: 1px 4px 6px #fbfaf7, 0 0 0 #000, 1px 4px 6px #fbfaf7;
   text-decoration: none;
@@ -463,7 +472,7 @@ button:hover, a.button:hover, .button:hover {
   font-family: "droid-sans", "helvetica neue", sans-serif;
   font-weight: bold;
   font-size: 23px;
-  text-transform: uppercase; 
+  text-transform: uppercase;
   color: rgba(255,51,0, 0.8);
   text-shadow: 1px 4px 6px #f0efeb, 0 0 0 #000, 1px 4px 6px #f0efeb;
   text-decoration: none;
@@ -696,6 +705,11 @@ footer .join form{
   background: none;
   border: 0;
 }
+footer button, footer button:hover{
+  *width: 113px;
+  *padding-left: 0;
+  *padding-right: 0;
+}
 .partyStats{
   padding-top: 30px;
   padding-bottom: 40px;
@@ -857,13 +871,16 @@ footer .twitter{
   background: url(../images/bg_side.png) left top repeat-y;
 }
 .uploadSmall{
-  text-align: center;
   padding-top: 0;
   padding-bottom: 0;
   margin-top: -15px;
   position: relative;
   padding-bottom: 30px;
   background: none;
+  padding-left: 20px
+}
+.sidebar .uploadSmall{
+  padding-left: 0;
 }
 .uploadSmall h3{
   background: url(../images/uploadSmall.png) center top no-repeat;
@@ -878,6 +895,8 @@ footer .twitter{
   width: 100px;
   bottom: 30px;
   margin-left: 37px;
+  text-align: center;
+;
 }
 .eventCluster .more{
   text-align: right;
