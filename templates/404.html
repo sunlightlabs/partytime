@@ -1,7 +1,9 @@
-{% extends "publicsite/base.html" %}
+{% extends "publicsite_redesign/sidebar_base.html" %}
+
+{% block title %}404 - {{ block.super }}{% endblock %}
 
 {% block content %}
-<a href="/"><img src="http://media.sunlightprojects.org/partytime/images/404.png" border="0"></a>
+
 
 <p>It would appear that you have strayed a little too far from the party. Try <a href="/">this page</a>
 or something on the right side of the screen. If you think we're the ones that are lost, <a href="/contact/">let us know.</a></p>
