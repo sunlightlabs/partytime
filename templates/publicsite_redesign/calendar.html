@@ -92,23 +92,26 @@
         var ua = new gigya.socialize.UserAction();
         var params = {
             containerID: 'share-buttons',
+            iconsOnly: true,
+            noButtonBorders: true,
             layout: 'horizontal',
             shareButtons: [
                 {
-                    provider: 'facebook-like',
+                    provider: 'facebook',
                 },
                 {
-                    provider: 'google-plusone'
-                },
-                {
-                    provider: 'twitter-tweet',
+                    provider: 'twitter',
                     related: 'sunfoundation',
                     via: 'sunfoundation'
+                },
+                {
+                    provider: 'googleplus'
                 },
                 {
                     provider: 'email'
                 }
             ],
+            showCounts: 'right',
             userAction: ua
         };
         gigya.socialize.showShareBarUI(params);
