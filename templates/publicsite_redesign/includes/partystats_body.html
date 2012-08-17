@@ -5,7 +5,7 @@
 <!-- start  party stats -->
 <div class="partyStats thirds">
 {% load cache %}
-{% cache 10 'party_stats'  %}
+{% cache 900 'party_stats'  %}
 {% partystats %}
 {% endcache %}
 </div>
