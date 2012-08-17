@@ -363,7 +363,8 @@ li.active a { color: #c92500; }
   filter: none;
 }
 #searchform button.button:hover { 
-  background: url(./images/btn_search.png) left bottom no-repeat;
+  background: url(../images/btn_search.png) left bottom no-repeat;
+  filter: none;
 }
 .join input[name="zip"] {
   width: 104px;
