@@ -28,11 +28,12 @@ from django.views.decorators.cache import cache_page
 
 from partytime.publicsite.models import *
 from wordpress.models import Post
-from layar import LayarView, POI
+#from layar import LayarView, POI
 
-# catch-all cache time
-# set low during development
-cache_time_minutes = 1
+# pull from a settings file
+cache_time_minutes = settings.CACHE_TIME_MINUTES
+
+
 
 unsortable_table_header = "<tr><th class='unsortable'>Date</th><th class='unsortable'>Beneficiary</th><th class='unsortable'>Host</th><th class='unsortable'>Event</th><th class='unsortable'>Location</th></tr>"
 
@@ -50,10 +51,10 @@ def index(request):
     
     # cache the partiesheldforleadership template tags etc for this long in seconds. Some of them are ridiculous to generate. 
     # Caching them all for different times decreases the likelihood they'll all need to get regened at the same page load. 
-    cachetime1 = 10
-    cachetime2 = 10
-    cachetime3 = 10
-    cachetime4 = 10
+    cachetime1 = cache_time_minutes * 60
+    cachetime2 = cachetime1 + 300
+    cachetime3 = cachetime1 + 600
+    cachetime4 = cachetime1 + 900
     
     
     return render_to_response(
@@ -447,6 +448,7 @@ field_name_fix={
     'tags':'tags'
     }
 
+@cache_page(60*cache_time_minutes)
 def search(request, field, args):
     pagenum = request.GET.get('page', 1)
     sortfield = request.GET.get('sort', 'start_date')
@@ -505,7 +507,7 @@ def search(request, field, args):
             )
             
             
-
+@cache_page(60*cache_time_minutes)
 def polwithpac(request, cid):
     
     
@@ -607,6 +609,7 @@ def multisearch(request):
     'error_message':error_message,
     })
 
+@cache_page(60*cache_time_minutes)
 def calendar_today(request):
     today = datetime.date.today()
     dayofweek = today.weekday() + 1
@@ -617,6 +620,7 @@ def calendar_today(request):
     response = calendar(request, week_start.strftime("%Y%m%d"))
     return response
     
+@cache_page(60*cache_time_minutes)    
 def calendar(request, datestring):
     # looking for queryarg: q=YYYYMMDD
     startdate = None
@@ -676,7 +680,7 @@ def calendar(request, datestring):
     )
            
 
-
+@cache_page(60*cache_time_minutes)
 def widget_upcoming(request):
     events = Event.objects.upcoming(5)
     widget_title = "Upcoming events"
@@ -687,6 +691,7 @@ def widget_upcoming(request):
     'widget_title':widget_title,
     })
 
+@cache_page(60*cache_time_minutes)
 def widget_recent(request):
     events = Event.objects.recent(5)
     widget_title = "Recent events"
@@ -697,6 +702,7 @@ def widget_recent(request):
     'widget_title':widget_title,
     })
 
+@cache_page(60*cache_time_minutes)
 def widget_newly_added(request):
     events = Event.objects.newest(5)
     widget_title = "Newly added events"
@@ -707,6 +713,7 @@ def widget_newly_added(request):
     'widget_title':widget_title,
     })
 
+@cache_page(60*cache_time_minutes)
 def widget_presidential(request):
     today = datetime.date.today()
     events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:5]
@@ -718,6 +725,7 @@ def widget_presidential(request):
     'widget_title':widget_title,
     })        
 
+@cache_page(60*cache_time_minutes)
 def widget_pol(request, crp_id):
     possible_lawmakers = Lawmaker.objects.filter(crp_id=crp_id).distinct()
 
@@ -743,6 +751,23 @@ def widget_pol(request, crp_id):
     'events':events,
     'widget_title':widget_title,
     })
+
+def cmtedetail(request, cmteid):
+    committee = Committee.objects.get(short=cmteid)
+    
+
+    return render_to_response(
+            'publicsite_redesign/entity_committee.html', 
+            {
+             'committee':commitee,
+             }
+            )
+
+
+
+
+
+
 
 def search_old(request, field, args):
     lm = None
@@ -1020,25 +1045,7 @@ def cmtes(request, chamber='House'):
             )
 
 
-def cmtedetail(request, cmteid):
-    res = Event.objects.by_cmte(cmteid)
-    paginator = Paginator(res['events'], 50, orphans=5)
 
-    pagenum = request.GET.get('page', 1)
-    try:
-        page = paginator.page(pagenum)
-    except (EmptyPage, InvalidPage):
-        raise Http404
-
-    return render_to_response(
-            'publicsite/cmtedetail.html', 
-            {'cmte': res['cmte'],
-             'page': page,
-             'members': res['members'],
-             'since_year': res['since_year'],
-             'snapshot_image_name': '',
-             }
-            )
 
 def supercommittee(request):
     members = SuperCommitteeMember.objects.all()

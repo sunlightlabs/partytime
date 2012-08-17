@@ -20,7 +20,7 @@
 {% block sidebar %}
 
 {% load cache %}
-{% cache 10 'partytime_sidebar'  %}
+{% cache 900 'partytime_sidebar'  %}
 {% sidebarcontent %}
 {% endcache %}
 

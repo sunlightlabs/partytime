@@ -51,6 +51,7 @@ Highcharts.theme = {
 		gridLineColor: '#d9d8d7',
 		lineWidth: 0,
 		tickWidth: 0,
+		allowDecimals: false,
 		labels: {
 			style: {
 				color: '#999',

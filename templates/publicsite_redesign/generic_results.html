@@ -71,7 +71,7 @@
 				{% if result.entertainment %}{% if query %}{{ result.entertainment|highlightsearchterm:query|safe }}{% else %}{{result.entertainment}} {% endif %}{% else %}Event{% endif %}
 			</td>
 			<td>
-				{% if query %}<a href="{% url partytime_search 'Venue_Name' result.venue.venue_name|urlencode %}" style="display:inline">{{ result.venue.venue_name|highlightsearchterm:query|safe }}</a>{% else %}{{ result.venue.venue_name}}{% endif %}{% if result.venue.address1 %}, {{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city}}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
+				{% if query %}{% if result.venue.venue_name %}<a href="{% url partytime_search 'Venue_Name' result.venue.venue_name|urlencode %}" style="display:inline">{{ result.venue.venue_name|highlightsearchterm:query|safe }}</a>{% else %}{{ result.venue.venue_name}}{% endif %}{% endif %}{% if result.venue.address1 %}, {{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city}}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
 			</td>
 		</tr>		
 		

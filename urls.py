@@ -65,7 +65,7 @@ urlpatterns = patterns('',
     
     url(r'^calendar/$', 'partytime.publicsite.views.calendar_today', name='partytime_calendar'),
     url(r'^calendar/(?P<datestring>\d+)/$', 'partytime.publicsite.views.calendar', name='partytime_calendar'),    
-    ### End redesigned views:
+
     
     # old search views
     url(r'^search_old/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search_old', name='partytime_search_old'),
@@ -76,7 +76,11 @@ urlpatterns = patterns('',
     url(r'^widget/presidential/$', 'partytime.publicsite.views.widget_presidential'),
     url(r'^widget/pol/(?P<crp_id>.+)/$', 'partytime.publicsite.views.widget_pol'),
 
-            
+
+    url(r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes', name='partytime_chamber_committees'),
+    
+    ### End redesigned views:
+                
     #old widget views
     #url(r'^widget/abc_convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.abc_convention', name='partytime_abc_convention_detail'),
     #url(r'^widget/abc_convention/$', 'partytime.publicsite.views.abc_convention', name='partytime_abc_convention'),
@@ -94,9 +98,9 @@ urlpatterns = patterns('',
     url(r'^convention/(?P<convention>\w+)/$', 'partytime.publicsite.views.convention_list', name='partytime_convention_detail'),
     url(r'^convention/$', 'partytime.publicsite.views.convention_list', name='partytime_convention_events'),
    
-    url(r'^committee/(?P<cmteid>\w{4})/$', 'partytime.publicsite.views.cmtedetail', name='partytime_committee_detail'),
+
     url(r'^supercommittee/$', 'partytime.publicsite.views.supercommittee', name='partytime_supercommittee'),
-    url(r'^committee/(?P<chamber>\w*)/$', 'partytime.publicsite.views.cmtes', name='partytime_chamber_committees'),
+
     url(r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
     url(r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'}, name='partytime_committee_list'),
 
