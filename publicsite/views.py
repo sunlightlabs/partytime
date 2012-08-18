@@ -577,6 +577,7 @@ def multisearch(request):
     venues = None
     entertainments = None
     hosts = None
+    cities = None
     
     if not (query):
         raise Http404
@@ -592,11 +593,13 @@ def multisearch(request):
         entertainments = Event.objects.filter(entertainment__icontains=query).values('entertainment').distinct()
         
         cities = Venue.objects.filter(city__icontains=query).values('city', 'state').distinct()
+        
+        if ( (len(lawmakers) + len(hosts) + len(venues) + len(entertainments) + len(cities)) == 0 ):
+            error_message = "No matches"
     else:
         error_message = "Search term must be at least three letters long"
-    
-    if ( (len(lawmakers) + len(hosts) + len(venues) + len(entertainments) + len(cities)) == 0 ):
-        error_message = "No matches"
+        
+        
     
     return render_to_response(
     'publicsite_redesign/multisearch.html', 
