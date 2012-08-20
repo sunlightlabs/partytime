@@ -790,10 +790,10 @@ footer .twitter{
 .uploadLarge h3{
   background: url(../images/uploadLarge.png) center 10px no-repeat;
   height: 160px;
-  margin-top: 19px;
+  margin-top: 0;
 }
 .uploadLarge a.button{
-  bottom: 0;
+  top: 140px;
   left: 83px;
   position: absolute;
 }
@@ -1360,7 +1360,9 @@ img.alignleft{
   margin-bottom: 20px;
 }
 
-
+.gigya.home{
+  margin: 0 auto;
+}
 
 
 

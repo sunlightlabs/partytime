@@ -2,14 +2,18 @@
 {% load partytime_redesign %}
 {% load static %}
 
+
+
 {# override this to make the partystats in the footer go away #}
 {% block partystats_footer %}
 {% endblock %}
 		
+{% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
 		
 {% block container %}
 <div class="callOut clearfix module">
 	<div class="colLtSm eightCol">
+
 		<h2 class="tagline">
 			On the political money trail
 		</h2>
@@ -20,6 +24,7 @@
 	<div class="uploadLarge colRt fourCol">
 		<h3 class="textReplace">Extend an Invite</h3>
 		<a class="button" href="/upload/">Upload</a>
+		<div class="gigya home" style="margin-top:42px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; height: 20px; width: 200px; background-color: red;" id="share-buttons"></div>
 	</div>
 </div>
 <div class="module current">
@@ -114,5 +119,36 @@
 <script type="text/javascript">{% yearinpartiesjs %}</script>
 {% endcache %}
 <script src="{% get_static_prefix %}js/gray.js" type="text/javascript"></script>
+
+<script>
+    $(document).ready(function() {
+        var ua = new gigya.socialize.UserAction();
+        var params = {
+            containerID: 'share-buttons',
+            iconsOnly: true,
+            noButtonBorders: true,
+            layout: 'horizontal',
+            shareButtons: [
+                {
+                    provider: 'facebook',
+                },
+                {
+                    provider: 'twitter',
+                    related: 'sunfoundation',
+                    via: 'sunfoundation'
+                },
+                {
+                    provider: 'googleplus'
+                },
+                {
+                    provider: 'email'
+                }
+            ],
+            showCounts: 'right',
+            userAction: ua
+        };
+        gigya.socialize.showShareBarUI(params);
+    });
+</script>
 {% endblock %}
 	
