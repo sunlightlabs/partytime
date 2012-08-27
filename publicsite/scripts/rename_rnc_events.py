@@ -24,9 +24,12 @@ for event in events:
     match = re.match(convention_event, event.entertainment)
     if match:
         
-        print 'Found convention event: %s - %s - %s ' % (event.entertainment, event.start_date, event.venue.venue_name)
+        print '%s|%s|%s|%s' % (event.pk, event.entertainment, event.start_date, event.venue.venue_name)
         
         fixed_name = re.sub(convention_event, "", event.entertainment)
         fixed_name = fixed_name + " -- Republican Convention"
         
         print "Proposed replacement name: %s" % (fixed_name)
+        
+        event.entertainment = fixed_name
+        event.save()
