@@ -46,15 +46,10 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 
 
     def add_view(self, request, form_url='', extra_context=None):
-        """Remove cancellation/postponement option on add pages;
-        should only show up on change pages.
-
-        Also remove scribd_url field from add pages.
+        """Remove scribd_url field from add pages.
         """
         for i, fieldset in enumerate(self.fieldsets):
-            if fieldset[0] == 'Cancellations/Postponements':
-                del(self.fieldsets[i])
-            elif fieldset[0] == 'Scribd':
+            if fieldset[0] == 'Scribd':
                 self.fieldsets[i][1]['fields'] = ((fieldset[1]['fields'][0][0],), )
 
         return super(EventAdmin, self).add_view(request, form_url, extra_context)
