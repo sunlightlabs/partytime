@@ -3,7 +3,7 @@
 import sys
 
 from django.core.management import setup_environ
-sys.path.append('/Users/jfenton/partytime/partytime')
+sys.path.append('/projects/partytime/src/partytime/')
 
 import settings
 setup_environ(settings)
