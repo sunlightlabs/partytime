@@ -32,4 +32,4 @@ for event in events:
         print "Proposed replacement name: %s" % (fixed_name)
         
         event.entertainment = fixed_name
-        #event.save()
+        event.save()
