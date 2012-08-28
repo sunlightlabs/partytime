@@ -1192,9 +1192,8 @@ def admin_mergevenue(request, original):
     from django.db import connection, transaction 
     cursor = connection.cursor()
     login_required(admin_mergevenue)
-    if request.POST['replaceid']:
-        replacement = request.POST['replaceid']
-    else:
+    replacement = request.GET.get('replaceid')  
+    if not (replacement):
         return HttpResponseRedirect('/admin/publicsite/venue/'+str(original))
     orig = Venue.objects.get(pk=original)
     replace = Venue.objects.get(pk=replacement)
