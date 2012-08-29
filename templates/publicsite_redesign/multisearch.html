@@ -45,7 +45,7 @@
 			<h1 class="h2">
 				<a href="{{post.get_absolute_url}}">{{ post.title }} </a>
 			</h1>
-			<address class="author">{{post.author.display_name }}</address>
+			<address class="author">By {{post.author.display_name }}</address>
 			{{ post.content|removetags:"img iframe object a"|truncatewords:40|safe|linebreaks }}
 		</div>
 		<div class="clear"></div>
