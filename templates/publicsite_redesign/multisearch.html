@@ -18,6 +18,79 @@
 	</div>
 <div class="clear"></div>
 
+<section class="partyList module blog">
+
+	
+	<h3>
+		From the blog
+	</h3>
+
+	<article class="module short odd">
+		<time pubdate="">
+			<span class="month">Aug</span>
+			<span class="day">27</span>
+			<span class="year">2012</span>
+		</time>
+		<div class="colRt elevenCol">
+			<h1 class="h2">
+				<a href="">Did AT&T rent out sprawling eatery to influence lawmakers all week?</a>
+			</h1>
+			<address class="author">by Keenan Steiner</address>
+
+			<p>
+				When Tampa Bay Online reported a few weeks back that a lobbyist rented out a sprawling, upscale restaurant for the whole week of the Republican National Convention, they provided a host of details about the restaurant, the big tabs that the GOP high rollers ...
+			</p>
+		</div>
+		<div class="clear"></div>
+	</article>
+	<article class="module short even">
+		<time pubdate="">
+			<span class="month">Aug</span>
+			<span class="day">27</span>
+			<span class="year">2012</span>
+		</time>
+		<div class="colRt elevenCol">
+			<h1 class="h2">
+				<a href="">Did AT&T rent out sprawling eatery to influence lawmakers all week?</a>
+			</h1>
+			<address class="author">by Keenan Steiner</address>
+
+			<p>
+				When Tampa Bay Online reported a few weeks back that a lobbyist rented out a sprawling, upscale restaurant for the whole week of the Republican National Convention, they provided a host of details about the restaurant, the big tabs that the GOP high rollers ...
+			</p>
+		</div>
+		<div class="clear"></div>
+	</article>
+
+
+	{% for post in post_list %}
+	<article class="module short even">
+		<time datetime="{{ post.post_date|date:"c"}}" pubdate="">
+			<span class="month">{{ doc.start_date|date:"N"}}</span>
+			<span class="day">{{ doc.start_date|date:"d"}}</span>
+			<span class="year">{{ doc.start_date|date:"Y"}}</span>
+		</time>
+		<div class="colRt elevenCol">
+			<h1 class="h2">
+				<a href="{{post.get_absolute_url}}">{{ post.title }} </a>
+			</h1>
+			<address class="author">{{post.author.display_name }}</address>
+			{{ post.content|removetags:"img iframe object"|truncatewords:100|safe|linebreaks }}
+		</div>
+		<div class="clear"></div>
+	</article>
+	{% endfor %}
+
+	<div class="pagination clearfix">
+		<span class="next"> <a class="more textReplace" href="">View More Blog Results</a></span>
+	</div>
+
+
+
+
+
+</section>
+
 {% if error_message %}
 <section class="partyList module">
 

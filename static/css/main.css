@@ -154,6 +154,7 @@ body {
 .eightCol { width: 600px; }
 .nineCol { width: 680px;}
 .tenCol { width: 760px;}
+.elevenCol { width: 820px;}
 .twelveCol { width: 940px;}
 
 .colRt, .colLt, .colLtSm { float: left; }
@@ -613,7 +614,7 @@ border-top: 1px solid white;
   border-left: 1px solid #F4F3EF;
   border-right: 1px solid #F4F3EF;
   background: #e9e8e2; /* Old browsers */
-  padding: 4px;
+  padding: 4px 9px;
 }
 .partyList thead th:hover{
   border-top: 1px solid #93D2D1;
@@ -625,7 +626,7 @@ border-top: 1px solid white;
 .partyList tr{
 }
 .partyList td {
-  padding: 9px 4px;
+  padding: 9px 9px;
   border-bottom: 1px solid #CECCCD;
   border-top: 1px solid white;
 }
@@ -1248,6 +1249,7 @@ content: "";
 
 
 /* blog styles */
+
 article.module.short{
   margin-bottom: 60px;
   padding-bottom: 20px;
@@ -1275,7 +1277,7 @@ article .entryMetaData address{
 article .social{
   float: right;
 }
-article .update{
+article .update, p.partyPostponed {
   border-top: 1px dotted #93D2D1;
   border-bottom: 1px dotted #93D2D1;
   padding: 5px 0;
@@ -1307,6 +1309,72 @@ article .update{
 .tags li:after{
   content: ",";
 }
+
+
+
+
+
+/* blog styles for search results */
+
+.partyList article h1.h2 {
+  font-size: 100%;
+  border: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  display: inline;
+}
+
+.partyList article address{
+  display: inline;
+  font-weight: bold;
+}
+.partyList article .entryMetaData{
+  margin-bottom: 0;
+}
+.module.partyList article.module {
+  padding: 9px 4px;
+  border-bottom: 1px solid #CECCCD;
+  border-top: 1px solid white;
+}
+.partyList article.even{
+}
+.partyList article.odd{
+  background: #FBFAF7;
+}
+.partyList article.module.short{
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.partyList article p{
+  margin-top: 0;
+}
+.partyList time{
+  font-style: normal;
+  color: #706e6e;
+  width: 27px;
+  float: left;
+  margin-right: 20px;
+  margin-top: 10px;
+  padding-left: 9px;
+}
+.partyList .day, .partyList .month, .partyList .year{
+  display: block;
+  line-height: 1.1;
+  text-align: center;
+}
+.partyList .day {
+  font-size: 200%;
+  font-family: "Times New Roman", Georgia, serif;
+}
+.blogSearch{
+  text-transform: uppercase;
+  font-size: 80%;
+}
+
+
+
+
 
 
 
