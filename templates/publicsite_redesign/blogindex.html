@@ -1,12 +1,12 @@
 {% extends "publicsite_redesign/sidebar_base.html" %}
 
-{% block title %}Blog - {{ block.super }}{% endblock %}
+{% block title %}{% if page_title %}{{page_title}}{% else %}Recent Blog Posts{% endif %} - {{ block.super }}{% endblock %}
 
 {# Set the nav highlight #}
 {% block nav-blog %}class="active"{% endblock %}
 		
 {% block mainbar %}
-<h2>Recent Blog Posts</h2>
+<h2>{% if page_title %}{{page_title}}{% else %}Recent Blog Posts{% endif %}</h2>
 {% for post in post_list %}
 <article class="module short">
 	<h1 class="h2">
@@ -38,16 +38,4 @@
 	{{ paginator_html|safe}}
 </div>
 
-{% endblock %}
-
-{% block js %}
-    <script type="text/javascript">
-        var disqus_shortname = 'politicalpartytime';
-        (function () {
-            var s = document.createElement('script'); s.async = true;
-            s.type = 'text/javascript';
-            s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
-            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-        }());
-    </script>
 {% endblock %}

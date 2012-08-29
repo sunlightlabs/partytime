@@ -7,7 +7,7 @@
 {% block container %}
 <div class="module nineCol colLt search">
 	<h2 class="wHint wActions">
-		Search results for '{{ query }}'
+		{% if blog_search %}Blog search{% else %}Search{% endif %} results for '{{ query }}'
 	</h2>
 	<div class="clear"></div>
 
@@ -25,6 +25,24 @@
 	<h3>
 		{{ error_message }}
 	</h3>
+</section>
+{% endif %}
+
+{% if blog_posts %}
+<section class="partyList module">
+	<h3>
+		Blog posts
+	</h3>
+	<table>
+		<tbody>
+			{% for post in blog_posts %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				<td><span class="blogSearchTitle"><a href="{{post.get_absolute_url}}">{{ post.title }}</a></span><br><span class="resultsByline">By {{post.author.display_name }}</span>, published <span class="resultsPubDate">{{ post.post_date|date:"F j, Y, P" }}</span></td>
+			{%endfor %}
+		</tbody>
+	</table>
+	<p><em>{% if has_more_blog_posts %}More than {{ num_blog_posts }} posts matched your search. <a href="/search-blog/{{query}}/">See all results.</a>{% endif %}</em></p>
+			
 </section>
 {% endif %}
 
