@@ -582,7 +582,7 @@ def multisearch(request):
     if not (query):
         raise Http404
     
-    if len(query)>3:
+    if len(query)>2:
     
         lawmakers = Lawmaker.objects.filter(Q(name__icontains=query)|Q(affiliate__icontains=query)).distinct()
     
