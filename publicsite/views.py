@@ -569,9 +569,10 @@ def polwithpac(request, cid):
              }
             )
 # new search that looks in multiple places for matches and then does... something.... 
-
+@cache_page(60*cache_time_minutes)
 def multisearch(request):
     query = request.GET.get('q')
+    blog_posts = None
     error_message = None
     lawmakers = None
     venues = None
@@ -582,8 +583,11 @@ def multisearch(request):
     if not (query):
         raise Http404
     
+    num_blog_posts = 3
     if len(query)>2:
-    
+        
+        blog_posts = Post.objects.published().filter(content__icontains=query)[:num_blog_posts+1]
+        
         lawmakers = Lawmaker.objects.filter(Q(name__icontains=query)|Q(affiliate__icontains=query)).distinct()
     
         hosts = Host.objects.filter(name__icontains=query).values('name').distinct()
@@ -598,8 +602,14 @@ def multisearch(request):
             error_message = "No matches"
     else:
         error_message = "Search term must be at least three letters long"
+    
+    more_blog_results=False
+    print "blog posts: %s num blog posts: %s" % (len(blog_posts), num_blog_posts)
+    if (len(blog_posts)==num_blog_posts+1):
         
-        
+        blog_posts = blog_posts[:num_blog_posts]
+        more_blog_results=True
+    print "has lots: %s" % (more_blog_results)
     
     return render_to_response(
     'publicsite_redesign/multisearch.html', 
@@ -610,7 +620,40 @@ def multisearch(request):
     'hosts':hosts, 
     'cities':cities,
     'error_message':error_message,
+    'blog_posts':blog_posts,
+    'has_more_blog_posts':more_blog_results,
+    'num_blog_posts':num_blog_posts,
     })
+    
+@cache_page(60*cache_time_minutes)
+def blogsearch(request, searchterm):
+    print searchterm
+    if len(searchterm)<3:
+        raise Http404
+    
+    blog_posts = Post.objects.published().filter(content__icontains=searchterm)
+
+    paginator = Paginator(blog_posts, 5)
+    pagenum = request.GET.get('page', 1)
+    max_page = paginator.num_pages, 
+    
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+    
+    paginator_html = make_paginator_text('/search-blog/' + searchterm + '/?', int(pagenum), max_page[0])
+    page_title = "Search results for '%s' - page %s of %s" % (searchterm, pagenum, max_page[0])
+    
+    return render_to_response(
+            'publicsite_redesign/blogindex.html', 
+            {'post_list': page.object_list,
+            'paginator_html':paginator_html,
+            'page_title':page_title,
+            }
+            )
+    
+
 
 @cache_page(60*cache_time_minutes)
 def calendar_today(request):

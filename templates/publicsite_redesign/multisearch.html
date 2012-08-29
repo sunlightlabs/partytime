@@ -7,7 +7,7 @@
 {% block container %}
 <div class="module nineCol colLt search">
 	<h2 class="wHint wActions">
-		{% if blog_search %}Blog search{% else %}Search{% endif %} results for '{{ query }}'
+		Search results for '{{ query }}'
 	</h2>
 	<div class="clear"></div>
 
@@ -19,32 +19,45 @@
 <div class="clear"></div>
 
 {% if error_message %}
-<section class="partyList module">
-
-	
+<section class="partyList module">	
 	<h3>
 		{{ error_message }}
 	</h3>
 </section>
 {% endif %}
 
+
 {% if blog_posts %}
-<section class="partyList module">
+
+<section class="partyList module blog">
 	<h3>
-		Blog posts
+		Blog Posts
 	</h3>
-	<table>
-		<tbody>
-			{% for post in blog_posts %}
-			<tr class="{% cycle 'odd' 'even' %}">
-				<td><span class="blogSearchTitle"><a href="{{post.get_absolute_url}}">{{ post.title }}</a></span><br><span class="resultsByline">By {{post.author.display_name }}</span>, published <span class="resultsPubDate">{{ post.post_date|date:"F j, Y, P" }}</span></td>
-			{%endfor %}
-		</tbody>
-	</table>
-	<p><em>{% if has_more_blog_posts %}More than {{ num_blog_posts }} posts matched your search. <a href="/search-blog/{{query}}/">See all results.</a>{% endif %}</em></p>
-			
+
+	{% for post in blog_posts %}
+	<article class="module short {% cycle 'odd' 'even' %}">
+		<time datetime="{{ post.post_date|date:"c"}}" pubdate="">
+			<span class="month">{{ post.post_date|date:"N"}}</span>
+			<span class="day">{{ post.post_date|date:"d"}}</span>
+			<span class="year">{{ post.post_date|date:"Y"}}</span>
+		</time>
+		<div class="colRt elevenCol">
+			<h1 class="h2">
+				<a href="{{post.get_absolute_url}}">{{ post.title }} </a>
+			</h1>
+			<address class="author">{{post.author.display_name }}</address>
+			{{ post.content|removetags:"img iframe object a"|truncatewords:40|safe|linebreaks }}
+		</div>
+		<div class="clear"></div>
+	</article>
+	{% endfor %}
+
+	<div class="pagination clearfix">
+		{% if has_more_blog_posts %}<span class="next"> <a class="more textReplace" href="/search-blog/{{query}}/">View More Blog Results</a></a></span>{% endif %}
+	</div>
 </section>
 {% endif %}
+
 
 {% if lawmakers %}
 <section class="partyList module">

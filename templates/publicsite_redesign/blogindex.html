@@ -6,7 +6,7 @@
 {% block nav-blog %}class="active"{% endblock %}
 		
 {% block mainbar %}
-<h2>{% if page_title %}{{page_title}}{% else %}Recent Blog Posts{% endif %}</h2>
+<h2>Most Recent Blog Posts{% if page_title %}<br><span class="blogSearch">{{page_title}}</span>{% endif %}</h2>
 {% for post in post_list %}
 <article class="module short">
 	<h1 class="h2">
@@ -25,7 +25,7 @@
 	</ul>
 	
 	<div class="clear"></div>
-{{ post.content|removetags:"img iframe object"|truncatewords:100|safe|linebreaks }}
+{{ post.content|removetags:"img iframe object a"|truncatewords:100|safe|linebreaks }}
 
 		<div class="pagination clearfix">
 			<span class="next"> <a class="more textReplace" href="{{post.get_absolute_url}}">View More</a></span>
