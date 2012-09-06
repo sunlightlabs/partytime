@@ -30,6 +30,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'partytime.publicsite.views.index', name='partytime_home'),
     url(r'^', include('mediasync.urls')),
+    # short-circuit old blog tag stuff
+    url(r'^blog/tag/(?P<term>[\w\-\./]+)/$', 'partytime.publicsite.views.blogtag'),
     url(r'^blog/', include('wordpress.urls')),
     # there didn't use to *be* a blog home page -- it was instead the home page. 
     url(r'^blogindex/$', 'partytime.publicsite.views.blogindex', name='blogindex'),

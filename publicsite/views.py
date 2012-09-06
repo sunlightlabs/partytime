@@ -652,7 +652,33 @@ def blogsearch(request, searchterm):
             'page_title':page_title,
             }
             )
-    
+
+@cache_page(60*cache_time_minutes)
+def blogtag(request, term):
+    if len(term)<3:
+        raise Http404
+
+    blog_posts = Post.objects.term(term)
+
+    paginator = Paginator(blog_posts, 5)
+    pagenum = request.GET.get('page', 1)
+    max_page = paginator.num_pages, 
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    paginator_html = make_paginator_text('/blog/tag/' + term + '/?', int(pagenum), max_page[0])
+    page_title = "Posts tagged '%s' - page %s of %s" % (term, pagenum, max_page[0])
+
+    return render_to_response(
+            'publicsite_redesign/blogindex.html', 
+            {'post_list': page.object_list,
+            'paginator_html':paginator_html,
+            'page_title':page_title,
+            }
+            )
 
 
 @cache_page(60*cache_time_minutes)
