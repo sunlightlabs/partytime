@@ -1281,9 +1281,20 @@ def admin_mergelm(request, original):
     from django.db import connection, transaction 
     cursor = connection.cursor()
     login_required(admin_mergelm)
-    if request.POST['replaceid']:
+    replacement = None
+    
+    # At some point this was a POST, but now seems to be a GET. Check for both before failing... 
+
+    try:
         replacement = request.POST['replaceid']
-    else:
+    except KeyError:
+        pass
+    try:
+        replacement = request.GET['replaceid']
+    except KeyError:
+        pass
+        
+    if not replacement:
         return HttpResponseRedirect('/admin/publicsite/lawmaker/'+str(original))
     e = Event.objects.filter(beneficiaries=original)
     orig = Lawmaker.objects.get(pk=original)
