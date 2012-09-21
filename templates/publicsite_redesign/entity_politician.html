@@ -1,12 +1,11 @@
 {% extends "publicsite_redesign/base.html" %}
-{% load partytime %}
+{% load partytime capture truncate %}
 
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>
 {% endblock %}
 
-{% block title %}	{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}) - {{ block.super }}{% endblock %}
+{% block title %}{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}) - {{ block.super }}{% endblock %}
 
-		
 {% block container %}
 <div class="module nineCol colLt entity">
 		{% if image_url %}<img src="{{ image_url }}" alt="{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }})" class="oneCol colLt">{% endif %}
@@ -31,7 +30,7 @@
 				</li>
 				{% endif %}
 			</ul>
-			
+
 			<div class="clear"></div>
 			{% if lawmaker.congressional_leadership_positions %}
 			<h4>Congressional Leadership</h4>
@@ -41,7 +40,7 @@
 				{% endfor %}
 		    </ul>
 		    {% endif %}
-			
+
 			{% if lawmaker.committee_set.all %}
 			<h4>Committee Membership</h4>
 			<ul class="committees clearfix">
@@ -66,7 +65,7 @@
 			<h3 class="">
 				Beneficiary of {{ event_count }} PT events
 			</h3>
-			
+
 			<dl class="clearfix">
 				<dt>Parties Benefitting</dt>
 				<dd>
@@ -116,20 +115,21 @@
 					<td>
 						{% if result.venue.venue_name %}<a href="{% url partytime_search 'Venue_Name' result.venue.venue_name|urlencode %}" style="display:inline">{{ result.venue.venue_name }}</a>{% endif %}{% if result.venue.address1 %}{% if result.venue.venue_name %}, {% endif %}{{ result.venue.address1 }}{% endif %}{% if result.venue.address2 %} {{ result.venue.address2 }}{% endif %}{% if result.venue.city %}, {{ result.venue.city }}{% endif %}{% if result.venue.state %}, {{ result.venue.state }}{% endif %}
 					</td>
-				</tr>		
+				</tr>
 
 				{% endfor %}
 
 			</tbody>
 		</table>
-		
+
 		<div class="pagination">
 				{{ paginator_html|safe }}
 		</div>
 	</div>
 {% endblock %}
-	
+
 {% block js %}
+{% captureas share_title %}{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}){% endcaptureas %}
 {{ block.super }}
 <script type="text/javascript">
 
@@ -145,9 +145,17 @@ function gotoscout(feedurl) {
 
 </script>
 <script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
+<style>
+#share-buttons img {border:none;}
+</style>
 <script>
     $(document).ready(function() {
         var ua = new gigya.socialize.UserAction();
+        ua.setTitle("Check out {{ share_title|escapejs }} on Political Party Time");
+        ua.setLinkBack(location.href);
+        var twitterUa = new gigya.socialize.UserAction();
+        twitterUa.setTitle("Check out {{ share_title|escapejs|truncatechars:90 }} on @SunFoundation's @SFPartyTime " + location.href)
+        twitterUa.setLinkBack(location.href);
         var params = {
             containerID: 'share-buttons',
             iconsOnly: true,
@@ -156,25 +164,29 @@ function gotoscout(feedurl) {
             shareButtons: [
                 {
                     provider: 'facebook',
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/facebook.png'
                 },
                 {
                     provider: 'twitter',
-                    related: 'sunfoundation',
-                    via: 'sunfoundation'
+                    via: 'sunfoundation',
+                    userAction: twitterUa,
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/twitter.png'
                 },
                 {
-                    provider: 'googleplus'
+                    provider: 'googleplus',
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/googleplus.png'
                 },
                 {
-                    provider: 'email'
+                    provider: 'email',
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/email.png'
                 }
             ],
             showCounts: 'right',
-            userAction: ua
+            userAction: ua,
+            shortURLs: 'never'
         };
         gigya.socialize.showShareBarUI(params);
     });
 </script>
 
 {% endblock %}
-	

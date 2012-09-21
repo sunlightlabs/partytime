@@ -1,15 +1,17 @@
 {% extends "publicsite_redesign/sidebar_base.html" %}
+{% load capture truncate %}
 
 {% block title %}{{ post.title }} - {{ block.super }}{% endblock %}
 
 {% block opengraph %}
+{% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
     <meta property="og:title" content="{{ post.title }}">
-    <meta property="og:description" content="{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}">
+    <meta property="og:description" content="{{ description }}">
     <meta property="og:type" content="article">
     <meta property="og:url" content="http://politicalpartytime.org{{ post.get_absolute_url }}">
 {% endblock %}
-		
-		
+
+
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
 
 {% block mainbar %}
@@ -23,10 +25,11 @@
 	</h3>
 </div>
 
-	
+
 {% endblock %}
 
 {% block js %}
+{% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
     <script type="text/javascript">
         var disqus_identifer = 'http://blog.politicalpartytime.org/?p={{ post.id }}';
         var disqus_url = 'http://politicalpartytime.org{{ post.get_absolute_url }}';
@@ -41,6 +44,12 @@
 <script>
     $(document).ready(function() {
         var ua = new gigya.socialize.UserAction();
+        ua.setTitle("{{ post.title|escapejs }}");
+        ua.setDescription("{{ description|escapejs }}")
+        ua.setLinkBack("http://politicalpartytime.org{{ post.get_absolute_url }}");
+        var twitterUa = new gigya.socialize.UserAction();
+        twitterUa.setLinkBack("http://politicalpartytime.org{{ post.get_absolute_url }}");
+        twitterUa.setTitle("Follow the political money trail, check out {{ post.title|truncatechars:41|escapejs }} on @SunFoundation's @SFPartyTime");
         var params = {
             containerID: 'share-buttons',
             iconsOnly: true,
@@ -49,20 +58,26 @@
             shareButtons: [
                 {
                     provider: 'facebook',
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/facebook.png'
                 },
                 {
                     provider: 'twitter',
-                    related: 'sunfoundation',
-                    via: 'sunfoundation'
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/twitter.png',
+                    via: 'sunfoundation',
+                    userAction: twitterUa
                 },
                 {
-                    provider: 'googleplus'
+                    provider: 'googleplus',
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/googleplus.png'
+
                 },
                 {
-                    provider: 'email'
+                    provider: 'email',
+                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/email.png'
                 }
             ],
             showCounts: 'right',
+            shortURLs: 'never',
             userAction: ua
         };
         gigya.socialize.showShareBarUI(params);
