@@ -160,7 +160,7 @@ def partiesfor2013inauguration():
     query = '2013 Inauguration'
     viewmorelink = "/search-all/?q=2013+Inauguration"
     # put newest added first so the home page doesn't look static
-    parties =  Event.objects.filter(entertainment__icontains=query).values('entertainment').order_by('-added')[:3]
+    parties =  Event.objects.filter(entertainment__icontains=query).order_by('-added')[:3]
     #print parties
 
     return{
