@@ -154,6 +154,21 @@ def partiesforpresidentialcandidates():
     'viewmorelink':viewmorelink,
     }    
     
+@register.inclusion_tag('publicsite_redesign/templatetag_templates/indexpage_partylist.html')
+def partiesfor2013inauguration():
+    title = "Parties Held For<br>Obama's 2013<br>Inauguration"
+    query = '2013 Inauguration'
+    viewmorelink = "/search-all/?q=2013+Inauguration"
+    # put newest added first so the home page doesn't look static
+    parties =  Event.objects.filter(entertainment__icontains=query).values('entertainment').order_by('-added')[:3]
+    #print parties
+
+    return{
+    'parties':parties,
+    'title':title,
+    'viewmorelink':viewmorelink,
+    }
+        
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/year_in_parties.js')
 def yearinpartiesjs():
     
