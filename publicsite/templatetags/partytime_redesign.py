@@ -156,7 +156,7 @@ def partiesforpresidentialcandidates():
     
 @register.inclusion_tag('publicsite_redesign/templatetag_templates/indexpage_partylist.html')
 def partiesfor2013inauguration():
-    title = "Parties Held For<br>Obama's 2013<br>Inauguration"
+    title = "Parties Held For<br>The 2013<br>Inauguration"
     query = '2013 Inauguration'
     viewmorelink = "/search-all/?q=2013+Inauguration"
     # put newest added first so the home page doesn't look static
