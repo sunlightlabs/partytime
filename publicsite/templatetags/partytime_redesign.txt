@@ -1,0 +1,11 @@
+from django.template import Library
+from publicsite.models import * 
+
+register = Library()
+
+@register.inclusion_tag('publicsite_redesign/templatetag_templates/partystats.html')  
+def partystats():
+    pass
+    
+    return {
+    }

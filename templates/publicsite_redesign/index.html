@@ -68,7 +68,9 @@
 			{% endfor %}
 		</ol>
 		<a href="/upcoming/" class="more">View more</a>
+		<!-- Hide the 2012 convention link
 		<a href="/search/Entertainment_Type/convention/" class="convention badge">2012 Convention Parties</a>
+		-->
 	</div>
 	<div class="clear"></div>
 </div>
@@ -83,8 +85,8 @@
 <div class="module last">
 	<div class="colLt threeCol events">
 		{% load cache %}
-		{% cache cachetime3 'partiesforpresidentialcandidates'  %}
-		{% partiesforpresidentialcandidates %}
+		{% cache cachetime3 'partiesfor2013inauguration'  %}
+		{% partiesfor2013inauguration %}
 		{% endcache %}
 	</div>
 	<div class="colLt threeCol events">
