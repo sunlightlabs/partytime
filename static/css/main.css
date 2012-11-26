@@ -1418,6 +1418,17 @@ img.alignleft{
 }
 
 
+.specialEvent .inauguration.badge{
+  width: 140px;
+  height: 140px;
+  display: block;
+  text-indent: -9999em;
+  top: -15px;
+  right: -15px;
+  position: absolute;
+  background: url(../images/inaugurationBadge.png) left top no-repeat;
+}
+
 /* gigya related styles */
 
 
