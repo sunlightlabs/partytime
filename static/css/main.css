@@ -1429,6 +1429,11 @@ img.alignleft{
   background: url(../images/inaugurationBadge.png) left top no-repeat;
 }
 
+.specialEvent .inauguration.badge:hover{
+  background: url(../images/inaugurationBadge.png) right top no-repeat;
+  cursor: pointer;
+}
+
 /* gigya related styles */
 
 

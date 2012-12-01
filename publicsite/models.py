@@ -152,7 +152,9 @@ class EventManager(models.Manager):
 
     def month(self, year, month):
         startdate = datetime.date(year, month, 1)
-        enddate = datetime.date(year, month+1, 1)
+        next_month = ( month + 1 ) % 12
+        next_year_maybe = year + ( month + 1) / 12 # these are ints so this works.
+        enddate = datetime.date(next_year_maybe, next_month, 1)
         events = Event.objects.filter(
                     start_date__gte=startdate, start_date__lt=enddate,
                     status='').order_by('start_date', 'start_time')

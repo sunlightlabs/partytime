@@ -175,9 +175,9 @@ def yearinpartiesjs():
     today = datetime.date.today()
     year = today.year
     month = today.month
-    
+    next_month = ( month + 1) % 12
     startdate = datetime.date(year-1, month, 1)
-    enddate = datetime.date(year, month+1, 1)
+    enddate = datetime.date(year, next_month, 1)
     events = Event.objects.filter(
                 start_date__gte=startdate, start_date__lt=enddate,
                 status='')
