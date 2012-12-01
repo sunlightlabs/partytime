@@ -176,15 +176,15 @@ def yearinpartiesjs():
     year = today.year
     month = today.month
     next_month = ( month + 1) % 12
+    next_year_maybe = year + ( month + 1) / 12 # these are ints so this works.
     startdate = datetime.date(year-1, month, 1)
-    enddate = datetime.date(year, next_month, 1)
+    enddate = datetime.date(next_year_maybe, next_month, 1)
     events = Event.objects.filter(
                 start_date__gte=startdate, start_date__lt=enddate,
                 status='')
     
     
     monthly_count = events.extra(select={'year': 'EXTRACT(year FROM start_date)','month': 'EXTRACT(month FROM start_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Count('pk'))
-    
     month_data = []
     month_names = []
 
