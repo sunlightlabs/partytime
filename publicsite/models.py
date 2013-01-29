@@ -55,33 +55,33 @@ class Author(models.Model):
 #     post_type = models.CharField(max_length=255)
 #     author = models.ForeignKey(Author, related_name='posts', db_column='post_author')
 #     comment_count = models.IntegerField()
-# 
+#
 #     category_cache = None
 #     tag_cache = None
-# 
+#
 #     class Meta:
 #       db_table = 'wp_posts'
-# 
+#
 #     def __unicode__(self):
 #         return self.title
-# 
+#
 #     def clean_content(self):
 #         content = BLOCK_ELEMENT_RE.sub(r"\n\1\n", self.content).strip()
 #           content = NONBLOCK_ELEMENT_RE.sub(r"><\3",content)
 #           return content
-# 
+#
 #     def categories(self):
 #         if not self.category_cache:
 #             taxonomy = "category"
 #             self.category_cache = self._get_terms(taxonomy)
 #         return self.category_cache
-# 
+#
 #     def tags(self):
 #         if not self.tag_cache:
 #             taxonomy = "post_tag"
 #             self.tag_cache = self._get_terms(taxonomy)
 #         return self.tag_cache
-# 
+#
 #     def _get_terms(self, taxonomy):
 #         sql = """SELECT t.name,
 #                         t.slug
@@ -97,10 +97,10 @@ class Author(models.Model):
 #         cursor = connection.cursor()
 #         cursor.execute(sql, [taxonomy, self.id])
 #         return [{'name': row[0], 'slug': row[1]} for row in cursor.fetchall()]
-# 
+#
 #     def save(self):
 #         pass
-# 
+#
 #     def delete(self):
 #         pass
 
@@ -132,7 +132,7 @@ class EventManager(models.Manager):
                     status='', is_presidential=True).order_by('-start_date', '-start_time')[:limit]
         return events
 
-    # this isn't, strictly speaking, the newest; it's the newest parties that haven't already happened. 
+    # this isn't, strictly speaking, the newest; it's the newest parties that haven't already happened.
     def newest(self, limit=10):
         events = Event.objects.filter(
                     start_date__gte=datetime.date.today(),
@@ -175,7 +175,7 @@ class EventManager(models.Manager):
                 events = events.filter(entertainment__icontains=args)
             elif field == 'city':
                 (city, state) = args.split('-')
-                events = events.filter(venue__city__icontains=args, venue__state=state)    
+                events = events.filter(venue__city__icontains=args, venue__state=state)
             elif field == 'tags':
                 events = events.filter(tags__tag_name__icontains=args)
             else:
@@ -252,17 +252,17 @@ class Lawmaker(models.Model):
             info = ' (%s%s%s)' % (party_str, self.state, district_str)
 
         return u'%s%s%s' % (title_str, self.name, info)
-             
+
 
     def natural_key(self):
         return (self.name)
-        
+
     def titled_name(self):
         if self.title:
             title_str = '%s ' % self.title
         else:
             title_str = ''
-        return u'%s%s' % (title_str, self.name)        
+        return u'%s%s' % (title_str, self.name)
 
     def events_since_year(self, year=2009):
         return self.pol_events.filter(start_date__gte=datetime.date(year, 01, 01))
@@ -442,7 +442,7 @@ class Venue(models.Model):
         r = parties.count('R')
         d = parties.count('D')
         return {'Republican': r, 'Democrat': d, 'Parties': parties, }
-        
+
     def state_full(self):
         try:
             return state_dict[self.state]
@@ -510,7 +510,7 @@ class Event(models.Model):
            return self.entertainment
         else:
             return 'Event'
-            
+
     def truncated_name(self):
         name = self.__unicode__()
         #print name
@@ -532,16 +532,26 @@ class Event(models.Model):
     def get_absolute_url(self):
         return ('partytime_party_detail', [str(self.id), ])
 
+    def beneficiary_str(self):
+        bs = ''
+        if self.beneficiaries.count():
+            bs = ', '.join([x.name for x in self.beneficiaries.all()])
+        return bs
+
     def event_title(self):
         title = ''
         if len(self.entertainment) > 2:
             title += self.entertainment
         else:
             title += 'Fundraiser'
-        if self.beneficiaries.all():
-            title += ' for %s ' % ', '.join([x.name for x in self.beneficiaries.all()])
+        if self.beneficiaries.count():
+            title += ' for %s ' % self.beneficiary_str()
         return title
 
+    def event_description(self):
+        desc = self.__unicode__()
+        if self.beneficiaries.count():
+            desc += ' for %s' % self.beneficiary_str()
 
     def upload_to_scribd(self):
         """Upload an event PDF to Scribd.
@@ -585,7 +595,7 @@ class Event(models.Model):
 
         # TODO: The document should be added to the Political Party Time collection
         # The API to do so seems broken as of 2012-08-17
-        
+
         self.scribd_id = doc.id
         self.scribd_url = doc.get_scribd_url()
 
