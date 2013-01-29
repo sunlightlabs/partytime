@@ -552,6 +552,7 @@ class Event(models.Model):
         desc = self.__unicode__()
         if self.beneficiaries.count():
             desc += ' for %s' % self.beneficiary_str()
+        return desc
 
     def upload_to_scribd(self):
         """Upload an event PDF to Scribd.
