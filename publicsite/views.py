@@ -45,115 +45,118 @@ unsortable_date_up_header = "<tr><th class='sort up'>Date</th><th class='unsorta
 def index(request):
 
 
-    blog_posts = Post.objects.published().select_related()[:2]    
+    blog_posts = Post.objects.published().select_related()[:2]
     upcoming_events = Event.objects.upcoming(2)
     newest_events = Event.objects.newest(2)
-    
-    # cache the partiesheldforleadership template tags etc for this long in seconds. Some of them are ridiculous to generate. 
-    # Caching them all for different times decreases the likelihood they'll all need to get regened at the same page load. 
+
+    # cache the partiesheldforleadership template tags etc for this long in seconds. Some of them are ridiculous to generate.
+    # Caching them all for different times decreases the likelihood they'll all need to get regened at the same page load.
     cachetime1 = cache_time_minutes * 60
     cachetime2 = cachetime1 + 300
     cachetime3 = cachetime1 + 600
     cachetime4 = cachetime1 + 900
-    
-    
+
+
     return render_to_response(
-            'publicsite_redesign/index.html', 
+            'publicsite_redesign/index.html',
             {'post_list': blog_posts,
             'upcoming_events':upcoming_events,
-            'newest_events':newest_events, 
+            'newest_events':newest_events,
             'cachetime1':cachetime1,
             'cachetime2':cachetime2,
             'cachetime3':cachetime3,
-            'cachetime4':cachetime4,                        
+            'cachetime4':cachetime4,
             })
 
 def make_sortable_table_header(url_base, sort_order):
-    
+
     table_html = "<tr>"
-    
+
     if sort_order == '1':
-        href_url = url_base + "sort=start_date&order=0" 
+        href_url = url_base + "sort=start_date&order=0"
         table_html += "<th class='%s'><a href='%s'>Date</a></th>" % ("sort up", href_url)
     else:
-        href_url = url_base + "sort=start_date&order=1" 
-        
+        href_url = url_base + "sort=start_date&order=1"
+
         table_html += "<th class='%s'><a href='%s'>Date</a></th>" % ("sort down", href_url)
 
 
     for field_name in ('Beneficiary', 'Host', 'Event', 'Location'):
             table_html += "<th class='unsortable'>%s</th>" % field_name
-    
+
     return table_html
-    
+
 
 
 def make_paginator_text(base_html, current_page, max_page):
-    
+
     if max_page==1:
         return ""
-    
+
     initial_page = current_page - 3
-    
+
     if current_page < 5:
         initial_page = 1
-    
+
     if current_page > max_page-2:
         initial_page = max_page - 5
 
-    
+
     return_html = ""
     if current_page > 1:
         return_html += '<span class="prev"><a class="textReplace" href="' + base_html + 'page=' + str(current_page-1) + '">Previous</a></span>'
-        
+
     end_page = initial_page+6
     if end_page > max_page:
         end_page = max_page+1
-    
+
     if initial_page < 1:
         initial_page = 1
-    
+
     for i in range(initial_page, end_page):
-        
-    
-        return_html += '<span class="pageNum ' 
+
+
+        return_html += '<span class="pageNum '
         if i==current_page:
             return_html += 'cur">'  + str(i) + '</span>'
         else:
             return_html += '"><a href="' + base_html + 'page=' + str(i) + '">' + str(i) + '</a></span>'
-    
-    
+
+
     if current_page < max_page:
         return_html += '<span class="next"><a class="textReplace" href="' + base_html + 'page=' + str(current_page+1) + '">Next</a></span>'
-        
+
     return return_html
 
 
 def blogindex(request):
-    # need to add pagination etc. 
+    # need to add pagination etc.
     blog_posts = Post.objects.published()
 
     paginator = Paginator(blog_posts, 5)
     pagenum = request.GET.get('page', 1)
-    max_page = paginator.num_pages, 
-    
+    max_page = paginator.num_pages,
+
     try:
         page = paginator.page(pagenum)
     except (EmptyPage, InvalidPage):
         raise Http404
-    
+
     paginator_html = make_paginator_text('/blogindex/?', int(pagenum), max_page[0])
-    
+
     return render_to_response(
-            'publicsite_redesign/blogindex.html', 
+            'publicsite_redesign/blogindex.html',
             {'post_list': page.object_list,
             'paginator_html':paginator_html,
             }
             )
 
-def party(request, docid): 
+def party(request, docid):
     doc = get_object_or_404(Event, pk=docid)
-    return render_to_response('publicsite_redesign/party.html', {"doc": doc}) 
+    return render_to_response('publicsite_redesign/party.html', {
+        "doc": doc,
+        "description": doc.event_description()
+    })
 
 def sort_events(event_query_set, sortfield, sortorder):
     sort_directive = sortfield
@@ -175,24 +178,24 @@ def recent(request):
     print "recent"
     paginator = Paginator(events, 20)
 
-    
+
     max_page = paginator.num_pages
-    
+
     try:
         page = paginator.page(pagenum)
     except (EmptyPage, InvalidPage):
         raise Http404
-        
+
 
     paginator_html = make_paginator_text('/recent/?', int(pagenum), max_page)
     page_url_base = "/recent/?page=%s&" % (pagenum)
     table_header = make_sortable_table_header(page_url_base, sortorder)
 
     rss_url = "/feeds/recent/"
-     
+
     return render_to_response(
-            'publicsite_redesign/generic_results.html', 
-            {'title': 'Events in the last month', 
+            'publicsite_redesign/generic_results.html',
+            {'title': 'Events in the last month',
              'table_header':table_header,
              'results': page.object_list,
              'paginator_html':paginator_html,
@@ -200,7 +203,7 @@ def recent(request):
              'widget_url':'/widget/recent/',
              }
             )
-            
+
 @cache_page(60*cache_time_minutes)
 def upcoming(request):
     pagenum = request.GET.get('page', 1)
@@ -211,20 +214,20 @@ def upcoming(request):
     paginator = Paginator(events, 20)
 
     max_page = paginator.num_pages
-    
+
     rss_url = "/feeds/upcoming/"
-    
+
     page_url_base = "/upcoming/?"
     paginator_html = make_paginator_text('/upcoming/?', int(pagenum), max_page)
-        
+
     try:
         page = paginator.page(pagenum)
     except (EmptyPage, InvalidPage):
         raise Http404
 
     return render_to_response(
-            'publicsite_redesign/generic_results.html', 
-            {'title': 'Upcoming events', 
+            'publicsite_redesign/generic_results.html',
+            {'title': 'Upcoming events',
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
@@ -237,14 +240,14 @@ def upcoming(request):
 def newly_added(request):
     pagenum = request.GET.get('page', 1)
 
-    
+
     events = Event.objects.newest(None).select_related('beneficiaries', 'venue')
     paginator = Paginator(events, 20)
     max_page = paginator.num_pages
     paginator_html = ""
 
     rss_url = "/feeds/newlyadded/"
-    
+
 
     try:
         page = paginator.page(pagenum)
@@ -252,8 +255,8 @@ def newly_added(request):
         raise Http404
 
     return render_to_response(
-            'publicsite_redesign/generic_results.html', 
-            {'title': 'The most recently added 20 events', 
+            'publicsite_redesign/generic_results.html',
+            {'title': 'The most recently added 20 events',
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
@@ -271,22 +274,22 @@ def committee_leadership(request):
     today = datetime.date.today()
     crp_ids = list(CommitteeMembership.objects.values_list('member__crp_id', flat=True).exclude(position='Member'))
     leadership_ids = list(Lawmaker.objects.filter(crp_id__in=crp_ids).values_list('id', flat=True))
-    
+
     events_all = Event.objects.filter(status="", beneficiaries__in=leadership_ids, start_date__lte=today).select_related('beneficiaries', 'venue').distinct().order_by('-start_date', 'start_time')
-    
+
     events = sort_events( events_all, sortfield, sortorder)
-    
+
     paginator = Paginator(events, 20)
     pagenum = request.GET.get('page', 1)
-    
+
     page_url_base = "/committee-leadership/?page=%s&" % (pagenum)
     table_header = make_sortable_table_header(page_url_base, sortorder)
-    
+
     max_page = paginator.num_pages
 
     pageless_url_base = "/committee-leadership/?sort=start_date&order=%s&" % (sortorder)
 
-    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)
 
     try:
         page = paginator.page(pagenum)
@@ -294,15 +297,15 @@ def committee_leadership(request):
         raise Http404
 
     return render_to_response(
-            'publicsite_redesign/generic_results.html', 
-            {'title': 'Recent Events held for committee leaders', 
+            'publicsite_redesign/generic_results.html',
+            {'title': 'Recent Events held for committee leaders',
              'results': page.object_list,
              'paginator_html':paginator_html,
              'current_pagenum':pagenum,
              'max_pagenum':max_page,
              'table_header':table_header,}
             )
-            
+
 @cache_page(60*cache_time_minutes)
 def congressional_leadership(request):
     pagenum = request.GET.get('page', 1)
@@ -313,21 +316,21 @@ def congressional_leadership(request):
     today = datetime.date.today()
     leader_ids = LeadershipPosition.objects.values_list('lawmaker_id', flat=True)
     events_all = Event.objects.filter(status="", beneficiaries__pk__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')
-    
+
     events = sort_events( events_all, sortfield, sortorder)
-    
+
     page_url_base = "/congressional-leadership/?page=%s&" % (pagenum)
-    
+
     paginator = Paginator(events, 20)
     pageless_url_base = "/congressional-leadership/?sort=start_date&order=%s&" % (sortorder)
 
     table_header = make_sortable_table_header(page_url_base, sortorder)
 
-    
+
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)
 
     try:
         page = paginator.page(pagenum)
@@ -335,14 +338,14 @@ def congressional_leadership(request):
         raise Http404
 
     return render_to_response(
-            'publicsite_redesign/generic_results.html', 
-            {'title': 'Parties Held for Congressional Leadership', 
+            'publicsite_redesign/generic_results.html',
+            {'title': 'Parties Held for Congressional Leadership',
              'results': page.object_list,
              'paginator_html':paginator_html,
              'current_pagenum':pagenum,
              'max_pagenum':max_page,
              'table_header':table_header,}
-            )      
+            )
 
 
 @cache_page(60*cache_time_minutes)
@@ -358,17 +361,17 @@ def hosted_by_congressional_leadership(request):
     events_all = Event.objects.filter(status="", other_members__crp_id__in=leader_ids, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')
 
     events = sort_events(events_all, sortfield, sortorder)
-    
+
     paginator = Paginator(events, 20)
 
     page_url_base = "/hosted-by-congressional-leadership/?page=%s&" % (pagenum)
     pageless_url_base = "/hosted-by-congressional-leadership/?sort=start_date&order=%s&" % (sortorder)
     table_header = make_sortable_table_header(page_url_base, sortorder)
-    
+
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    paginator_html = make_paginator_text(page_url_base, int(pagenum), max_page)    
+    paginator_html = make_paginator_text(page_url_base, int(pagenum), max_page)
 
     try:
         page = paginator.page(pagenum)
@@ -376,14 +379,14 @@ def hosted_by_congressional_leadership(request):
         raise Http404
 
     return render_to_response(
-            'publicsite_redesign/generic_results.html', 
-            {'title': 'Recent Parties Hosted by Congressional Leadership', 
+            'publicsite_redesign/generic_results.html',
+            {'title': 'Recent Parties Hosted by Congressional Leadership',
              'results': page.object_list,
              'paginator_html':paginator_html,
              'current_pagenum':pagenum,
              'max_pagenum':max_page,
              'table_header':table_header,}
-            )      
+            )
 
 
 @cache_page(60*cache_time_minutes)
@@ -403,22 +406,22 @@ def presidential(request):
     max_page = paginator.num_pages
     paginator_html = ""
     # There typically aren't enough results for there to be multiple pages
-    
+
     page_url_base = "/presidential/?page=%s&" % (pagenum)
     pageless_url_base = "/presidential/?sort=start_date&order=%s&" % (sortorder)
     table_header = make_sortable_table_header(page_url_base, sortorder)
-    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)
 
     try:
         page = paginator.page(pagenum)
     except (EmptyPage, InvalidPage):
         raise Http404
-    
+
     rss_url = '/feeds/presidential/'
-    
+
     return render_to_response(
-            'publicsite_redesign/generic_results.html', 
-            {'title': 'Recent Parties Hosted For Presidential Candidates', 
+            'publicsite_redesign/generic_results.html',
+            {'title': 'Recent Parties Hosted For Presidential Candidates',
              'results': page.object_list,
              'paginator_html':paginator_html,
              'rss_url':rss_url,
@@ -453,72 +456,72 @@ def search(request, field, args):
     pagenum = request.GET.get('page', 1)
     sortfield = request.GET.get('sort', 'start_date')
     sortorder = request.GET.get('order', '1')
-    
+
     lawmakers = None
 
     if field == 'Beneficiary':
         lawmakers = Lawmaker.objects.filter(name__icontains=args)
         if len(lawmakers)==1:
             if lawmakers[0].crp_id and not lawmakers[0].affiliate:
-                return HttpResponseRedirect('/pol/'+lawmakers[0].crp_id)               
+                return HttpResponseRedirect('/pol/'+lawmakers[0].crp_id)
 
     if lawmakers is not None:
         lawmakers = lawmakers.filter(affiliate=None).exclude(crp_id=None)
-    
+
     fixed_field = field.lower()
     events_all = Event.objects.by_field(fixed_field, args)
     events = sort_events( events_all, sortfield, sortorder)
     formatted_field = field_name_fix[fixed_field]
     title = "Search results for '%s' in %s" % (args, formatted_field)
-    
-    
+
+
     paginator = Paginator(events, 20)
 
     max_page = paginator.num_pages
 
 
 #    search_url_base = "/search/%s/%s/?" % (field, args)
-    
+
     page_url_base = "/search/%s/%s/?page=%s&" % (field, args, pagenum)
     pageless_url_base = "/search/%s/%s/?sort=start_date&order=%s&" % (field, args, sortorder)
     table_header = make_sortable_table_header(page_url_base, sortorder)
-    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
-     
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)
+
     print "paginator: " + paginator_html
-    
+
     try:
         page = paginator.page(pagenum)
     except (EmptyPage, InvalidPage):
         raise Http404
-    
-    
+
+
     return render_to_response(
             'publicsite_redesign/generic_results.html',
             {'title':title,
             'field':field,
              'results': page.object_list,
-             'lawmakers': lawmakers, 
-             'paginator_html':paginator_html, 
+             'lawmakers': lawmakers,
+             'paginator_html':paginator_html,
              'current_pagenum':pagenum,
              'max_pagenum':max_page,
              'table_header':table_header,
              'query':args,
              }
             )
-            
-            
+
+
 @cache_page(60*cache_time_minutes)
 def polwithpac(request, cid):
-    
-    
-    
+
+
+
     lawmaker = None
     pacname = None
 
     possible_lawmakers = Lawmaker.objects.filter(crp_id=cid).distinct()
 
     if possible_lawmakers.count() == 0:
-        return HttpResponseRedirect('/')     
+        return HttpResponseRedirect('/')
 
     for this_lawmaker in possible_lawmakers:
         if this_lawmaker.affiliate:
@@ -532,10 +535,10 @@ def polwithpac(request, cid):
 
     events_all = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date', '-start_time').distinct()
     events = sort_events( events_all, sortfield, sortorder)
-    
+
     # need to get pictures of 'em
     image_url = None
-    
+
     event_count = events.count()
     paginator = Paginator(events, 20)
 
@@ -546,29 +549,29 @@ def polwithpac(request, cid):
     page_url_base = "/pol/%s/?page=%s&" % (cid, pagenum)
     pageless_url_base = "/pol/%s/?sort=start_date&order=%s&" % (cid, sortorder)
     table_header = make_sortable_table_header(page_url_base, sortorder)
-    
-    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)    
+
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)
     print "paginator: " + paginator_html
-    
+
     try:
         page = paginator.page(pagenum)
     except (EmptyPage, InvalidPage):
         raise Http404
-    
+
     return render_to_response(
             'publicsite_redesign/entity_politician.html',
             {'results': page.object_list,
              'lawmaker': lawmaker,
              'pacname': pacname,
-             'image_url': image_url, 
+             'image_url': image_url,
              'event_count':event_count,
-             'paginator_html':paginator_html, 
+             'paginator_html':paginator_html,
              'current_pagenum':pagenum,
              'max_pagenum':max_page,
-             'table_header':table_header,             
+             'table_header':table_header,
              }
             )
-# new search that looks in multiple places for matches and then does... something.... 
+# new search that looks in multiple places for matches and then does... something....
 @cache_page(60*cache_time_minutes)
 def multisearch(request):
     query = request.GET.get('q')
@@ -579,74 +582,74 @@ def multisearch(request):
     entertainments = None
     hosts = None
     cities = None
-    
+
     if not (query):
         raise Http404
-    
+
     num_blog_posts = 3
     if len(query)>2:
-        
+
         blog_posts = Post.objects.published().filter(content__icontains=query)[:num_blog_posts+1]
-        
+
         lawmakers = Lawmaker.objects.filter(Q(name__icontains=query)|Q(affiliate__icontains=query)).distinct()
-    
+
         hosts = Host.objects.filter(name__icontains=query).values('name').distinct()
-    
+
         venues = Venue.objects.filter(venue_name__icontains=query).values('venue_name').distinct()
-    
+
         entertainments = Event.objects.filter(entertainment__icontains=query).values('entertainment').distinct()
-        
+
         cities = Venue.objects.filter(city__icontains=query).values('city', 'state').distinct()
-        
+
         if ( (len(lawmakers) + len(hosts) + len(venues) + len(entertainments) + len(cities)) == 0 ):
             error_message = "No matches"
     else:
         error_message = "Search term must be at least three letters long"
-    
+
     more_blog_results=False
     print "blog posts: %s num blog posts: %s" % (len(blog_posts), num_blog_posts)
     if (len(blog_posts)==num_blog_posts+1):
-        
+
         blog_posts = blog_posts[:num_blog_posts]
         more_blog_results=True
     print "has lots: %s" % (more_blog_results)
-    
+
     return render_to_response(
-    'publicsite_redesign/multisearch.html', 
+    'publicsite_redesign/multisearch.html',
     {'query':query,
     'lawmakers':lawmakers,
     'venues':venues,
     'entertainments':entertainments,
-    'hosts':hosts, 
+    'hosts':hosts,
     'cities':cities,
     'error_message':error_message,
     'blog_posts':blog_posts,
     'has_more_blog_posts':more_blog_results,
     'num_blog_posts':num_blog_posts,
     })
-    
+
 @cache_page(60*cache_time_minutes)
 def blogsearch(request, searchterm):
     print searchterm
     if len(searchterm)<3:
         raise Http404
-    
+
     blog_posts = Post.objects.published().filter(content__icontains=searchterm)
 
     paginator = Paginator(blog_posts, 5)
     pagenum = request.GET.get('page', 1)
-    max_page = paginator.num_pages, 
-    
+    max_page = paginator.num_pages,
+
     try:
         page = paginator.page(pagenum)
     except (EmptyPage, InvalidPage):
         raise Http404
-    
+
     paginator_html = make_paginator_text('/search-blog/' + searchterm + '/?', int(pagenum), max_page[0])
     page_title = "Search results for '%s' - page %s of %s" % (searchterm, pagenum, max_page[0])
-    
+
     return render_to_response(
-            'publicsite_redesign/blogindex.html', 
+            'publicsite_redesign/blogindex.html',
             {'post_list': page.object_list,
             'paginator_html':paginator_html,
             'page_title':page_title,
@@ -662,7 +665,7 @@ def blogtag(request, term):
 
     paginator = Paginator(blog_posts, 5)
     pagenum = request.GET.get('page', 1)
-    max_page = paginator.num_pages, 
+    max_page = paginator.num_pages,
 
     try:
         page = paginator.page(pagenum)
@@ -673,7 +676,7 @@ def blogtag(request, term):
     page_title = "Posts tagged '%s' - page %s of %s" % (term, pagenum, max_page[0])
 
     return render_to_response(
-            'publicsite_redesign/blogindex.html', 
+            'publicsite_redesign/blogindex.html',
             {'post_list': page.object_list,
             'paginator_html':paginator_html,
             'page_title':page_title,
@@ -685,14 +688,14 @@ def blogtag(request, term):
 def calendar_today(request):
     today = datetime.date.today()
     dayofweek = today.weekday() + 1
-    
+
     # fix to make sunday 0
     week_start = today - datetime.timedelta(days=dayofweek)
-    
+
     response = calendar(request, week_start.strftime("%Y%m%d"))
     return response
-    
-@cache_page(60*cache_time_minutes)    
+
+@cache_page(60*cache_time_minutes)
 def calendar(request, datestring):
     # looking for queryarg: q=YYYYMMDD
     startdate = None
@@ -701,30 +704,30 @@ def calendar(request, datestring):
     except ValueError:
         raise Http404
 
-    # fix to make sunday 0    
+    # fix to make sunday 0
     dayofweek = startdate.weekday() + 1
-    
+
     week_start = startdate - datetime.timedelta(days=dayofweek)
-    
-    # redirect if the start date isn't a sunday. 
-    
+
+    # redirect if the start date isn't a sunday.
+
     if (dayofweek != 7):
         newurl = "/calendar/%s/" % (week_start.strftime("%Y%m%d"))
-        return HttpResponseRedirect(newurl) 
-    
+        return HttpResponseRedirect(newurl)
+
     week_start = week_start + datetime.timedelta(days=7)
-    
+
     week_end = week_start + datetime.timedelta(days=6)
-    
+
     this_day = week_start
     week_data = []
-    
+
     nextweekstart = week_start + datetime.timedelta(days=7)
     lastweekstart = week_start - datetime.timedelta(days=7)
-    
+
     next_week_url = "/calendar/%s/" % (nextweekstart.strftime("%Y%m%d"))
     last_week_url = "/calendar/%s/" % (lastweekstart.strftime("%Y%m%d"))
-    
+
     for day in ('SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'):
         events = Event.objects.filter(start_date=this_day, status='').order_by('start_time')
         todays_data = {
@@ -734,11 +737,11 @@ def calendar(request, datestring):
         }
         week_data.append(todays_data)
         this_day = this_day + datetime.timedelta(days=1)
-    
-    
-    
+
+
+
     return render_to_response(
-    'publicsite_redesign/calendar.html', 
+    'publicsite_redesign/calendar.html',
     {
     'week_data':week_data,
     'week_start':week_start,
@@ -750,14 +753,14 @@ def calendar(request, datestring):
     'cache_time':10,
     }
     )
-           
+
 
 @cache_page(60*cache_time_minutes)
 def widget_upcoming(request):
     events = Event.objects.upcoming(5)
     widget_title = "Upcoming events"
     return render_to_response(
-    'publicsite_redesign/widget.html', 
+    'publicsite_redesign/widget.html',
     {
     'events':events,
     'widget_title':widget_title,
@@ -768,7 +771,7 @@ def widget_recent(request):
     events = Event.objects.recent(5)
     widget_title = "Recent events"
     return render_to_response(
-    'publicsite_redesign/widget.html', 
+    'publicsite_redesign/widget.html',
     {
     'events':events,
     'widget_title':widget_title,
@@ -779,7 +782,7 @@ def widget_newly_added(request):
     events = Event.objects.newest(5)
     widget_title = "Newly added events"
     return render_to_response(
-    'publicsite_redesign/widget.html', 
+    'publicsite_redesign/widget.html',
     {
     'events':events,
     'widget_title':widget_title,
@@ -791,20 +794,20 @@ def widget_presidential(request):
     events = Event.objects.filter(status="", is_presidential=True, start_date__lte=today).distinct().select_related('beneficiaries', 'venue').order_by('-start_date', 'start_time')[:5]
     widget_title = "Recent presidential events"
     return render_to_response(
-    'publicsite_redesign/widget.html', 
+    'publicsite_redesign/widget.html',
     {
     'events':events,
     'widget_title':widget_title,
-    })        
+    })
 
 @cache_page(60*cache_time_minutes)
 def widget_pol(request, crp_id):
     possible_lawmakers = Lawmaker.objects.filter(crp_id=crp_id).distinct()
 
     lawmaker = None
-    
+
     if possible_lawmakers.count() == 0:
-        return Http404     
+        return Http404
 
     for this_lawmaker in possible_lawmakers:
         if this_lawmaker.affiliate:
@@ -813,12 +816,12 @@ def widget_pol(request, crp_id):
             lawmaker = this_lawmaker
 
     events = Event.objects.filter(status='', beneficiaries__crp_id=crp_id).order_by('-start_date', '-start_time').distinct()[:5]
-    
+
     lawmaker_name = lawmaker.titled_name()
     widget_title = "Events for %s" % (lawmaker_name)
-    
+
     return render_to_response(
-    'publicsite_redesign/widget.html', 
+    'publicsite_redesign/widget.html',
     {
     'events':events,
     'widget_title':widget_title,
@@ -826,10 +829,10 @@ def widget_pol(request, crp_id):
 
 def cmtedetail(request, cmteid):
     committee = Committee.objects.get(short=cmteid)
-    
+
 
     return render_to_response(
-            'publicsite_redesign/entity_committee.html', 
+            'publicsite_redesign/entity_committee.html',
             {
              'committee':commitee,
              }
@@ -848,7 +851,7 @@ def search_old(request, field, args):
         lm = Lawmaker.objects.filter(name__icontains=args)
         if len(lm)==1:
             if lm[0].crp_id and not lm[0].affiliate:
-                return HttpResponseRedirect('/pol/'+lm[0].crp_id)               
+                return HttpResponseRedirect('/pol/'+lm[0].crp_id)
 
     if lm is not None:
         lm = lm.filter(affiliate=None).exclude(crp_id=None)
@@ -869,9 +872,9 @@ def search_embed(request, field, args):
     events = Event.objects.by_field(field.lower(), args)
     return render_to_response(
             'publicsite/search_embed.html',
-            {'field': field, 
-             'args':args, 
-             'docset':events, }, 
+            {'field': field,
+             'args':args,
+             'docset':events, },
             context_instance = RequestContext(request)
             )
 
@@ -879,8 +882,8 @@ def search_embed(request, field, args):
 def search_embed_flex(request, field, args):
     events = Event.objects.by_field(field.lower(), args).order_by('start_date')[:3]
     return render_to_response(
-            'publicsite/search_embed_flex.html', 
-            {'field': field, 'args': args, 'docset': events, }, 
+            'publicsite/search_embed_flex.html',
+            {'field': field, 'args': args, 'docset': events, },
             context_instance = RequestContext(request)
             )
 
@@ -892,15 +895,15 @@ def convention_list(request, convention=''):
     }
 
     args = conventions.get(convention, 'convention')
-    
+
     events = Event.objects.filter(status='', tags__tag_name__icontains=args) \
                           .exclude(start_date__isnull=True) \
                           .order_by('start_date', 'start_time')
-    
+
     return render_to_response(
-            'publicsite/search_results.html', 
+            'publicsite/search_results.html',
             {'field': 'Tags',
-             'args': args, 
+             'args': args,
              'docset': events, }
             )
 
@@ -922,8 +925,8 @@ def upcoming_embed(request):
 def upcoming_embed2(request):
     docset = Event.objects.upcoming(5)
     return render_to_response(
-            'publicsite/upcoming_embed_2.html', 
-            {'snapshot_image_name': 'upcoming', 
+            'publicsite/upcoming_embed_2.html',
+            {'snapshot_image_name': 'upcoming',
              'docset':docset, }
             )
 
@@ -938,8 +941,8 @@ def bydate(request,start,end):
         raise Http404
 
     return render_to_response(
-                'publicsite/snapshot.html', 
-                {'snapshot_image_name': '', 
+                'publicsite/snapshot.html',
+                {'snapshot_image_name': '',
                  'page': page, }
                 )
 
@@ -953,24 +956,24 @@ def abc_convention(request, convention=''):
         'republican': 'gop convention',
         'democratic': 'democratic convention',
     }
-    
+
     arg = conventions.get(convention, None)
-    
+
     if arg:
         events = Event.objects.filter(
                 status='',
                 tags__tag_name=arg)
         event_count = events.count()
-        
+
         if event_count > 0:
             randdocnum = random.randint(0, event_count - 1)
             event = events[randdocnum]
-            
+
             return render_to_response(
                     'publicsite/widgets/abc_convention.html',
-                    {'field': 'Tags', 
-                     'args': arg, 
-                     'doc': event, 
+                    {'field': 'Tags',
+                     'args': arg,
+                     'doc': event,
                      'convention': convention, }
                     )
 
@@ -993,8 +996,8 @@ def jsonCID(request, CID):
                           .order_by('start_date', 'start_time')
 
     try:
-        data = serializers.serialize('json', 
-                                     events, 
+        data = serializers.serialize('json',
+                                     events,
                                      fields=('committee_id',
                                              'start_date',
                                              'start_time',
@@ -1003,10 +1006,10 @@ def jsonCID(request, CID):
                                              'contributions_info',
                                              'hosts',
                                              'beneficiaries',
-                                             'make_checks_payable_to'), 
+                                             'make_checks_payable_to'),
                                      use_natural_keys=True)
     except:
-        data = ''    
+        data = ''
 
     return HttpResponse(data)
 
@@ -1026,7 +1029,7 @@ def widget_state(request, state):
 
     return render_to_response(
             'publicsite/widgets/state.html',
-            {'docset':docset, 
+            {'docset':docset,
              'state': state, }
             )
 
@@ -1043,7 +1046,7 @@ def leadpac_all(request):
         raise Http404
 
     return render_to_response(
-            'publicsite/snapshot.html', 
+            'publicsite/snapshot.html',
             {'snapshot_image_name': '', 'page': page, }
             )
 
@@ -1053,7 +1056,7 @@ def leadpacs(request):
                           .order_by('-start_date', '-start_time')[0:6]
 
     return render_to_response(
-            'publicsite/leadpacs.html', 
+            'publicsite/leadpacs.html',
             {'docset': docset, })
 
 
@@ -1089,16 +1092,16 @@ def upload(request):
             client.close()
 
             if result:
-                send_mail('[partytime] Invitation submission', 
-                         'A new invitation has been submitted to Political Party Time. You may download it from http://assets.sunlightfoundation.com.s3.amazonaws.com/partytime/3.0/%s' % remote_path, 
-                          'partytime@sunlightfoundation.com', 
+                send_mail('[partytime] Invitation submission',
+                         'A new invitation has been submitted to Political Party Time. You may download it from http://assets.sunlightfoundation.com.s3.amazonaws.com/partytime/3.0/%s' % remote_path,
+                          'partytime@sunlightfoundation.com',
                           ['partytime@sunlightfoundation.com', 'abycoffe+partytime@sunlightfoundation.com', ]
                           )
 
             return HttpResponseRedirect('/upload/thanks/')
 
     return render_to_response(
-            'publicsite_redesign/upload.html', 
+            'publicsite_redesign/upload.html',
             context_instance = RequestContext(request)
             )
 
@@ -1111,8 +1114,8 @@ def upload_thanks(request):
 #
 def cmtes(request, chamber='House'):
     return render_to_response(
-            'publicsite/cmte.html', 
-            {'res': Committee.objects.filter(chamber=chamber), 
+            'publicsite/cmte.html',
+            {'res': Committee.objects.filter(chamber=chamber),
              'chamber': chamber, }
             )
 
@@ -1134,7 +1137,7 @@ def supercommittee(request):
         raise Http404
 
     return render_to_response(
-            'publicsite/supercommittee.html', 
+            'publicsite/supercommittee.html',
             {'page': page,
              'members': members,
              }
@@ -1149,7 +1152,7 @@ def updatecmtes(request,chamber):
     from sunlightapi import sunlight, SunlightApiError
     sunlight.apikey = '***REMOVED***'
     newnames=''
-    Cmtes = sunlight.committees.getList(chamber)   
+    Cmtes = sunlight.committees.getList(chamber)
     for cn in Cmtes:
         c = sunlight.committees.get(cn.id)
         partyC = Committee(chamber=c.chamber, title=c.name, short=c.id)
@@ -1168,7 +1171,7 @@ def updatecmtes(request,chamber):
 
 
 
-def admin_uploadzip(request):    
+def admin_uploadzip(request):
     import os, zipfile, cStringIO
     from django.contrib.auth.decorators import login_required
     import datetime
@@ -1179,15 +1182,15 @@ def admin_uploadzip(request):
 
     login_required(admin_uploadzip)
 
-    def getzip(filename, ignoreable=100): 
-        try: 
-            return zipfile.ZipFile(filename) 
-        except zipfile.BadZipfile: 
+    def getzip(filename, ignoreable=100):
+        try:
+            return zipfile.ZipFile(filename)
+        except zipfile.BadZipfile:
             original = filename.read()
-            position = original.rindex(zipfile.stringEndArchive, 
-                                   -(22 + ignoreable), -20) 
-            coredata = cStringIO.StringIO(original[: 22 + position]) 
-            return zipfile.ZipFile(coredata) 
+            position = original.rindex(zipfile.stringEndArchive,
+                                   -(22 + ignoreable), -20)
+            coredata = cStringIO.StringIO(original[: 22 + position])
+            return zipfile.ZipFile(coredata)
 
     if request.FILES:
         f = request.FILES['file']
@@ -1240,7 +1243,7 @@ def admin_checkfordupes(request):
     this_event = request.POST['e']
     ben = request.POST['ben_ids'].split()
 
-    e = Event.objects.filter(status='', venue__id=venue, start_date=date).exclude(pk=this_event) 
+    e = Event.objects.filter(status='', venue__id=venue, start_date=date).exclude(pk=this_event)
     q = Q()
     for b in ben:
         q = q | Q( beneficiaries=b)
@@ -1252,23 +1255,23 @@ def admin_checkfordupes(request):
         for hh in ee.hosts.all()[0:4]:
             s+= hh.name + ", "
         s+='..)'
-    
+
     return HttpResponse(s)
 
 
-def admin_mergevenue(request, original):    
+def admin_mergevenue(request, original):
     from django.contrib.auth.decorators import login_required
-    from django.db import connection, transaction 
+    from django.db import connection, transaction
     cursor = connection.cursor()
     login_required(admin_mergevenue)
-    replacement = request.GET.get('replaceid')  
+    replacement = request.GET.get('replaceid')
     if not (replacement):
         return HttpResponseRedirect('/admin/publicsite/venue/'+str(original))
     orig = Venue.objects.get(pk=original)
     replace = Venue.objects.get(pk=replacement)
     return HttpResponse("Venue " + replace.__str__() + " will replace " + orig.__str__() + " in " + str(orig.event_set.count()) + " parties. <a href=\"/accounts/replacevenue/"+str(original)+"/"+str(replacement)+"\">Click here to proceed</a>.")
 
-def admin_mergevenue_confirmed(request, original, replacement):    
+def admin_mergevenue_confirmed(request, original, replacement):
     from django.contrib.auth.decorators import login_required
     login_required(admin_mergevenue_confirmed)
     Event.objects.filter(venue=original).update(venue=replacement)
@@ -1276,14 +1279,14 @@ def admin_mergevenue_confirmed(request, original, replacement):
     return HttpResponseRedirect('/admin/publicsite/venue/')
 
 
-def admin_mergelm(request, original):    
+def admin_mergelm(request, original):
     from django.contrib.auth.decorators import login_required
-    from django.db import connection, transaction 
+    from django.db import connection, transaction
     cursor = connection.cursor()
     login_required(admin_mergelm)
     replacement = None
-    
-    # At some point this was a POST, but now seems to be a GET. Check for both before failing... 
+
+    # At some point this was a POST, but now seems to be a GET. Check for both before failing...
 
     try:
         replacement = request.POST['replaceid']
@@ -1293,7 +1296,7 @@ def admin_mergelm(request, original):
         replacement = request.GET['replaceid']
     except KeyError:
         pass
-        
+
     if not replacement:
         return HttpResponseRedirect('/admin/publicsite/lawmaker/'+str(original))
     e = Event.objects.filter(beneficiaries=original)
@@ -1301,10 +1304,10 @@ def admin_mergelm(request, original):
     replace = Lawmaker.objects.get(pk=replacement)
     return HttpResponse("Lawmaker " + replace.__str__() + " will replace " + orig.__str__() + " in " + str(len(e)) + " parties. <a href=\"/accounts/replacelm/"+str(original)+"/"+str(replacement)+"\">Click here to proceed</a>.")
 
-def admin_mergelm_confirmed(request, original, replacement):    
+def admin_mergelm_confirmed(request, original, replacement):
     from django.contrib.auth.decorators import login_required
     login_required(admin_mergelm_confirmed)
-    from django.db import connection, transaction 
+    from django.db import connection, transaction
     cursor = connection.cursor()
 
     query = "UPDATE publicsite_event_beneficiary SET lawmaker_id="+str(replacement)+" WHERE lawmaker_id="+str(original)
