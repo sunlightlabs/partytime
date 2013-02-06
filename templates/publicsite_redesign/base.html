@@ -3,58 +3,66 @@
 
 <!doctype html>
 <html lang="en" class="no-js">
-    <head>
-        <meta charset="utf-8">
+	<head>
+		<meta charset="utf-8">
 
-        <title>{% block title %}Political Party Time{% endblock %}</title>
+		<title>{% block title %}Political Party Time{% endblock %}</title>
 
-	    <meta name="description" content="{% block description %}From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.{% endblock  %}">
-	    <meta name="author" content="Sunlight Foundation">
+		<meta name="description" content="{% block description %}From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.{% endblock  %}">
+		<meta name="author" content="Sunlight Foundation">
 
-	    <meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=">
+		<meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=">
 		{#   #}
 		<meta property="og:site_name" content="Sunlight Foundation's Party Time">
 		<meta property="og:title" content="Political Party Time">
 		{# really django? This is a pretty whack way to use the same block twice. #}
-		{% with description as og_description %}<meta property="og:description" content="{% if og_description %}{{ og_description }}{% else %}From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.{% endif %}">{% endwith %}
-        <meta property="og:type" content="cause">
-        <meta property="og:image" content="http://assets.politicalpartytime.org/1.0/images/widget_ppt_logo.png">
+		{% spaceless %}
+		{% with description as og_description %}
+		{% if og_description %}
+		<meta property="og:description" content="{{ og_description }}">
+		{% else %}
+		<meta property="og:description" content="From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.">
+		{% endif %}
+		{% endwith %}
+		{% endspaceless %}
+		<meta property="og:type" content="cause">
+		<meta property="og:image" content="http://assets.politicalpartytime.org/1.0/images/widget_ppt_logo.png">
 		<meta property="fb:admins" content="7812952">
-        
+
 		<link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="/feeds/upcoming/">
 		<link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="/feeds/recent/">
 		<link rel="shortcut icon" href="{% get_static_prefix %}images/favicon.ico">
 
 
-        {% block head %}{% endblock %}
+		{% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
-		
-        {% block css %}{% endblock %}
+
+		{% block css %}{% endblock %}
 
 	<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
 
-        <script type="text/javascript" src="http://use.typekit.com/xbc3pmu.js"></script>
-        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+		<script type="text/javascript" src="http://use.typekit.com/xbc3pmu.js"></script>
+		<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 		{% block headjs %}<!-- headjs base -->{% endblock %}
 
-        {% if not debug %}
-        <script>
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-1265484-20']);
-            _gaq.push(['_trackPageview']);
-            (function() {
-                var ga = document.createElement('script');
-                ga.type = 'text/javascript';
-                ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga, s);
-            })();
-        </script>{% endif %}
+		{% if not debug %}
+		<script>
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-1265484-20']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga, s);
+			})();
+		</script>{% endif %}
 		<!--[if lt IE 9]>
 		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-    </head>
-    <body class="{% block bodyclass %}home{% endblock %}">
+	</head>
+	<body class="{% block bodyclass %}home{% endblock %}">
 		<header id="mainHeader" class="clearfix">
 			<a href="/">
 				<h1 class="textReplace">
@@ -76,28 +84,28 @@
 				</ul>
 			</nav>
 			<form action="/search-all/" method="get" id="searchform" class="search site">
-	            <input class="transparent" type="search" name="q" id="id_q" placeholder="Search...">
-	            <button class="button" type="submit">
-	                 <span>Go</span>
-	            </button>
+				<input class="transparent" type="search" name="q" id="id_q" placeholder="Search...">
+				<button class="button" type="submit">
+					 <span>Go</span>
+				</button>
 
-	        </form> 
+			</form>
 		</header>
 		<div class="container">
 		{% block container %}
 		{% endblock %}
-		
+
 		{% block sidebar %}
 		{% endblock %}
 		</div>
 		<footer>
-			
+
 			{% block partystats_footer %}
 			{% include "publicsite_redesign/includes/partystats_footer.html" %}
 			{# !override this in index.html! #}
 			{% endblock %}
-			
-			
+
+
 			<div class="footerWrap">
 				<div class="container">
 					<div class="fiveCol about colLt">
@@ -121,48 +129,48 @@
 							</p>
 						</div>
 						<form class="twos colRt" action="http://sunlightfoundation.com/mailinglist/subscribe/" method="post" id="submit">
-		                    <input type="text" name="email" placeholder="your email address">
-		                    <input type="text" name="zip" placeholder="your zip code">
-		                    <button type="submit">
-		                         <span>Sign Up</span>
-		                    </button>
-		                </form>
-		                <div class="follow twos colRt">
-		              	  <a href="http://twitter.com/sfpartytime" class="twitter">@SFpartytime</a>
-		               	</div>
+							<input type="text" name="email" placeholder="your email address">
+							<input type="text" name="zip" placeholder="your zip code">
+							<button type="submit">
+								 <span>Sign Up</span>
+							</button>
+						</form>
+						<div class="follow twos colRt">
+						  <a href="http://twitter.com/sfpartytime" class="twitter">@SFpartytime</a>
+						</div>
 					</div>
 					<div class="clear"></div>
 				</div>
 			</div>
 		</footer>
-	
-	
+
+
 {% block filler %}{% endblock %}
 
 		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-1.5.1.min.js"></script>
-		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-placehold.min.js"></script>	
+		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-placehold.min.js"></script>
 
-        <script type="text/javascript">
-          var _sf_async_config = { uid: 980, domain: 'politicalpartytime.org' };
-          (function() {
-            function loadChartbeat() {
-              window._sf_endpt = (new Date()).getTime();
-              var e = document.createElement('script');
-              e.setAttribute('language', 'javascript');
-              e.setAttribute('type', 'text/javascript');
-              e.setAttribute('src',
-                (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") +
-                "js/chartbeat.js");
-              document.body.appendChild(e);
-            };
-            var oldonload = window.onload;
-            window.onload = (typeof window.onload != 'function') ?
-              loadChartbeat : function() { oldonload(); loadChartbeat(); };
-          })();
-        </script>
+		<script type="text/javascript">
+		  var _sf_async_config = { uid: 980, domain: 'politicalpartytime.org' };
+		  (function() {
+			function loadChartbeat() {
+			  window._sf_endpt = (new Date()).getTime();
+			  var e = document.createElement('script');
+			  e.setAttribute('language', 'javascript');
+			  e.setAttribute('type', 'text/javascript');
+			  e.setAttribute('src',
+				(("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") +
+				"js/chartbeat.js");
+			  document.body.appendChild(e);
+			};
+			var oldonload = window.onload;
+			window.onload = (typeof window.onload != 'function') ?
+			  loadChartbeat : function() { oldonload(); loadChartbeat(); };
+		  })();
+		</script>
 
 
-        {% block js %}{% endblock %}
+		{% block js %}{% endblock %}
 
-    </body>
+	</body>
 </html>
