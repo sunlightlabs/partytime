@@ -12,10 +12,15 @@
 
 
 {% block mainbar %}
-
+{% captureas share_title %}{% if doc.entertainment %}{{ doc.entertainment|safe }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name|safe }} {% endfor %}{% endif %}{% endcaptureas %}
 <div class="oneCol colLt">
 	<time pubdate=""><span class="month">{{ doc.start_date|date:"N"}}</span><span class="day">{{ doc.start_date|date:"d"}}</span><span class="year">{{ doc.start_date|date:"Y"}}</span></time>
-	<div class="gigya party" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"></div>
+	<div class="share-buttons gigya party" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;float:right;margin-right:5px;" id="share-buttons"
+         data-socialite="auto"
+         data-layout="vertical"
+         data-services="facebook,twitter,googleplus-simple,email"
+         data-options="showCounts=right&amp;title=Check%20out%20{{ share_title|urlencode }}%20on%20Political%20Party%20Time&amp;description=Follow%20the%20political%20money%20trail%20with%20Sunlight%20Foundation's%20Party%20Time!%20Know%20of%20an%20upcoming%20political%20fundraiser%3F%20Anonymously%20upload%20it%3A%20http%3A%2F%2Fpoliticalpartytime.org%2Fupload%2F&amp;url={{ current_url|urlencode }}"
+         data-twitter-options="defaultText=Check%20out%20{{ share_title|truncatechars:90|urlencode }}%20on%20%40SunFoundation's%20%40SFPartyTime"></div>
 
 
 </div>
@@ -79,53 +84,4 @@
 		</script>
 	</div>
 </div>
-
-{% endblock %}
-
-{% block js %}
-{% captureas share_title %}{% if doc.entertainment %}{{ doc.entertainment }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}{% endcaptureas %}
-<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
-<script>
-    $(document).ready(function() {
-        var ua = new gigya.socialize.UserAction();
-
-		ua.setLinkBack("http://politicalpartytime.org{{ doc.get_absolute_url }}");
-		ua.setTitle("Check out {{ share_title|escapejs }} on Political Party Time");
-		ua.setDescription("Follow the political money trail with Sunlight Foundation's Party Time! Know of an upcoming political fundraiser? Anonymously upload it: http://politicalpartytime.org/upload/ ");
-
-		var twitterUa = new gigya.socialize.UserAction();
-		twitterUa.setLinkBack("http://politicalpartytime.org{{ doc.get_absolute_url }}");
-		twitterUa.setTitle("Check out {{ share_title|truncatechars:90|escapejs }} on @SunFoundation's @SFPartyTime");
-
-        var params = {
-            containerID: 'share-buttons',
-            iconsOnly: true,
-            noButtonBorders: true,
-            layout: 'vertical',
-            shareButtons: [
-                {
-                    provider: 'facebook',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/facebook.png'
-                },
-                {
-                    provider: 'twitter',
-   				    userAction: twitterUa,
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/twitter.png'
-                },
-                {
-                    provider: 'googleplus',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/googleplus.png'
-                },
-                {
-                    provider: 'email',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/email.png'
-                }
-            ],
-            shortURLs: 'never',
-            showCounts: 'right',
-            userAction: ua
-        };
-        gigya.socialize.showShareBarUI(params);
-    });
-</script>
 {% endblock %}

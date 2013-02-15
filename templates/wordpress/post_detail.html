@@ -11,13 +11,9 @@
     <meta property="og:url" content="http://politicalpartytime.org{{ post.get_absolute_url }}">
 {% endblock %}
 
-
-{% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
-
 {% block mainbar %}
 
-
-	    {% include "wordpress/post.html" %}
+	{% include "wordpress/post.html" %}
 
 <div class="comments module last" id="disqus_thread">
 	<h3>
@@ -29,7 +25,7 @@
 {% endblock %}
 
 {% block js %}
-{% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
+
     <script type="text/javascript">
         var disqus_identifer = 'http://blog.politicalpartytime.org/?p={{ post.id }}';
         var disqus_url = 'http://politicalpartytime.org{{ post.get_absolute_url }}';
@@ -40,49 +36,7 @@
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         })();
     </script>
-	<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
-<script>
-    $(document).ready(function() {
-        var ua = new gigya.socialize.UserAction();
-        ua.setTitle("{{ post.title|escapejs }}");
-        ua.setDescription("{{ description|escapejs }}")
-        ua.setLinkBack("http://politicalpartytime.org{{ post.get_absolute_url }}");
-        var twitterUa = new gigya.socialize.UserAction();
-        twitterUa.setLinkBack("http://politicalpartytime.org{{ post.get_absolute_url }}");
-        twitterUa.setTitle("Follow the political money trail, check out {{ post.title|truncatechars:41|escapejs }} on @SunFoundation's @SFPartyTime");
-        var params = {
-            containerID: 'share-buttons',
-            iconsOnly: true,
-            noButtonBorders: true,
-            layout: 'horizontal',
-            shareButtons: [
-                {
-                    provider: 'facebook',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/facebook.png'
-                },
-                {
-                    provider: 'twitter',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/twitter.png',
-                    via: 'sunfoundation',
-                    userAction: twitterUa
-                },
-                {
-                    provider: 'googleplus',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/googleplus.png'
 
-                },
-                {
-                    provider: 'email',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/email.png'
-                }
-            ],
-            showCounts: 'right',
-            shortURLs: 'never',
-            userAction: ua
-        };
-        gigya.socialize.showShareBarUI(params);
-    });
-</script>
 {% endblock %}
 
 
