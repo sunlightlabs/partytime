@@ -7,15 +7,17 @@
 {# Set the nav highlight #}
 {% block nav-calendar %}class="active"{% endblock %}
 
-{% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
-
 {% block container %}
 	<div class="graph module">
 		<h2>
 			Social Calendar
 		</h2>
 		<ul class="clearfix social">
-			<li id="share-buttons">
+			<li id="share-buttons" class="share-buttons"
+                data-socialite="auto"
+                data-services="facebook,twitter,googleplus,email"
+                data-options="showCounts=right&amp;title=Political%20Pary%20Time&amp;description=Follow%20the%20political%20money%20trail%20with%20Sunlight%20Foundation's%20Party%20Time!%20Know%20of%20an%20upcoming%20political%20fundraiser%3F%20Anonymously%20upload%20it%3A%20http%3A%2F%2Fpoliticalpartytime.org%2Fupload%2F&amp;url=http%3A%2F%2Fpoliticalpartytime.org"
+                data-twitter-options="title=Follow%20the%20political%20money%20trail%20w%2F%40SunFoundation's%20%40SFPartyTime">
 			</li>
 		</ul>
 		<div class="clear"></div>
@@ -86,49 +88,5 @@
 </script>
 
 <script src="{% get_static_prefix %}js/gray.js" type="text/javascript"></script>
-<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
-<script>
-    $(document).ready(function() {
-        var ua = new gigya.socialize.UserAction();
-        ua.setLinkBack("http://politicalpartytime.org");
-        ua.setTitle("Political Party Time");
-        ua.setDescription("Follow the political money trail with Sunlight Foundation's Party Time! Know of an upcoming political fundraiser? Anonymously upload it: http://politicalpartytime.org/upload/ ");
-
-        var twitterUa = new gigya.socialize.UserAction();
-        twitterUa.setLinkBack("http://politicalpartytime.org");
-        twitterUa.setTitle("Follow the political money trail w/@SunFoundation's @SFPartyTime");
-
-        var params = {
-            containerID: 'share-buttons',
-            iconsOnly: true,
-            noButtonBorders: true,
-            layout: 'horizontal',
-            shareButtons: [
-                {
-                    provider: 'facebook',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/facebook.png'
-                },
-                {
-                    provider: 'twitter',
-                    userAction: twitterUa,
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/twitter.png'
-                },
-                {
-                    provider: 'googleplus',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/googleplus.png'
-                },
-                {
-                    provider: 'email',
-                    iconImgUp: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/site/4.0/images/icons/16/email.png'
-                }
-            ],
-            shortURLs: 'never',
-            showCounts: 'right',
-            userAction: ua
-        };
-        gigya.socialize.showShareBarUI(params);
-    });
-</script>
-
 {% endblock %}
 
