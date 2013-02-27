@@ -22,3 +22,7 @@ slimmer
 http://python-scribd.googlecode.com/files/python-scribd-1.1.0.tar.gz
 
 gunicorn
+# for xml output in api
+lxml
+django-tastypie
+-e git://github.com/sunlightlabs/django-locksmith.git#egg=locksmith

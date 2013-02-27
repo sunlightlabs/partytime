@@ -1,10 +1,13 @@
 import time
+from tastypie.api import Api
+
 
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.decorators.cache import cache_page
 # for staticfiles. 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from publicsite.api import LawmakerResource, EventResource, VenueResource, HostResource
 
 from publicsite.feeds import *
 from settings import *
@@ -27,7 +30,15 @@ feeds = {
 
 admin.autodiscover()
 
+v1_api = Api(api_name='v1')
+v1_api.register(LawmakerResource())
+v1_api.register(EventResource())
+v1_api.register(VenueResource())
+v1_api.register(HostResource())
+
 urlpatterns = patterns('',
+    url(r'^api/locksmith/', include('locksmith.auth.urls')), 
+    url(r'^api/', include(v1_api.urls)),
     url(r'^$', 'partytime.publicsite.views.index', name='partytime_home'),
     url(r'^', include('mediasync.urls')),
     # short-circuit old blog tag stuff

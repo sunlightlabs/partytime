@@ -16,3 +16,13 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+DATABASES['wordpress'] = DATABASES['default']
+
+STATIC_URL = "/static/"
+
+CACHE_TIME_MINUTES = 15
+
+API_LIMIT_PER_PAGE = 50
+LOCKSMITH_HUB_URL = ''
+LOCKSMITH_SIGNING_KEY = ''
+LOCKSMITH_API_NAME = 'politicalpartytime'
