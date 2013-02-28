@@ -15,7 +15,7 @@ class LawmakerResource(ModelResource):
         max_limit = API_LIMIT_PER_PAGE
         queryset = Lawmaker.objects.all()
         resource_name = 'lawmaker'
-#        authentication = LocksmithKeyAuthentication()
+        authentication = LocksmithKeyAuthentication()
         
 class VenueResource(ModelResource):
     class Meta:
@@ -23,7 +23,7 @@ class VenueResource(ModelResource):
         queryset = Venue.objects.all()
         resource_name = 'venue'
         excludes = ['latitude', 'longitude', 'website', 'townhouse']
-#        authentication = LocksmithKeyAuthentication()        
+        authentication = LocksmithKeyAuthentication()        
         
 class HostResource(ModelResource):
     class Meta:
@@ -31,7 +31,7 @@ class HostResource(ModelResource):
         queryset = Host.objects.all()
         resource_name = 'host'
         filtering = {'crp_id':ALL,'id':ALL,}
-#        authentication = LocksmithKeyAuthentication()        
+        authentication = LocksmithKeyAuthentication()        
 
         
 class EventResource(ModelResource):
@@ -45,5 +45,5 @@ class EventResource(ModelResource):
         queryset = Event.objects.all()
         resource_name = 'event'
         excludes = ['data_entry_problems', 'user_initials', 'status', 'tags', 'pdf_document_link', 'committee_id', 'scribd_upload', 'scribd_id', 'scribd_url', 'added']
-#        authentication = LocksmithKeyAuthentication()
+        authentication = LocksmithKeyAuthentication()
         
