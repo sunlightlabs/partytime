@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.views.decorators.cache import cache_page
 # for staticfiles. 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from publicsite.api import LawmakerResource, EventResource, VenueResource, HostResource
+from api.api import LawmakerResource, EventResource, VenueResource, HostResource
 
 from publicsite.feeds import *
 from settings import *

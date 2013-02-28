@@ -2,14 +2,34 @@ from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 
 from django.conf import settings
+from django.http import HttpResponse
+from tastypie.utils.mime import determine_format, build_content_type
 
 from publicsite.models import Lawmaker, Venue, Event, Host
 
 from api_authentication import LocksmithKeyAuthentication
+from models import LogEntry
 
 API_LIMIT_PER_PAGE = getattr(settings, 'API_LIMIT_PER_PAGE', 50)
 
-class LawmakerResource(ModelResource):
+
+class ExtendedModelResource(ModelResource):
+    # override to set api records.
+    def create_response(self, request, data, response_class=HttpResponse, **response_kwargs):
+        """
+        Extracts the common "which-format/serialize/return-response" cycle.
+
+        Mostly a useful shortcut/hook.
+        """
+        api_key = request.GET['apikey']
+        if api_key:
+            LogEntry.objects.create(method='p',caller_key=api_key)
+            print "Running extended model resource with key=%s" % (api_key)
+        desired_format = self.determine_format(request)
+        serialized = self.serialize(request, data, desired_format)
+        return response_class(content=serialized, content_type=build_content_type(desired_format), **response_kwargs)
+    
+class LawmakerResource(ExtendedModelResource):
     class Meta:
         filtering = {'crp_id':ALL, 'state':ALL,}
         max_limit = API_LIMIT_PER_PAGE
