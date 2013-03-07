@@ -75,8 +75,8 @@ def submit_report(log_path, log_date_format, log_date, locksmith_api_name, locks
     total_submitted = 0
     for api_key in totals:
         for endpoint in totals[api_key]:
-            print "Api call on %s %s" % (api_key, totals[api_key][endpoint])
-            """apicall(
+            #print "Api call on %s %s" % (api_key, totals[api_key][endpoint])
+            apicall(
                 locksmith_endpoint,
                 locksmith_signing_key,
                 api = locksmith_api_name,
@@ -85,6 +85,6 @@ def submit_report(log_path, log_date_format, log_date, locksmith_api_name, locks
                 key = api_key,
                 calls = totals[api_key][endpoint]
             )
-            """
+            
             total_submitted += totals[api_key][endpoint]
     return total_submitted
