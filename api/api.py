@@ -8,7 +8,6 @@ from tastypie.utils.mime import determine_format, build_content_type
 from publicsite.models import Lawmaker, Venue, Event, Host
 
 from api_authentication import LocksmithKeyAuthentication
-from models import LogEntry
 
 API_LIMIT_PER_PAGE = getattr(settings, 'API_LIMIT_PER_PAGE', 50)
 
