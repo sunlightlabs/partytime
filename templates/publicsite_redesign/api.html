@@ -26,6 +26,360 @@
 <p>
 	These documents are posted as a public service in the interest of creating more transparency about the relationships between lobbyists and lawmakers. Sunlight is not responsible for the content of the invitations themselves (including erroneous information) or for verifying whether the events advertised in the invitations actually occurred.
 </p>
+
+<h3>API</h3>
+<div style="border: 1px solid black; padding: 5px;"><b>NOTE: As of Mar. 7, API users will be required to use a <a href="http://services.sunlightlabs.com/accounts/register/">Sunlight API key</a> to make API calls. The key is free and does not restrict access to the data.</b></div>
+<p>
+	<b>Overview </b><br /> The base url for the API is politicalpartytime.org/api/v1 ; any addresses in the below must be appended to the base url. All API calls require an active <a href="http://services.sunlightlabs.com/accounts/register/">Sunlight API key</a> and a format (either 'json' or 'xml') as querystring arguments. For instance, a call to describe event #31 would look like /event/31/?format=json&apikey=[ your API key ]. API <a href="#methods">methods</a> and <a href="#return_types">return types</a> are described below.
+</p>
+<p id="methods"><h3>API Methods</h3><br />
+<b>/event/</b><br />Return a list of <a href="#events">events</a>. With no filters will return all events. Optional parameters are: 
+<dl style="margin-left:15px;">
+	<dt>
+		<code>beneficiaries__crp_id</code>
+	</dt>
+	<dd>
+		Lawmaker ID used by the Center for Responsive Politics.
+	</dd>
+    <dt>
+		<code>host__id </code>
+	</dt>
+	<dd>Internal host id
+	</dd>
+    <dt>
+		<code>beneficiaries__state </code>
+	</dt>
+	<dd>Two-letter postal code indicating what state the event beneficiary represents. Presidents do not represent a single state.
+	</dd>
+</dl>
+</p>
+<p>
+<b>/event/&lt;event_id&gt;/</b><br />Return details about a single <a href="#events">event</a> referenced by id. No additional parameters are required.
+<dl style="margin-left:15px;">
+	<dt>
+		<code>beneficiaries__crp_id</code>
+	</dt>
+	<dd>
+		Lawmaker ID used by the Center for Responsive Politics.
+	</dd>
+    <dt>
+		<code>host__id </code>
+	</dt>
+	<dd>Internal host id
+	</dd>
+    <dt>
+		<code>beneficiaries__state </code>
+	</dt>
+	<dd>Two-letter postal code indicating what state the event beneficiary represents. Presidents do not represent a single state.
+	</dd>
+</dl>
+</p>
+
+
+<p>
+<b>/lawmakers/</b><br />Return details about <a href="#legislators">legislators</a>. With no additional parameters, will return all legislators.
+<dl class="api" style="margin-left:15px;">
+	<dt>
+		<code>crp_id</code>
+	</dt>
+	<dd>
+		Show only the legislator identified by this used by the Center for Responsive Politics ID. 
+	</dd>
+</dl>
+</p>
+
+<p>
+<b>/lawmaker/&lt;lawmaker_id&gt;/</b><br />Return details about a single <a href="#legislators">legislator</a> referenced by internal id. No additional parameters are required.
+</p>
+    
+<p>
+<b>/host/</b><br />Return details about all <a href="#hosts">hosts</a>. 
+</p>
+
+<p>
+<b>/host/&lt;host_id&gt;/</b><br />Return details about a single <a href="#hosts">host</a> identified by internal id.
+<dl class="api" style="margin-left:15px;">
+<dt>
+	<code>host_id</code>
+</dt>
+<dd>
+	 Internal host id. 
+</dd>
+</dl>
+</p>
+
+
+<p id="return_types"><h3>API return types</h3></p>
+
+<p id="events"><b>Events</b><br />Each fundraiser or other party includes the following data, though some fields may be empty.</p>
+
+<dl class="api" style="margin-left:15px;">
+	<dt>
+		<code>Beneficiaries</code>
+	</dt>
+	<dd>
+		A list of beneficiaries, typically lawmakers, who are raising money at the event. Some events raise money for many lawmakers, so this list may be quite long. For more details see <a href="#legislators">legislators</a>.
+	</dd>
+	
+	<dt>
+		<code>canceled</code>
+	</dt>
+	<dd>Is the event canceled ? 
+	</dd>
+
+	<dt>
+		<code>checks_payable_to_address</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>contributions_info</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>distribution_paid_for_by</code>
+	</dt>
+	<dd>The entity who sent the event--typically the sponsoring committee
+	</dd>
+	
+	<dt>
+		<code>end_date</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>end_time</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>entertainment</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>hosts</code>
+	</dt>
+	<dd>A list of event <a href="#hosts">hosts</a>.
+	</dd>
+	
+	<dt>
+		<code>id</code>
+	</dt>
+	<dd>An unique internal id. This is unique with respect to invitations; occasionally we enter different versions of the same event twice. 
+	</dd>
+	
+	<dt>
+		<code>is_presidential</code>
+	</dt>
+	<dd>Is this a presidential fundraiser? 
+	</dd>
+	
+	<dt>
+		<code>make_checks_payable_to</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>postponed</code>
+	</dt>
+	<dd>
+	</dd>
+
+	<dt>
+		<code>resource_uri</code>
+	</dt>
+	<dd>The local API address for this specific event.
+	</dd>
+	
+	<dt>
+		<code>rsvp_info</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>start_date</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>start_time</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>venue</code>
+	</dt>
+	<dd>The location of the event. For more details, see <a href="#venues">venues</a>.
+	</dd>
+						
+
+</dl>
+
+
+
+<p id="legislators"><b>Legislators</b><br />Not all legislators are present; only those who we have a record of hosting or benefitting from a fundraiser. </p>
+<dl class="api" style="margin-left:15px;">
+	<dt>
+		<code>affiliate</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>crp_id</code>
+	</dt>
+	<dd>A unique id assigned by the Center for Responsive Politics. 
+	</dd>
+
+
+	<dt>
+		<code>district</code>
+	</dt>
+	<dd>What house district does this lawmaker represent? Absent for other officials.
+	</dd>
+	
+	<dt>
+		<code>id</code>
+	</dt>
+	<dd>A unique internal id.
+	</dd>
+	
+	<dt>
+		<code>name</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>party</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	
+	<dt>
+		<code>resource_uri</code>
+	</dt>
+	<dd>URL for API page with these details.
+	</dd>
+	
+	<dt>
+		<code>state</code>
+	</dt>
+	<dd>What state does this lawmaker represent?
+	</dd>
+	
+	<dt>
+		<code>title</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	
+	
+	
+</dl>
+
+
+<p id="hosts"><b>Hosts</b><br />These are people listed as hosts on the invitation. They can be either lawmakers or regular citizens. </p>
+<dl class="api" style="margin-left:15px;">
+	
+	<dt>
+		<code>crp_id</code>
+	</dt>
+	<dd>A unique id assigned by the Center for Responsive Politics. 
+	</dd>
+	
+	<dt>
+		<code>id</code>
+	</dt>
+	<dd>A unique internal id.
+	</dd>
+	
+	<dt>
+		<code>name</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>resource_uri</code>
+	</dt>
+	<dd>URL for API page with these details.
+	</dd>
+	
+</dl>
+
+
+<p id="venues"><b>Venues</b><br />The locations where fundraisers are held</p>
+<dl class="api" style="margin-left:15px;">
+
+
+	<dt>
+		<code>address1</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	<dt>
+		<code>address2</code>
+	</dt>
+	<dd>
+	</dd>
+	
+	
+	<dt>
+		<code>city</code>
+	</dt>
+	<dd>
+	</dd>
+	
+
+	<dt>
+		<code>id</code>
+	</dt>
+	<dd>A unique internal id.
+	</dd>
+
+	
+	<dt>
+		<code>resource_uri</code>
+	</dt>
+	<dd>URL for API page with these details.
+	</dd>
+	
+
+	<dt>
+		<code>state</code>
+	</dt>
+	<dd>
+	</dd>
+
+	
+	<dt>
+		<code>venue_name</code>
+	</dt>
+	<dd>
+	</dd>
+    	
+	<dt>
+		<code>zipcode</code>
+	</dt>
+	<dd>
+	</dd>
+
+</dl>
 <h3>RSS</h3>
 <p>
 	You can find the RSS feed for Party Time here: <a href="http://politicalpartytime.org/feeds/pol/N00009668/">http://politicalpartytime.org/feeds/pol/N00009668/</a>
@@ -39,162 +393,6 @@
 <p>
 	And as a relational "zip" file <a href="/www/partytime_dump.zip">here.</a>
 </p>
-<h3>API</h3>
-<div style="border: 1px solid black; padding: 5px;"><b>NOTE: the API format will be changing soon! On Mar. 1, API users will be required to use a <a href="http://services.sunlightlabs.com/accounts/register/">sunlight API key</a> to make API calls. The key is free and does not restrict access to the data.</b></div>
-<p>
-	Returns Party Time data in JSON format. You can find the JSON feed here: <a href="http://politicalpartytime.org/json/N00009668/">http://politicalpartytime.org/json/N00009668/</a> 
-</p>
-<p>
-	The last number represents a candidateID. You can determine a candidate ID by going to his or her profile page on Political Party Time. (IDs originate from the <a href="http://opensecrets.org">Center for Responsive Politics</a> -- the nation&#39;s authority on campaign finance data.)
-</p>
-
-<h3>Party on, data geeks!</h3>
-<dl class="api">
-	<dt>
-		<code>Field Name</code>
-	</dt>
-	<dd>
-		Explanation
-	</dd>
-	<dt>
-		<code>ID</code>
-	</dt>
-	<dd>
-		unique ID (primary key)
-	</dd>
-	<dt>
-		<code>Beneficiary</code>
-	</dt>
-	<dd>
-		candidate name, party, district, office, or committee name
-	</dd>
-	<dt>
-		<code>Host</code>
-	</dt>
-	<dd>
-		full names of hosts
-	</dd>
-	<dt>
-		<code>Other Members Of Congress</code>
-	</dt>
-	<dd>
-		name of lawmakers featured on invitation who are not beneficiaries of event
-	</dd>
-	<dt>
-		<code>Start Time</code>
-	</dt>
-	<dd>
-		start time
-	</dd>
-	<dt>
-		<code>End Time</code>
-	</dt>
-	<dd>
-		end time
-	</dd>
-	<dt>
-		<code>Start Date</code>
-	</dt>
-	<dd>
-		start date
-	</dd>
-	<dt>
-		<code>End Date</code>
-	</dt>
-	<dd>
-		end date
-	</dd>
-	<dt>
-		<code>Venue Name</code>
-	</dt>
-	<dd>
-		Name of the venue where the event is being held
-	</dd>
-	<dt>
-		<code>Entertainment Type</code>
-	</dt>
-	<dd>
-		type of entertainment listed, i.e. beer tasting, pheasant hunt, reception
-	</dd>
-	<dt>
-		<code>Venue Address1</code>
-	</dt>
-	<dd>
-		Venue street address
-	</dd>
-	<dt>
-		<code>Venue Address2</code>
-	</dt>
-	<dd>
-		Apt/suite/room number for the event
-	</dd>
-	<dt>
-		<code>Venue City</code>
-	</dt>
-	<dd>
-		venue city
-	</dd>
-	<dt>
-		<code>Venue State</code>
-	</dt>
-	<dd>
-		venue state
-	</dd>
-	<dt>
-		<code>Venue Zipcode</code>
-	</dt>
-	<dd>
-		venue zip code
-	</dd>
-	<dt>
-		<code>Venue Website</code>
-	</dt>
-	<dd>
-		venue website
-	</dd>
-	<dt>
-		<code>Contributions Info</code>
-	</dt>
-	<dd>
-		information on invitation for suggested contributions for event
-	</dd>
-	<dt>
-		<code>Latlong</code>
-	</dt>
-	<dd>
-		latitude/longitude of venue location
-	</dd>
-	<dt>
-		<code>Rsvp Info</code>
-	</dt>
-	<dd>
-		RSVP information
-	</dd>
-	<dt>
-		<code>Distribution Paid For By</code>
-	</dt>
-	<dd>
-		who is paying for distribution of invitation
-	</dd>
-	<dt>
-		<code>Make Checks Payable To</code>
-	</dt>
-	<dd>
-		information on to whom invitee should send invitati
-	</dd>
-	<dt>
-		<code>Checks Payable To Address</code>
-	</dt>
-	<dd>
-		address where payments should be sent
-	</dd>
-	<dt>
-		<code>Committee Id</code>
-	</dt>
-	<dd>
-		committee ID for beneficiary, if listed on invitation
-	</dd>
-</dl>
 <div class="clear"></div>
 
 {% endblock %}
