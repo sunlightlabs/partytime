@@ -43,10 +43,11 @@ class EventResource(ModelResource):
     hosts = fields.ManyToManyField(HostResource, 'hosts', full=True, null=True)
         
     class Meta:
-        filtering = {'beneficiaries':ALL_WITH_RELATIONS, 'hosts':ALL_WITH_RELATIONS,}
+        filtering = {'beneficiaries':ALL_WITH_RELATIONS, 'hosts':ALL_WITH_RELATIONS,'start_date':['gt']}
         max_limit = API_LIMIT_PER_PAGE
         queryset = Event.objects.all()
         resource_name = 'event'
         excludes = ['data_entry_problems', 'user_initials', 'status', 'tags', 'pdf_document_link', 'committee_id', 'scribd_upload', 'scribd_id', 'scribd_url', 'added']
         authentication = LocksmithKeyAuthentication()
+        
         

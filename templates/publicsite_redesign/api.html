@@ -27,11 +27,17 @@
 	These documents are posted as a public service in the interest of creating more transparency about the relationships between lobbyists and lawmakers. Sunlight is not responsible for the content of the invitations themselves (including erroneous information) or for verifying whether the events advertised in the invitations actually occurred.
 </p>
 
-<h3>API</h3>
-<div style="border: 1px solid black; padding: 5px;"><b>NOTE: As of Mar. 7, API users will be required to use a <a href="http://services.sunlightlabs.com/accounts/register/">Sunlight API key</a> to make API calls. The key is free and does not restrict access to the data.</b></div>
+<h3 id="api_description">API</h3>
+<div style="border: 1px solid black; padding: 5px;"><b>NOTE: As of Mar. 8, API users will be required to use a <a href="http://services.sunlightlabs.com/accounts/register/">Sunlight API key</a> to make API calls. The key is free and does not restrict access to the data. The structure of the API has changed slightly as well; please see below.</b></div>
 <p>
-	<b>Overview </b><br /> The base url for the API is politicalpartytime.org/api/v1 ; any addresses in the below must be appended to the base url. All API calls require an active <a href="http://services.sunlightlabs.com/accounts/register/">Sunlight API key</a> and a format (either 'json' or 'xml') as querystring arguments. For instance, a call to describe event #31 would look like /event/31/?format=json&apikey=[ your API key ]. API <a href="#methods">methods</a> and <a href="#return_types">return types</a> are described below.
+	<b>Overview </b><br /> The base url for the API is politicalpartytime.org/api/v1 ; any addresses listed below must be appended to the base url. All API calls require an active <a href="http://services.sunlightlabs.com/accounts/register/">Sunlight API key</a> and a format (either 'json' or 'xml') as querystring arguments. For instance, a call to describe event #31 would look like /event/31/?format=json&apikey=[ your API key ]. API <a href="#methods">methods</a> and <a href="#return_types">return types</a> are described below.
 </p>
+<p>Return objects consist of two parts; a meta object describing the results returned, and a list of the returned objects. The meta object looks like the following:
+    <br><pre>{"meta": {"limit": 50, "next": "/api/v1/event/?apikey=[API Key]&limit=50&offset=50&format=json", "offset": 0, "previous": null, "total_count": 17246}</pre><br>
+    The 'next' variable is the next page in this result set; the previous page--which in the above is null, is the previous page. The 'total_count' is the total number of objects matching this description, though not all are returned. The 'limit' is the maximum number of objects returned per page.</p>
+<h3>Univeral Parameters</h3>
+<p>
+All api calls can be given a 'limit' and an 'offset' parameter, though the limit can not be greater than 50. The offset must be positive.</p>
 <p id="methods"><h3>API Methods</h3><br />
 <b>/event/</b><br />Return a list of <a href="#events">events</a>. With no filters will return all events. Optional parameters are: 
 <dl style="margin-left:15px;">
@@ -39,17 +45,23 @@
 		<code>beneficiaries__crp_id</code>
 	</dt>
 	<dd>
-		Lawmaker ID used by the Center for Responsive Politics.
+		Lawmaker ID used by the Center for Responsive Politics.<br><pre>/event/?beneficiaries__crp_id=N00003675&format=json&apikey=[API key]</pre>
+	</dd>
+	<dt>
+		<code>start_date__gt</code>
+	</dt>
+	<dd>
+		Filter by events that started after a given date. Dates should be formatted YYYY-MM-DD.<pre>/event/?start_date__gt=2012-10-01&format=json&apikey=[API key]</pre>
 	</dd>
     <dt>
 		<code>host__id </code>
 	</dt>
-	<dd>Internal host id
+	<dd>Internal host id<br><pre>/event/?host_id=12&format=json&apikey=[API key]</pre>
 	</dd>
     <dt>
 		<code>beneficiaries__state </code>
 	</dt>
-	<dd>Two-letter postal code indicating what state the event beneficiary represents. Presidents do not represent a single state.
+	<dd>Two-letter postal code indicating what state the event beneficiary represents. Presidents do not represent a single state.<br><pre>/event/?beneficiaries__state=CT&format=json&apikey=[API key]</pre>
 	</dd>
 </dl>
 </p>
@@ -57,21 +69,12 @@
 <b>/event/&lt;event_id&gt;/</b><br />Return details about a single <a href="#events">event</a> referenced by id. No additional parameters are required.
 <dl style="margin-left:15px;">
 	<dt>
-		<code>beneficiaries__crp_id</code>
+		<code></code>
 	</dt>
 	<dd>
-		Lawmaker ID used by the Center for Responsive Politics.
+		<pre>/event/31/?format=json&apikey=[API key]</pre>
 	</dd>
-    <dt>
-		<code>host__id </code>
-	</dt>
-	<dd>Internal host id
-	</dd>
-    <dt>
-		<code>beneficiaries__state </code>
-	</dt>
-	<dd>Two-letter postal code indicating what state the event beneficiary represents. Presidents do not represent a single state.
-	</dd>
+
 </dl>
 </p>
 
@@ -83,13 +86,23 @@
 		<code>crp_id</code>
 	</dt>
 	<dd>
-		Show only the legislator identified by this used by the Center for Responsive Politics ID. 
-	</dd>
+		Show only the legislator identified by this used by the Center for Responsive Politics ID.
+ <pre>/lawmaker/?format=json&crp_id=N00003675&apikey=[API key]</pre>
+	    </dd>
 </dl>
 </p>
 
 <p>
 <b>/lawmaker/&lt;lawmaker_id&gt;/</b><br />Return details about a single <a href="#legislators">legislator</a> referenced by internal id. No additional parameters are required.
+
+<dl class="api" style="margin-left:15px;">
+	<dt>
+		<code>crp_id</code>
+	</dt>
+	<dd>
+		<pre>/lawmaker/19/?format=json&apikey=[API key]</pre>
+	    </dd>
+</dl>
 </p>
     
 <p>
@@ -103,7 +116,7 @@
 	<code>host_id</code>
 </dt>
 <dd>
-	 Internal host id. 
+	 Internal host id. <pre>/host/?host_id=12&format=json&apikey=[API key]</pre>
 </dd>
 </dl>
 </p>
