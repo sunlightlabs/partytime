@@ -43,7 +43,7 @@ class EventResource(ModelResource):
     hosts = fields.ManyToManyField(HostResource, 'hosts', full=True, null=True)
         
     class Meta:
-        filtering = {'beneficiaries':ALL_WITH_RELATIONS, 'hosts':ALL_WITH_RELATIONS,'start_date':['gt']}
+        filtering = {'beneficiaries':ALL_WITH_RELATIONS, 'hosts':ALL_WITH_RELATIONS,'start_date':['gt', 'lt']}
         max_limit = API_LIMIT_PER_PAGE
         queryset = Event.objects.all()
         resource_name = 'event'

@@ -990,8 +990,8 @@ def widget180_upcoming(request):
 
 
 def jsonCID(request, CID):
-    return HttpResponseRedirect('/api/#api_description')
-    """
+    #return HttpResponseRedirect('/api/#api_description')
+    
     from django.core import serializers
 
     events = Event.objects.filter(beneficiaries__crp_id=CID, status='') \
@@ -1014,7 +1014,7 @@ def jsonCID(request, CID):
         data = ''
 
     return HttpResponse(data)
-    """
+    
 
 
 def widget_state(request, state):

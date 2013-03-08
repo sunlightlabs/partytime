@@ -500,6 +500,7 @@ class Event(models.Model):
 
     class Meta:
         db_table = u'publicsite_event'
+        ordering = ['-start_date']
 
     def __unicode__(self):
         if self.entertainment and self.venue:
