@@ -35,9 +35,9 @@
 <p>Return objects consist of two parts; a meta object describing the results returned, and a list of the returned objects. The meta object looks like the following:
     <br><pre>{"meta": {"limit": 50, "next": "/api/v1/event/?apikey=[API Key]&limit=50&offset=50&format=json", "offset": 0, "previous": null, "total_count": 17246}</pre><br>
     The 'next' variable is the next page in this result set; the previous page--which in the above is null, is the previous page. The 'total_count' is the total number of objects matching this description, though not all are returned. The 'limit' is the maximum number of objects returned per page.</p>
-<h3>Univeral Parameters</h3>
+<h3>Universal Parameters</h3>
 <p>
-All api calls can be given a 'limit' and an 'offset' parameter, though the limit can not be greater than 50. The offset must be positive.</p>
+All API calls can be given a 'limit' and an 'offset' parameter, though the limit can not be greater than 50. The offset must be positive.</p>
 <p id="methods"><h3>API Methods</h3><br />
 <b>/event/</b><br />Return a list of <a href="#events">events</a>. With no filters will return all events. Optional parameters are: 
 <dl style="margin-left:15px;">
@@ -56,7 +56,7 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
     <dt>
 		<code>host__id </code>
 	</dt>
-	<dd>Internal host id<br><pre>/event/?host_id=12&format=json&apikey=[API key]</pre>
+	<dd>Internal host ID<br><pre>/event/?host_id=12&format=json&apikey=[API key]</pre>
 	</dd>
     <dt>
 		<code>beneficiaries__state </code>
@@ -66,7 +66,7 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 </dl>
 </p>
 <p>
-<b>/event/&lt;event_id&gt;/</b><br />Return details about a single <a href="#events">event</a> referenced by id. No additional parameters are required.
+<b>/event/&lt;event_id&gt;/</b><br />Return details about a single <a href="#events">event</a> referenced by ID. No additional parameters are required.
 <dl style="margin-left:15px;">
 	<dt>
 		<code></code>
@@ -93,7 +93,7 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 </p>
 
 <p>
-<b>/lawmaker/&lt;lawmaker_id&gt;/</b><br />Return details about a single <a href="#legislators">legislator</a> referenced by internal id. No additional parameters are required.
+<b>/lawmaker/&lt;lawmaker_id&gt;/</b><br />Return details about a single <a href="#legislators">legislator</a> referenced by internal ID. No additional parameters are required.
 
 <dl class="api" style="margin-left:15px;">
 	<dt>
@@ -110,13 +110,13 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 </p>
 
 <p>
-<b>/host/&lt;host_id&gt;/</b><br />Return details about a single <a href="#hosts">host</a> identified by internal id.
+<b>/host/&lt;host_id&gt;/</b><br />Return details about a single <a href="#hosts">host</a> identified by internal ID.
 <dl class="api" style="margin-left:15px;">
 <dt>
 	<code>host_id</code>
 </dt>
 <dd>
-	 Internal host id. <pre>/host/?host_id=12&format=json&apikey=[API key]</pre>
+	 Internal host ID. <pre>/host/?host_id=12&format=json&apikey=[API key]</pre>
 </dd>
 </dl>
 </p>
@@ -185,7 +185,7 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 	<dt>
 		<code>id</code>
 	</dt>
-	<dd>An unique internal id. This is unique with respect to invitations; occasionally we enter different versions of the same event twice. 
+	<dd>An unique internal ID. This is unique with respect to invitations; occasionally we enter different versions of the same event twice. 
 	</dd>
 	
 	<dt>
@@ -241,18 +241,18 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 
 
 
-<p id="legislators"><b>Legislators</b><br />Not all legislators are present; only those who we have a record of hosting or benefitting from a fundraiser. </p>
+<p id="legislators"><b>Legislators / Leadership PACs</b><br />Not all legislators are present; only those who we have a record of hosting or benefitting from a fundraiser. Leadership PACs are also entered in this table; if that's the case, the lawmaker's name is given in the 'affiliate' field</p>
 <dl class="api" style="margin-left:15px;">
 	<dt>
 		<code>affiliate</code>
 	</dt>
-	<dd>
+	<dd>If this is a leadership PAC, this field is the lawmaker's name.
 	</dd>
 	
 	<dt>
 		<code>crp_id</code>
 	</dt>
-	<dd>A unique id assigned by the Center for Responsive Politics. 
+	<dd>A unique ID assigned by the Center for Responsive Politics. 
 	</dd>
 
 
@@ -265,7 +265,7 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 	<dt>
 		<code>id</code>
 	</dt>
-	<dd>A unique internal id.
+	<dd>A unique internal ID.
 	</dd>
 	
 	<dt>
@@ -311,13 +311,13 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 	<dt>
 		<code>crp_id</code>
 	</dt>
-	<dd>A unique id assigned by the Center for Responsive Politics. 
+	<dd>A unique ID assigned by the Center for Responsive Politics. 
 	</dd>
 	
 	<dt>
 		<code>id</code>
 	</dt>
-	<dd>A unique internal id.
+	<dd>A unique internal ID.
 	</dd>
 	
 	<dt>
@@ -362,7 +362,7 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 	<dt>
 		<code>id</code>
 	</dt>
-	<dd>A unique internal id.
+	<dd>A unique internal ID.
 	</dd>
 
 	
@@ -404,7 +404,7 @@ All api calls can be given a 'limit' and an 'offset' parameter, though the limit
 <h3>relational ZIP</h3>
 
 <p>
-	And as a relational "zip" file <a href="/www/partytime_dump.zip">here.</a>
+	And as a relational "zip" file <a href="/www/partytime_dump.zip">here</a>.
 </p>
 <div class="clear"></div>
 
