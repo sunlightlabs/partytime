@@ -448,7 +448,8 @@ field_name_fix={
     'other_members_of_congress':'other member of congress',
     'venue_name':'venue',
     'entertainment_type':'entertainment',
-    'tags':'tags'
+    'tags':'tags',
+    'city':'city'
     }
 
 @cache_page(60*cache_time_minutes)

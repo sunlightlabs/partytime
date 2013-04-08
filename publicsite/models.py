@@ -175,7 +175,9 @@ class EventManager(models.Manager):
                 events = events.filter(entertainment__icontains=args)
             elif field == 'city':
                 (city, state) = args.split('-')
-                events = events.filter(venue__city__icontains=args, venue__state=state)
+                events = events.filter(venue__city__icontains=city)
+                if state:
+                    events = events.filter(venue__state__icontains=state)
             elif field == 'tags':
                 events = events.filter(tags__tag_name__icontains=args)
             else:
