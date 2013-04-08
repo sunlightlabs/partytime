@@ -67,7 +67,7 @@ urlpatterns = patterns('',
     url(r'^party/(?P<docid>\d+)/$', 'partytime.publicsite.views.party', name='partytime_party_detail'),
     
     # search by field page on new template
-    url(r'^search/(?P<field>\w+)/(?P<args>.+)/$', 'partytime.publicsite.views.search', name='partytime_search'),
+    url(r'^search/(?P<field>\w+)/(?P<args>.*)/$', 'partytime.publicsite.views.search', name='partytime_search'),
     
     
     url(r'^pol/(?P<cid>.+)/$', 'partytime.publicsite.views.polwithpac', name='partytime_pol_detail'),
