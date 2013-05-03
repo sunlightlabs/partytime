@@ -27,7 +27,7 @@
 <div class="eightCol colRt">
 	<div class="description">
 		<h2>
-			<span class="type">{% if doc.entertainment %}{{ doc.entertainment }}{% endif %}</span> {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %}</a>
+			<span class="type">{% if doc.entertainment %}{{ doc.entertainment }}{% endif %}</span> {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{% if ben.crp_id and not ben.affiliate %}<a href="/pol/{{ben.crp_id}}/">{% endif %}{{ ben.name }}{% if ben.crp_id and not  ben.affiliate  %}</a>{% endif %} {% if ben.affiliate %}({% if ben.crp_id %}<a href="/pol/{{ben.crp_id}}/">{% endif %}{{ ben.affiliate }}{% if ben.crp_id %}</a >{% endif %}) {% endif %}{% endfor %}{% endif %}</a>
 		</h2>
 		{% if doc.canceled or doc.postponed %}
         <p class="partyPostponed">Note: This event has been {% if doc.canceled %}canceled{% else %}postponed{% endif %}.</p>
