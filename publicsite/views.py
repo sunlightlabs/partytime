@@ -537,8 +537,6 @@ def polwithpac(request, cid):
     events_all = Event.objects.filter(status='', beneficiaries__crp_id=cid).order_by('-start_date', '-start_time').distinct()
     events = sort_events( events_all, sortfield, sortorder)
 
-    # need to get pictures of 'em
-    image_url = None
 
     event_count = events.count()
     paginator = Paginator(events, 20)
@@ -564,7 +562,6 @@ def polwithpac(request, cid):
             {'results': page.object_list,
              'lawmaker': lawmaker,
              'pacname': pacname,
-             'image_url': image_url,
              'event_count':event_count,
              'paginator_html':paginator_html,
              'current_pagenum':pagenum,

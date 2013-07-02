@@ -228,7 +228,9 @@ class Lawmaker(models.Model):
     district = models.CharField(blank=True, max_length=2)
     crp_id =  models.CharField(u'CRP ID', blank=True, max_length=15)
     affiliate =  models.CharField(help_text=u"If this is a leadership PAC, this field is the lawmaker's name", blank=True,max_length=200)
-
+    bioguide = models.CharField(blank=True, null=True, max_length=10, help_text="Bioguide id")
+    image_available = models.NullBooleanField(null=True, help_text="Is there an image available?")
+    
     class Meta:
         db_table = u'publicsite_lawmaker'
 
@@ -305,6 +307,13 @@ class Lawmaker(models.Model):
             return positions
         lawmaker = lawmaker[0]
         return lawmaker.all_leadership_positions()
+    
+    def get_image_url(self):
+        if self.image_available:
+            return "http://assets.politicalpartytime.org/1.0/images/lawmakers/72x90/%s.jpg" % (self.bioguide)
+        else:
+            return None
+        
 
 
 class SuperCommitteeMember(models.Model):

@@ -1,0 +1,1 @@
+The files in this directory are used for setting bioguide ids, committee membership, and image availability. 

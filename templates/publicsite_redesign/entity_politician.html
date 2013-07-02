@@ -9,7 +9,7 @@
 {% block container %}
 {% captureas share_title %}{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}){% endcaptureas %}
 <div class="module nineCol colLt entity">
-		{% if image_url %}<img src="{{ image_url }}" alt="{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }})" class="oneCol colLt">{% endif %}
+		{% if lawmaker.image_available %}<img src="{{ lawmaker.get_image_url }}" alt="{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }})" class="oneCol colLt">{% endif %}
 		<div class="leg sevenCol colRt">
 			<h2 class="">
 				{{ lawmaker.title }} {{ lawmaker.name }} <span class="role">({{ lawmaker.party }}, {{ lawmaker.state }})</span>
