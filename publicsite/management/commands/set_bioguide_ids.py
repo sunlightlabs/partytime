@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 leg_dict[leg['opensecrets']]=leg['bioguide']
         
         # Now look up the lawmakers who don't have a CRP id and add it.
-        lawmakers = Lawmaker.objects.filter(bioguide__isnull=True)
+        lawmakers = Lawmaker.objects.all()
         found=0
         notfound=0
         crp_id_missing = 0
