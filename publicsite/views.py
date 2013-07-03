@@ -597,8 +597,8 @@ def cmtedetail(request, cmteid):
     events_all = Event.objects.filter(status='', beneficiaries__in=lawmakers).order_by('-start_date', '-start_time').distinct()
     events = sort_events( events_all, sortfield, sortorder)
 
-    committee_leadership = committee.members.filter(committeemembership__position__in=["Chair", "Ranking Member"])
-    committee_membership = committee.members.exclude(committeemembership__position__in=["Chair", "Ranking Member"])
+    committee_leadership = committee.members.filter(committeemembership__position__in=["Chair", "Ranking Member", "Chairman"])
+    committee_membership = committee.members.exclude(committeemembership__position__in=["Chair", "Ranking Member", "Chairman"])
     
     event_count = events.count()
     paginator = Paginator(events, 20)
