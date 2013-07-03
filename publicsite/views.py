@@ -514,8 +514,6 @@ def search(request, field, args):
 @cache_page(60*cache_time_minutes)
 def polwithpac(request, cid):
 
-
-
     lawmaker = None
     pacname = None
 
@@ -569,6 +567,76 @@ def polwithpac(request, cid):
              'table_header':table_header,
              }
             )
+
+#
+# committees
+#
+@cache_page(60*cache_time_minutes)
+def cmtes(request):
+    house_committees = Committee.objects.filter(chamber='House')
+    senate_committees = Committee.objects.filter(chamber='Senate')
+    joint_committees = Committee.objects.filter(chamber='Joint')
+    
+    return render_to_response(
+            'publicsite_redesign/committee_list.html',
+            {
+            'house_committees':house_committees,
+            'senate_committees':senate_committees,
+            'joint_committees':joint_committees,
+            }
+            )
+            
+@cache_page(60*cache_time_minutes)                       
+def cmtedetail(request, cmteid):
+    pagenum = request.GET.get('page', 1)
+    sortfield = request.GET.get('sort', 'start_date')
+    sortorder = request.GET.get('order', '1')
+    
+    committee = Committee.objects.get(short=cmteid)
+    lawmakers = committee.members.all().distinct()
+    events_all = Event.objects.filter(status='', beneficiaries__in=lawmakers).order_by('-start_date', '-start_time').distinct()
+    events = sort_events( events_all, sortfield, sortorder)
+
+    committee_leadership = committee.members.filter(committeemembership__position__in=["Chair", "Ranking Member"])
+    committee_membership = committee.members.exclude(committeemembership__position__in=["Chair", "Ranking Member"])
+    
+    event_count = events.count()
+    paginator = Paginator(events, 20)
+
+
+    max_page = paginator.num_pages
+
+
+    page_url_base = "/committee/detail/%s/?page=%s&" % (cmteid, pagenum)
+    pageless_url_base = "/committee/detail/%s/?sort=start_date&order=%s&" % (cmteid, sortorder)
+    table_header = make_sortable_table_header(page_url_base, sortorder)
+
+    paginator_html = make_paginator_text(pageless_url_base, int(pagenum), max_page)
+    print "paginator: " + paginator_html
+
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response(
+            'publicsite_redesign/entity_committee.html',
+            {
+             'committee_membership':committee_membership,
+             'committee_leadership':committee_leadership,
+             'committee':committee,
+             'results': page.object_list,
+             'event_count':event_count,
+             'paginator_html':paginator_html,
+             'current_pagenum':pagenum,
+             'max_pagenum':max_page,
+             'table_header':table_header,
+             }
+            )
+
+
+
+
 # new search that looks in multiple places for matches and then does... something....
 @cache_page(60*cache_time_minutes)
 def multisearch(request):
@@ -824,19 +892,6 @@ def widget_pol(request, crp_id):
     'events':events,
     'widget_title':widget_title,
     })
-
-def cmtedetail(request, cmteid):
-    committee = Committee.objects.get(short=cmteid)
-
-
-    return render_to_response(
-            'publicsite_redesign/entity_committee.html',
-            {
-             'committee':commitee,
-             }
-            )
-
-
 
 
 
@@ -1108,17 +1163,6 @@ def upload(request):
 
 def upload_thanks(request):
     return HttpResponse("Thank you for your submission.")
-
-
-#
-# committees
-#
-def cmtes(request, chamber='House'):
-    return render_to_response(
-            'publicsite/cmte.html',
-            {'res': Committee.objects.filter(chamber=chamber),
-             'chamber': chamber, }
-            )
 
 
 

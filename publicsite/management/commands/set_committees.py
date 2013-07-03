@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 ctype = "House"
                 if committee['committee_type'] == 'senate':
                     ctype = "Senate"
-                elif committee['committee_type'] == 'join':
+                elif committee['committee_type'] == 'joint':
                     ctype = "Joint"
                 committeemodel = Committee.objects.create(
                     short=committee['thomas_id'],

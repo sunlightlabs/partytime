@@ -115,8 +115,8 @@ urlpatterns = patterns('',
     url(r'^supercommittee/$', 'partytime.publicsite.views.supercommittee', name='partytime_supercommittee'),
 
     url(r'^committee/update/(?P<chamber>\w*)/$', 'partytime.publicsite.views.updatecmtes'),   #temp
-    url(r'^committee/$', 'partytime.publicsite.views.cmtes', {'chamber': 'House'}, name='partytime_committee_list'),
-
+    url(r'^committee/detail/(?P<cmteid>\w*)/$', 'partytime.publicsite.views.cmtedetail'), 
+    url(r'^committees/$', 'partytime.publicsite.views.cmtes', name='partytime_supercommittee'),
     url(r'^leadpacs/$', 'partytime.publicsite.views.leadpac_all', name='partytime_leadpacs'),
     url(r'^ical/$', IcalFeed(), name='partytime_ical'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),

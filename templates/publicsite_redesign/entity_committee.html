@@ -4,15 +4,14 @@
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>
 {% endblock %}
 
-{% block title %}{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}) - {{ block.super }}{% endblock %}
+{% block title %}	{{ committee.title }} - {{ block.super }}{% endblock %}
 
+		
 {% block container %}
-{% captureas share_title %}{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }}){% endcaptureas %}
 <div class="module nineCol colLt entity">
-		{% if lawmaker.image_available %}<img src="{{ lawmaker.get_image_url }}" alt="{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }})" class="oneCol colLt">{% endif %}
 		<div class="leg sevenCol colRt">
 			<h2 class="">
-				{{ lawmaker.title }} {{ lawmaker.name }} <span class="role">({{ lawmaker.party }}, {{ lawmaker.state }})</span>
+				{{ committee.title }} 
 			</h2>
 			<div class="clear"></div>
 			<div class="share-buttons gigya entity" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"
@@ -21,73 +20,47 @@
                  data-options="showCounts=right&amp;title=Check%20out%20{{ share_title|safe|urlencode }}%20on%20Political%20Party%20Time&amp;description=Follow%20the%20political%20money%20trail%20with%20Sunlight%20Foundation's%20Party%20Time!%20Know%20of%20an%20upcoming%20political%20fundraiser%3F%20Anonymously%20upload%20it%3A%20http%3A%2F%2Fpoliticalpartytime.org%2Fupload%2F&amp;url={{ current_url|urlencode }}"
                  data-twitter-options="defaultText=Check%20out%20{{ share_title|safe|truncatechars:90|urlencode }}%20on%20%40SunFoundation's%20%40SFPartyTime"></div>
 			<ul class="clearfix social">
-				{% if lawmaker.crp_id %}
-				<li>
-					<a href="/feeds/pol/{{ lawmaker.crp_id }}/" class="rss textReplace">rss</a>
-				</li>
-				<li>
-					<a href="javascript:gotoscout('http://politicalpartytime.org/feeds/pol/{{ lawmaker.crp_id }}/')" class="">Create an alert</a>
-				</li>
-				{% endif %}
-				{% if lawmaker.crp_id %}
-				<li>
-					<a href="/widget/pol/{{ lawmaker.crp_id }}/" class="">Share Widget</a>
-				</li>
-				{% endif %}
+				
+				
 			</ul>
 
 			<div class="clear"></div>
-			{% if lawmaker.congressional_leadership_positions %}
-			<h4>Congressional Leadership</h4>
-		    <ul class="committees clearfix">
-				{% for position in lawmaker.congressional_leadership_positions %}
-				<li>{{ position }}</li>
-				{% endfor %}
-		    </ul>
-		    {% endif %}
-
-			{% if lawmaker.committee_set.all %}
-			<h4>Current Committee Membership</h4>
+			<h4>Current Committee Leadership</h4>
 			<ul class="committees clearfix">
-				{% for committee in lawmaker.committee_set.all %}
-				<li>
-					<a href="{{committee.get_absolute_url}}">{{committee.title}}</a> <span class="role">{{ lawmaker|committee_position:committee }}</span>
-				</li>
+				{% for lawmaker in committee_leadership %}
+				{% if lawmaker.affiliate %}{% else %}
+					<a href="{% if lawmaker.crp_id %}{% url partytime_pol_detail lawmaker.crp_id %}{% else %}{% url partytime_search 'Beneficiary' lawmaker.affiliate|urlencode %}{% endif %}" style="display:inline;">{{ lawmaker.title }} {{ lawmaker.name }}</a> <span class="role">{{ lawmaker|committee_position:committee }}</span>
+				{% endif %}
 				{% endfor %}
 			</ul>
-			{% endif %}
+			
+			<h4>Current Committee Members</h4>
+			<ul class="committees clearfix">
+				{% for lawmaker in committee_membership %}
+				{% if lawmaker.affiliate %}{% else %}
+					<a href="{% if lawmaker.crp_id %}{% url partytime_pol_detail lawmaker.crp_id %}{% else %}{% url partytime_search 'Beneficiary' lawmaker.affiliate|urlencode %}{% endif %}" style="display:inline;">{{ lawmaker.title }} {{ lawmaker.name }}</a>
+				{% endif %}
+				{% endfor %}
+			</ul>
 		</div>
 	</div>
 
 		<div class="uploadSmall module colRt threeCol ">
 			<h3 class="textReplace">Extend an Invite</h3>
-			<a class="button" href="/upload/">Upload</a>
+			<a class="button" href="">Upload</a>
 		</div>
 	<div class="clear"></div>
 
 	<div class="partyList last module">
 		<div class="tableHat twelveCol aboutParties">
-			<h3 class="">
-				Beneficiary of {{ event_count }} PT events
+			
+			
+		  <h3 class="">
+				{{ event_count }} Party Time events for current members of the {{ committee.title}}
 			</h3>
-
-			<dl class="clearfix">
-				<dt>Parties Benefitting</dt>
-				<dd>
-					<ul>
-						<li>
-							Campaign Committee
-						</li>
-						{% if pacname %}
-						<li>
-							<a href="/search/Beneficiary/{{ pacname }}/">{{ pacname }}</a>
-						</li>
-						{% endif %}
-
-					</ul>
-				</dd>
-				{% if current_pagenum %}<dt>Showing page {{ current_pagenum}} of {{ max_pagenum }}</dt>{% endif %}
-			</dl>
+			<div class="pagination">
+  		  {{ paginator_html|safe }}
+  		</div>
 			<div class="clear"></div>
 		</div>
 		<table>
@@ -126,13 +99,14 @@
 
 			</tbody>
 		</table>
-
+		
 		<div class="pagination">
-				{{ paginator_html|safe }}
+		  {{ paginator_html|safe }}
+			
 		</div>
 	</div>
 {% endblock %}
-
+	
 {% block js %}
 {{ block.super }}
 <script type="text/javascript">
@@ -148,8 +122,10 @@ function gotoscout(feedurl) {
 }
 
 </script>
+
 <style>
 #share-buttons img {border:none;}
 </style>
 
 {% endblock %}
+	

@@ -76,6 +76,7 @@
 					{# set nav to class="active" if, well, it's active #}
 					<li {% block nav-blog %}{% endblock %}><a href="/blogindex/">Blog</a></li>
 					<li {% block nav-calendar %}{% endblock %}><a href="/calendar/">Calendar</a></li>
+					<li {% block nav-committees %}{% endblock %}><a href="/committees/">Committees</a></li>
 					<li {% block nav-api %}{% endblock %}><a href="/api/">Data/API</a></li>
 					<li {% block nav-faq %}{% endblock %}><a href="/FAQ/">FAQ</a></li>
 					<li {% block nav-about %}{% endblock %}><a href="/about/">About</a></li>
@@ -83,7 +84,7 @@
 				</ul>
 			</nav>
 			<form action="/search-all/" method="get" id="searchform" class="search site">
-				<input class="transparent" type="search" name="q" id="id_q" placeholder="Search...">
+				<input class="transparent" type="search" style="width: 300px;" name="q" id="id_q" placeholder="Search...">
 				<button class="button" type="submit">
 					 <span>Go</span>
 				</button>
