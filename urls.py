@@ -131,7 +131,7 @@ urlpatterns = patterns('',
 #    url(r'^layar/$', 'partytime.publicsite.views.partytime_layar', name='partytime_layar'),
     url(r'^emailalerts/', 'partytime.publicsite.views.email_subscribe'),
 #    url(r'^townhouses/layar/$', 'partytime.publicsite.views.townhouse_layar', name='partytime_townhouse_layar'),
-    url(r'^townhouses/', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite/townhouses.html', 'extra_context': {'timestamp': str(int(time.time())), }, }),
+    url(r'^townhouses/', 'django.views.generic.simple.direct_to_template', {'template': 'publicsite_redesign/townhouses.html', 'extra_context': {'timestamp': str(int(time.time())), }, }),
     url(r'^venue/(?P<venue_id>\d+)/$', 'partytime.publicsite.views.venue_detail', name='partytime_venue_detail'),
     
     ## for redesign testing
