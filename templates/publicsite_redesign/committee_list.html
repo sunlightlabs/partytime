@@ -7,7 +7,7 @@
 {% block title %}Committees - {{ block.super }}{% endblock %}
 
 {% block container %}
-{% captureas share_title %}Find parties by committee{% endcaptureas %}
+{% captureas share_title %}Follow the latest from the political money trail with @SFPartyTime (via @SunFoundation){% endcaptureas %}
 <div class="module nineCol colLt entity">
 		{% if lawmaker.image_available %}<img src="{{ lawmaker.get_image_url }}" alt="{{ lawmaker.title }} {{ lawmaker.name }} ({{ lawmaker.party }}, {{ lawmaker.state }})" class="oneCol colLt">{% endif %}
 		<div class="leg sevenCol colRt">
@@ -19,8 +19,8 @@
 			<div class="share-buttons gigya entity" style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px;" id="share-buttons"
                  data-socialite="auto"
                  data-services="facebook,twitter,googleplus,email"
-                 data-options="showCounts=right&amp;title=Check%20out%20{{ share_title|safe|urlencode }}%20on%20Political%20Party%20Time&amp;description=Follow%20the%20political%20money%20trail%20with%20Sunlight%20Foundation's%20Party%20Time!%20Know%20of%20an%20upcoming%20political%20fundraiser%3F%20Anonymously%20upload%20it%3A%20http%3A%2F%2Fpoliticalpartytime.org%2Fupload%2F&amp;url={{ current_url|urlencode }}"
-                 data-twitter-options="defaultText=Check%20out%20{{ share_title|safe|truncatechars:90|urlencode }}%20on%20%40SunFoundation's%20%40SFPartyTime"></div>
+                 data-options="showCounts=right&amp;title={{ share_title|safe|urlencode }}&amp;description=Follow%20the%20political%20money%20trail%20with%20Sunlight%20Foundation's%20Party%20Time!%20Know%20of%20an%20upcoming%20political%20fundraiser%3F%20Anonymously%20upload%20it%3A%20http%3A%2F%2Fpoliticalpartytime.org%2Fupload%2F&amp;url={{ current_url|urlencode }}"
+                 data-twitter-options="defaultText={{ share_title|safe|truncatechars:140|urlencode }}"></div>
 
 			<div class="clear"></div> 		    
 

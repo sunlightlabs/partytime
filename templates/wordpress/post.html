@@ -1,5 +1,7 @@
 {% load capture truncate %}
 {% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
+{% captureas share_title %}Follow the latest from the political money trail with @SFPartyTime (via @SunFoundation){% endcaptureas %}
+
 <article class="module">
 		<h1 class="h2">
 			{{ post.title }}
@@ -17,7 +19,7 @@
 		    data-socialite="auto"
             data-services="facebook,twitter,googleplus,email"
             data-options="showCounts=right&amp;description={{ description|safe|urlencode }}&amp;title={{ post.title|safe|urlencode }}&amp;url={{ current_url|urlencode }}"
-            data-twitter-options="title=Follow%20the%20political%20money%20trail%2C%20check%20out%20{{ post.title|safe|truncatechars:41|urlencode }}%20on%20%40SunFoundation's%20%40SFPartyTime"></li>
+            data-twitter-options="defaultText={{ share_title|safe|truncatechars:140|urlencode }}"></li>
 		</ul>
 
 		<div class="clear"></div>

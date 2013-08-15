@@ -12,7 +12,7 @@
 <h4>{{ cmte.title }}</h4>
 <h5>({{ page.paginator.count }} parties since {{since_year}})</h5>
 </div>
-<div id="committee_members">
+<div>
 	<p><strong>Committee Members:</strong>
     {% for mem in members %}<a href="{% url partytime_pol_detail mem.crp_id %}">{{mem.name}}</a>{{ mem|committee_position:cmte }}{%if not forloop.last%}, {% endif %}{% endfor %}
 	</p>
