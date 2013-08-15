@@ -1,6 +1,6 @@
 {% load capture truncate %}
 {% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
-{% captureas share_title %}Follow the latest from the political money trail with @SFPartyTime (via @SunFoundation){% endcaptureas %}
+{% captureas share_title %}Follow the latest from the political money trail with @SFPartyTime's blog: {% endcaptureas %}
 
 <article class="module">
 		<h1 class="h2">
