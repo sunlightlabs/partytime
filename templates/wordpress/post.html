@@ -1,6 +1,6 @@
 {% load capture truncate %}
 {% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
-{% captureas share_title %}Follow the latest from the political money trail with @SFPartyTime's blog: {% endcaptureas %}
+{% captureas share_title %}{{ post.title|truncatechars:90|safe }} via @SFpartytime: http://politicalpartytime.org{{ post.get_absolute_url }}{% endcaptureas %}
 
 <article class="module">
 		<h1 class="h2">
@@ -19,7 +19,7 @@
 		    data-socialite="auto"
             data-services="facebook,twitter,googleplus,email"
             data-options="showCounts=right&amp;description={{ description|safe|urlencode }}&amp;title={{ post.title|safe|urlencode }}&amp;url={{ current_url|urlencode }}"
-            data-twitter-options="defaultText={{ share_title|safe|truncatechars:140|urlencode }}"></li>
+            data-twitter-options="defaultText={{ share_title|safe|urlencode }}"></li>
 		</ul>
 
 		<div class="clear"></div>

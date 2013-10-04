@@ -4,11 +4,15 @@
 {% block title %}{{ post.title }} - {{ block.super }}{% endblock %}
 
 {% block opengraph %}
-{% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
-    <meta property="og:title" content="{{ post.title }}">
-    <meta property="og:description" content="{{ description }}">
+
+    <meta property="og:title" content="{{ post.title }}  | Political Party Time">
+    <meta property="og:description" content="{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}">
     <meta property="og:type" content="article">
     <meta property="og:url" content="http://politicalpartytime.org{{ post.get_absolute_url }}">
+    {% endblock %}
+    {# override the image #}
+    {% block og_image %}{% endblock %}
+{% block description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}
 {% endblock %}
 
 {% block mainbar %}

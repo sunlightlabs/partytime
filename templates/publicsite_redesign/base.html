@@ -1,6 +1,8 @@
 {% load cache %}
 {% load static %}
 
+{# the twitter + facebook stuff have been changed back and fourth and back again so many times, they are a mess. I've given up on trying to do this at all logically--whatever system we come up with will probably get revised in another two weeks #}
+
 <!doctype html>
 <html lang="en" class="no-js">
 	<head>
@@ -14,19 +16,13 @@
 		<meta name="verify-v1" content="6wCTSLxTPmX3vPNO5ovaHmojRgfzO1N784f/IVXPmSc=">
 		{#   #}
 		<meta property="og:site_name" content="Sunlight Foundation's Party Time">
+		{% block opengraph %}
 		<meta property="og:title" content="Political Party Time">
-		{# really django? This is a pretty whack way to use the same block twice. #}
-		{% spaceless %}
-		{% with description as og_description %}
-		{% if og_description %}
-		<meta property="og:description" content="{{ og_description }}">
-		{% else %}
 		<meta property="og:description" content="From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.">
-		{% endif %}
-		{% endwith %}
-		{% endspaceless %}
-		<meta property="og:type" content="cause">
-		<meta property="og:image" content="http://assets.politicalpartytime.org/1.0/images/widget_ppt_logo.png">
+    <meta property="og:type" content="cause">
+		{% endblock %}
+
+		{% block og_image %}<meta property="og:image" content="http://assets.politicalpartytime.org/1.0/images/partytime.jpg">{% endblock %}
 		<meta property="fb:admins" content="7812952">
 
 		<link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="/feeds/upcoming/">
@@ -84,7 +80,7 @@
 				</ul>
 			</nav>
 			<form action="/search-all/" method="get" id="searchform" class="search site">
-				<input class="transparent" type="search" style="width: 300px;" name="q" id="id_q" placeholder="Search...">
+				<input class="transparent" type="search" name="q" id="id_q" placeholder="Search...">
 				<button class="button" type="submit">
 					 <span>Go</span>
 				</button>

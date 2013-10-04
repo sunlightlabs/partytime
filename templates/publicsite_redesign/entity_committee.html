@@ -6,6 +6,15 @@
 
 {% block title %}	{{ committee.title }} - {{ block.super }}{% endblock %}
 
+
+{% block opengraph %}
+  <meta property="og:title" content="{{ committee.title }} | Political Party Time">
+  <meta property="og:description" content="From the early hours of the morning until late in the evening, politicians are breaking bread and sipping cocktails with donors. Sunlight’s Party Time lets you know who’s fundraising and where.">
+  <meta property="og:type" content="cause">
+  <meta property="og:url" content="http://politicalpartytime.org{{ committee.get_absolute_url }}">
+  
+{% endblock %}
+
 		
 {% block container %}
 {% captureas share_title %}Follow the latest from the political money trail with @SFPartyTime (via @SunFoundation){% endcaptureas %}

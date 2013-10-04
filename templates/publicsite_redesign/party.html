@@ -3,6 +3,14 @@
 
 {% block title %}{% if doc.entertainment %}{{ doc.entertainment }}{% endif %} {% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }} {% endfor %}{% endif %} - {{ block.super }}{% endblock %}
 
+
+{# omg this is nuts #}
+{% block opengraph %}
+  <meta property="og:title" content="{% if doc.entertainment %}{{ doc.entertainment }}{% endif %}{% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }}{% endfor %}{% endif %} | Political Party Time">
+  <meta property="og:description" content="{% if doc.entertainment %}{{ doc.entertainment }}{% endif %} {% if doc.venue.venue_name %}at {{ doc.venue.venue_name }} {% if doc.venue.venue_address %} - {{ doc.venue.venue_address }}{% endif %}{% endif %}{% if doc.beneficiaries.all  %} for {% for ben in doc.beneficiaries.all %}{{ ben.name }}{% endfor %}{% endif %}">
+  <meta property="og:type" content="cause">
+{% endblock %}
+
 {% block headjs %}<script src="http://www.scribd.com/javascripts/view.js"></script>
 <script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>
 {% endblock %}
