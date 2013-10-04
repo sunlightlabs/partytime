@@ -16,7 +16,6 @@
 
 {% block og_image %}{% if lawmaker.image_available %}<meta property="og:image" content="{{ lawmaker.get_image_url }}">{% else %}<meta property="og:image" content="http://assets.politicalpartytime.org/1.0/images/partytime.jpg">{% endif %}{% endblock %}
 
-{% endif %}
 
 {% block container %}
 {% captureas share_title %}Follow the latest from the political money trail with @SFPartyTime (via @SunFoundation){% endcaptureas %}
