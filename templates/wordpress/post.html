@@ -1,6 +1,6 @@
 {% load capture truncate %}
 {% captureas description %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|striptags|truncatewords:50 }}{% endif %}{% endcaptureas %}
-{% captureas share_title %}{{ post.title|truncatechars:90|safe }} via @SFpartytime: http://politicalpartytime.org{{ post.get_absolute_url }}{% endcaptureas %}
+{% captureas share_title %}{{ post.title|truncatechars:90|safe }} via @SFpartytime{% endcaptureas %}
 
 <article class="module">
 		<h1 class="h2">
