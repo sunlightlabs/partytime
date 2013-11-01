@@ -175,7 +175,7 @@ def yearinpartiesjs():
     today = datetime.date.today()
     year = today.year
     month = today.month
-    next_month = ( month + 1) % 12
+    next_month = month % 12 + 1
     next_year_maybe = year + ( month + 1) / 12 # these are ints so this works.
     startdate = datetime.date(year-1, month, 1)
     enddate = datetime.date(next_year_maybe, next_month, 1)
