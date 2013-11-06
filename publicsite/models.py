@@ -489,8 +489,8 @@ class Event(models.Model):
     contributions_info = models.CharField(blank=True, max_length=255, null=True)
     user_initials = models.CharField(blank=True, max_length=5, null=True)
     data_entry_problems = models.CharField(blank=True, max_length=255, null=True)
-    notes = models.TextField(blank=True)
-
+    notes = models.TextField(blank=True, help_text="Are there any data entry problems or special circumstances that we should be aware of. This field is *not* intended for public consumption, but to track problems producing these pages.")
+    more_details = models.TextField(blank=True, null=True, help_text="Add a description--if you can--of any more details about this fundraiser that are verifiable. Examples: pool reports, tweets, flicker uploads, etc.")
     is_presidential = models.BooleanField(blank=True, default=False)
 
     canceled = models.BooleanField(u'This event has been canceled',
@@ -511,6 +511,7 @@ class Event(models.Model):
     class Meta:
         db_table = u'publicsite_event'
         ordering = ['-start_date']
+
 
     def __unicode__(self):
         if self.entertainment and self.venue:

@@ -2,6 +2,18 @@ from django.contrib import admin
 from publicsite.models import *
 import widgets
 
+from django import forms
+
+
+
+class CkeditorContentField(forms.Textarea):
+
+    def render(self, name, value, attrs=None):
+        if name == 'more_details':
+            attrs['class'] = 'ckeditor'
+        return super(CkeditorContentField, self).render(name, value, attrs)
+
+
 
 class EventAdmin(widgets.AutocompleteModelAdmin):
 
@@ -27,6 +39,11 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
                 ('canceled'),
             )}
         ),
+        ('More details', {
+            'fields': (
+                ('more_details'),
+            )}
+        ),
     ]
 
     related_search_fields = { 
@@ -44,6 +61,13 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 
     date_hierarchy = 'start_date'
 
+
+    formfield_overrides = {
+            models.TextField: {'widget': CkeditorContentField(), },
+            }
+
+    class Media:
+        js = ('http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/ckeditor/ckeditor.js',                )
 
     def add_view(self, request, form_url='', extra_context=None):
         """Remove scribd_url field from add pages.

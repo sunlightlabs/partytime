@@ -137,6 +137,8 @@ width:400px;
 {%ifequal title 'Select event to change'%}<form enctype="multipart/form-data" method="post" action="/accounts/uploadzip/">{% csrf_token %}<label for="file">Upload ZIP file of PDFs</label><input type="file" name="file"><input type="submit"></form>{%endifequal%}
 
     {% block footer %}<div id="footer"></div>{% endblock %}
+    <script type="text/javascript" src="http://widgets.politicalpartytime.org/ckeditor/ckeditor_custom.js"></script>
+    
 </div>
 <!-- END Container -->
 
