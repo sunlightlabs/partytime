@@ -552,7 +552,7 @@ class Event(models.Model):
 
     def event_title(self):
         title = ''
-        if len(self.entertainment) > 2:
+        if self.entertainment and len(self.entertainment) > 2:
             title += self.entertainment
         else:
             title += 'Fundraiser'
