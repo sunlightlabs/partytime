@@ -1265,7 +1265,7 @@ def admin_uploadzip(request):
                 # save the pdf data now
                 newe.save()
                 # 
-                time.sleep(1)
+                time.sleep(10)
                 # now upload the scribd doc
                 newe.upload_to_scribd()
                 # now save it again, this time with the scribd id added.
