@@ -11,7 +11,7 @@
   <meta property="og:type" content="cause">
 {% endblock %}
 
-{% block headjs %}<script src="http://www.scribd.com/javascripts/view.js"></script>
+{% block headjs %}<script type="text/javascript" src='http://www.scribd.com/javascripts/scribd_api.js'></script>
 <script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>
 {% endblock %}
 
@@ -84,10 +84,13 @@
 	<a class="contribute" href="mailto:partytime@sunlightfoundation.com">Suggest edits to event details</a>&nbsp;|&nbsp;<a href="{{doc.scribd_url}}">See invite on Scribd</a>
 	<div class="module inviteDoc sevenCol" id="embedded_doc">
 		<script type="text/javascript">
-	   		var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs{{ doc.pdf_document_link }}', 'pub-43329585085964116591');
+	   		{# comment #}var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs{{ doc.pdf_document_link }}', 'pub-43329585085964116591');
+	   		{# endcomment #}
+	   		var scribd_doc = scribd.Document.getDoc({{doc.scribd_id}}, '4hyu1j0cx5geo5wk8xyq1');
 	   		scribd_doc.addParam("height", 700);
 	   		scribd_doc.addParam("width", 530);
-			scribd_doc.addParam("public", false);
+			  scribd_doc.addParam("public", false);
+			  scribd_doc.addParam('jsapi_version', 2);
 	   		scribd_doc.write('embedded_doc');
 		</script>
 	</div>
