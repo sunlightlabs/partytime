@@ -16,10 +16,10 @@ class CkeditorContentField(forms.Textarea):
 
 
 class EventAdmin(widgets.AutocompleteModelAdmin):
-
+    #readonly_fields = ('scribd_id',)
     fieldsets = [
         (None, {
-            'fields': (('start_date', 'start_time'), ('end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link')
+            'fields': (('start_date', 'start_time'), ('end_date', 'end_time'), 'entertainment', 'venue',  'pdf_document_link', 'scribd_id')
         }),
         (None, {
             'fields': ('hosts', 'beneficiaries', 'is_presidential', 'other_members')

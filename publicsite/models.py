@@ -503,7 +503,7 @@ class Event(models.Model):
     scribd_upload = models.BooleanField(u'Upload PDF to Scribd',
                                         blank=True,
                                         default=True)
-    scribd_id = models.IntegerField()
+    scribd_id = models.IntegerField(help_text="don't change this unless you're sure!")
     scribd_url = models.URLField(u'Scribd URL', verify_exists=False, blank=True)
 
     added = models.DateTimeField(u'The date and time this event was added', auto_now_add=True)

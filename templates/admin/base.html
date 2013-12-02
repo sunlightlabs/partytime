@@ -9,18 +9,21 @@
 window.__admin_media_prefix__ = "{% filter escapejs %}{% admin_media_prefix %}{% endfilter %}";
 </script>
 {%ifequal title 'Change event'%}
-<script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
+<script type="text/javascript" src='http://www.scribd.com/javascripts/scribd_api.js'></script>
 <script type="text/javascript">
-function showPDF(url) {
-	   		var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs'+url, 'pub-43329585085964116591');
+function showPDF(scribd_id) {
+	   		//var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs'+url, 'pub-43329585085964116591');
+	   		var scribd_doc = scribd.Document.getDoc(scribd_id, '4hyu1j0cx5geo5wk8xyq1');
 	   		scribd_doc.addParam("height", 740);
 	   		scribd_doc.addParam("width", 540);
 			scribd_doc.addParam("public", false);
+			scribd_doc.addParam('jsapi_version', 2);
+		  
 	   		scribd_doc.write('embedded_doc');
 }
 function tryPDF() {
-    if (document.getElementById('id_pdf_document_link') && document.getElementById('id_pdf_document_link').value!='') {
-        showPDF(document.getElementById('id_pdf_document_link').value);
+    if (document.getElementById('id_scribd_id') && document.getElementById('id_scribd_id').value!='') {
+        showPDF(document.getElementById('id_scribd_id').value);
     }
 }
 function untrash() {
