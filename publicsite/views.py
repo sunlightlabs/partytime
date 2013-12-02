@@ -1262,6 +1262,11 @@ def admin_uploadzip(request):
                 destination.write(zfile.read(zfname))
                 destination.close()
                 newe.pdf_document_link = '/' + dirpath + watermarked_pdf_filename
+                # save the pdf data now
+                newe.save()
+                # now upload the scribd doc
+                newe.upload_to_scribd()
+                # now save it again, this time with the scribd id added.
                 newe.save()
 
                 filepath = syspath + dirpath + localfilename
