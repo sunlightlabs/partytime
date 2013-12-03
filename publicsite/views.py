@@ -1265,11 +1265,6 @@ def admin_uploadzip(request):
                 # save the pdf data now
                 newe.save()
                 # 
-                time.sleep(10)
-                # now upload the scribd doc
-                newe.upload_to_scribd()
-                # now save it again, this time with the scribd id added.
-                newe.save()
 
                 filepath = syspath + dirpath + localfilename
                 watermarked_filepath = syspath + dirpath + watermarked_pdf_filename
@@ -1277,6 +1272,13 @@ def admin_uploadzip(request):
                     watermarker(filepath, watermarked_filepath)
                 except: # Just in case the watermarking doesn't work.
                     shutil.copyfile(filepath, watermarked_filepath)
+                    
+                
+                time.sleep(0.3)
+                # now upload the scribd doc
+                newe.upload_to_scribd()
+                # now save it again, this time with the scribd id added.
+                newe.save()
 
         return HttpResponseRedirect('/admin/publicsite/event/')
     else:
