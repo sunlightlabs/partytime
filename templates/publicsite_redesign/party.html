@@ -84,14 +84,19 @@
 	<a class="contribute" href="mailto:partytime@sunlightfoundation.com">Suggest edits to event details</a>&nbsp;|&nbsp;<a href="{{doc.scribd_url}}">See invite on Scribd</a>
 	<div class="module inviteDoc sevenCol" id="embedded_doc">
 		<script type="text/javascript">
-	   		{# comment #}var scribd_doc = scribd.Document.getDocFromUrl('http://files.politicalpartytime.org/pdfs{{ doc.pdf_document_link }}', 'pub-43329585085964116591');
-	   		{# endcomment #}
 	   		var scribd_doc = scribd.Document.getDoc({{doc.scribd_id}}, '4hyu1j0cx5geo5wk8xyq1');
 	   		scribd_doc.addParam("height", 700);
 	   		scribd_doc.addParam("width", 530);
 			  scribd_doc.addParam("public", false);
 			  scribd_doc.addParam('jsapi_version', 2);
 	   		scribd_doc.write('embedded_doc');
+	   		
+	   		var onDocReady = function(e){
+            scribd_doc.api.setZoom(0.5);
+          }
+        scribd_doc.addEventListener('docReady', onDocReady);
+
+
 		</script>
 	</div>
 	
