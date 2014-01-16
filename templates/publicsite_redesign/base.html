@@ -32,7 +32,7 @@
 
 		{% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
-		<link rel="stylesheet" href="{% get_static_prefix %}css/donorbanner.css" type="text/css" />
+		{% comment %}<link rel="stylesheet" href="{% get_static_prefix %}css/donorbanner.css" type="text/css" />{% endcomment %}
 
 		{% block css %}{% endblock %}
 
@@ -60,6 +60,7 @@
 		<![endif]-->
 	</head>
 	<body class="{% block bodyclass %}home{% endblock %}">
+	  {% comment %}
 	   <!-- donor banner start -->
       <div id="donor_banner" class="minimize-donorbanner">
           <div class="donorcontainer">
@@ -86,6 +87,7 @@
           </div>
       </div>
       <!-- donor banner end -->
+      {% endcomment %}
 		<header id="mainHeader" class="clearfix">
 			<a href="/">
 				<h1 class="textReplace">
