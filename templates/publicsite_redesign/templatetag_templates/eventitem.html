@@ -1,5 +1,5 @@
 <li>
-	<time pubdate=""><span class="month">{{ event.start_date|date:"N" }}</span><span class="day">{{ event.start_date|date:"d" }}</span></time>
+	<time pubdate=""><span class="month">{{ event.start_date|date:"M" }}</span><span class="day">{{ event.start_date|date:"d" }}</span></time>
 	<div class="eventData">
 		<span class="type">{{ event.truncated_name }}</span>
 		{% if event.beneficiaries %}{% if new_window %}<h3{% else %}<h5{% endif %} class="beneficiary">
