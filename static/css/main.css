@@ -373,7 +373,7 @@ li.active a { color: #c92500; }
   width: 104px;
 }
 #searchform input {
-  width: 320px;
+  width: 240px;
   border-bottom: 2px solid white;
   padding-top: 10px; border: 0;
   border-bottom: 2px solid #84c7c6;
@@ -1512,15 +1512,20 @@ a.branding-bar_trigger {
   width: 160px;
   vertical-align: middle; }
 
-.bb_wrapper input.bb_input {
+.bb_wrapper .bb_input {
   background: #fff;
 }
-.bb_wrapper button.bb_submit, .bb_wrapper button.bb_submit:active {
+.bb_wrapper button.bb_submit, .bb_wrapper button.bb_submit:active, #bb_close-panel {
   -webkit-box-shadow: none;
   box-shadow: none;
   text-shadow: none;
 }
-
+li.getinvolved a {
+  color: #791A1A;
+}
+li.getinvolved a:hover {
+  color: #c92500;
+}
 
 
 

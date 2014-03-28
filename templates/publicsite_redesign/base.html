@@ -28,7 +28,7 @@
 		<link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="/feeds/upcoming/">
 		<link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="/feeds/recent/">
 		<link rel="shortcut icon" href="{% get_static_prefix %}images/favicon.ico">
-		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.2/css/brandingbar.css">
+		
 		<link rel="stylesheet" href="https://sf-icons.s3.amazonaws.com/css/sf-icons.css">
 		<!--[if IE 8]>
 		    <script src="https://sf-icons.s3.amazonaws.com/js/sf-icons.js"></script>
@@ -37,7 +37,7 @@
 		{% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
 		{% comment %}<link rel="stylesheet" href="{% get_static_prefix %}css/donorbanner.css" type="text/css" />{% endcomment %}
-
+		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.2/css/brandingbar.css">
 		{% block css %}{% endblock %}
 
 	<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
@@ -128,6 +128,7 @@
 					<li {% block nav-faq %}{% endblock %}><a href="/FAQ/">FAQ</a></li>
 					<li {% block nav-about %}{% endblock %}><a href="/about/">About</a></li>
 					<li {% block nav-contact %}{% endblock %}><a href="/contact/">Contact</a></li>
+					<li class="getinvolved"><a href="http://sunlightfoundation.com/join/">Get Involved</a></li>
 				</ul>
 			</nav>
 			<form action="/search-all/" method="get" id="searchform" class="search site">
