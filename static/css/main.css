@@ -1449,6 +1449,9 @@ img.alignleft{
 .gigya.home{
   margin: 0 auto;
 }
+.share-buttons .facebook-like {
+  margin-top: -6px;
+}
 
 
 /* branding bar */
