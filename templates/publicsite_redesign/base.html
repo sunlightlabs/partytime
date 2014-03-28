@@ -4,7 +4,7 @@
 {# the twitter + facebook stuff have been changed back and fourth and back again so many times, they are a mess. I've given up on trying to do this at all logically--whatever system we come up with will probably get revised in another two weeks #}
 
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js bb_wrapper">
 	<head>
 		<meta charset="utf-8">
 
@@ -28,7 +28,11 @@
 		<link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="/feeds/upcoming/">
 		<link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="/feeds/recent/">
 		<link rel="shortcut icon" href="{% get_static_prefix %}images/favicon.ico">
-
+		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.2/css/brandingbar.css">
+		<link rel="stylesheet" href="https://sf-icons.s3.amazonaws.com/css/sf-icons.css">
+		<!--[if IE 8]>
+		    <script src="https://sf-icons.s3.amazonaws.com/js/sf-icons.js"></script>
+		<![endif]-->
 
 		{% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
@@ -88,14 +92,31 @@
       </div>
       <!-- donor banner end -->
       {% endcomment %}
+  	<div class="another-brand-bar-class" data-bb-brandingbar="true" data-bb-property-id="sunlightlabs-awesome">
+			<div class="branding-bar_container">
+			    <div class="branding-bar_links">
+
+			        <!-- Social Media Icons -->
+			        <a class="social" href="https://www.facebook.com/sunlightfoundation"><span class="icon icon-facebook"></span></a>
+			        <a class="social" href="https://twitter.com/sunfoundation"><span class="icon icon-twitter"></span></a>
+			        <a class="social" href="https://plus.google.com/+sunlightfoundation"><span class="icon icon-google-plus"></span></a>
+
+			        <!-- Branding Bar Toggle -->
+			        <a class="branding-bar_trigger" data-bb-toggle=".bb_wrapper" href="http://sunlightfoundation.com/about/">About Sunlight Foundation</a>
+			    </div>
+
+			    <!-- Sunlight Logo -->
+			    <div class="branding-bar_logo">
+			        <span class="branding-bar_productof">a product of </span>
+			        <a class="branding-bar_sunlight-logo" href="http://www.sunlightfoundation.com">Sunlight Foundation</a>
+			    </div>
+			</div>
+		</div>
 		<header id="mainHeader" class="clearfix">
 			<a href="/">
 				<h1 class="textReplace">
 					Political Party Time
 				</h1>
-			</a>
-			<a href="http://sunlightfoundation.com/" class="sunlightMini textReplace">
-				Sunlight Foundation
 			</a>
 			<nav class="clear">
 				<ul>
@@ -172,7 +193,7 @@
 
 
 {% block filler %}{% endblock %}
-
+		<script src="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.2/js/brandingbar.min.js.gz"></script>
 		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-1.7.2.min.js"></script>
     
 		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-placehold.min.js"></script>

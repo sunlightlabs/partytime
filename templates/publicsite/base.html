@@ -3,7 +3,7 @@
 {% load partytime %}
 
 <!DOCTYPE html>
-<html>
+<html class="bb_wrapper">
 	<head>
 	    
 	    <meta charset="utf-8">
@@ -33,7 +33,12 @@
         <link rel="alternate" type="application/rss+xml" title="Party Time Upcoming Events" href="{% url partytime_feeds 'upcoming' %}">
         <link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="{% url partytime_feeds 'recent' %}">
 		<link rel="shortcut icon" href="{% media_url "images/favicon.ico" %}">
-		
+		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/:version/css/brandingbar.css">
+		<link rel="stylesheet" href="https://sf-icons.s3.amazonaws.com/css/sf-icons.css">
+		<!--[if IE 8]>
+		    <script src="https://sf-icons.s3.amazonaws.com/js/sf-icons.js"></script>
+		<![endif]-->
+
 		<script src="http://www.scribd.com/javascripts/view.js"></script>
 		<script type="text/javascript">
     		function toggleLayer(whichLayer) {
@@ -178,7 +183,8 @@
 		</div>
 		
 		{% block js %}{% endblock %}
-		
+		<script src="https://sunlight-cdn.s3.amazonaws.com/brandingbar/:version/js/brandingbar.min.js.gz"></script>
+
         <script src="http://services.sunlightlabs.com/brandingbar/hat_js/sunlightlabs/" type="text/javascript"></script> 
 		<script type="text/javascript">
 			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

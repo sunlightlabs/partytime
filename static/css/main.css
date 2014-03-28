@@ -13,7 +13,6 @@ body { margin: 0; font-size: 1em; line-height: 1.4; }
 ::selection { background: #5ad4d2; color: #fff; text-shadow: none; }
 
 a { color: #00e; }
-a:visited { color: #551a8b; }
 a:hover { color: #06e; }
 a:focus { outline: thin dotted; }
 a:hover, a:active { outline: 0; }
@@ -174,7 +173,7 @@ body {
 .colRt.wSide{
   padding-left: 19px;
 }
-a:link, a:visited{
+a {
   color: #d62c00;
 }
 a:hover, a:active{
@@ -333,7 +332,7 @@ a.twitter, span.twitter{
 
 #searchform { float: right; width: ; margin-top: 12px ; padding: 0; background: none; border: 0;}
 header { }
-header h1 { background: url(../images/logo.png) top left no-repeat; width: 658px; height: 178px; margin: 44px 0 0 0; float: left;}
+header h1 { background: url(../images/logo.png) top left no-repeat; width: 658px; height: 178px; margin: 0; float: left;}
 nav { font-family: "droid-sans", sans-serif; text-transform: uppercase; font-size: 95%; font-weight: bold;}
 nav li { float: left; margin-right: 25px; margin-top: 22px; }
 nav a{ text-decoration: none;}
@@ -1450,6 +1449,86 @@ img.alignleft{
 .gigya.home{
   margin: 0 auto;
 }
+
+
+/* branding bar */
+
+.branding-bar_container {
+  height: 45px;
+  width: 960px;
+  margin: 0 auto; 
+}
+  .branding-bar_container a {
+    color: #FFB6A5;
+  }
+  .branding-bar_container a.social {
+    text-decoration: none; }
+    .branding-bar_container a.social .icon {
+      color: #FFB6A5;
+      font-size: 16px;
+      margin-right: 10px;
+      -webkit-transition: color 200ms ease-out;
+      transition: color 200ms ease-out; }
+    .branding-bar_container a.social .icon-facebook:hover {
+      color: #3b5998; }
+    .branding-bar_container a.social .icon-twitter:hover {
+      color: #00aced; }
+    .branding-bar_container a.social .icon-google-plus:hover {
+      color: #fff; }
+
+.branding-bar_links {
+  float: left;
+  line-height: 40px; }
+
+a.branding-bar_trigger {
+  color: #FCE4DF;
+  cursor: pointer;
+  font-family: 'franklin-gothic-urw', helvetica, arial, sans-serif;
+  font-size: 13px;
+  text-decoration: none; }
+  .branding-bar_trigger:hover {
+    color: #fff; }
+
+.branding-bar_logo {
+  float: right;
+  line-height: 35px; }
+
+.branding-bar_productof {
+  color: #F4C4B9;
+  font-family: 'Georgia';
+  font-size: 11px;
+  font-style: italic;
+  margin-right: 2px;
+  text-rendering: optimizeLegibility; }
+
+.branding-bar_sunlight-logo {
+  background: url('../images/sunlight-logo.png') no-repeat 50% 50%;
+  -webkit-background-size: 100% 100%;
+  background-size: 100% 100%;
+  color: transparent;
+  display: inline-block;
+  font-size: 0;
+  height: 30px;
+  width: 160px;
+  vertical-align: middle; }
+
+.bb_wrapper input.bb_input {
+  background: #fff;
+}
+.bb_wrapper button.bb_submit, .bb_wrapper button.bb_submit:active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+
+
+
+
+
+
+
+
 
 
 
