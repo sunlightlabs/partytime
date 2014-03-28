@@ -8,15 +8,14 @@ python-sunlightapi
 Django==1.3
 django-debug-toolbar==0.8.3
 -e svn+http://django-ajax-selects.googlecode.com/svn/trunk/#egg=ajax-select
--e hg+http://bitbucket.org/ubernostrum/django-contact-form/#egg=django-contact-form
+-e hg+http://bitbucket.org/ubernostrum/django-contact-form/@1d3791fa4dfbb2375ba0d27e62283380c0ec74e6#egg=django_contact_form-dev
 -e git://github.com/sunlightlabs/django-layar.git#egg=django-layar
 
 boto
 slimmer
 -e git://github.com/sunlightlabs/django-mediasync.git#egg=mediasync
 
--e git://github.com/sunlightlabs/django-wordpress.git#egg=wordpress
-
+-e git://github.com/sunlightlabs/django-wordpress.git@ff6798a7136a0f8a602231f35e3dde43efd66fea#egg=django_wordpress-dev
 -e git://github.com/themartorana/python-postmark.git#egg=postmark
 
 http://python-scribd.googlecode.com/files/python-scribd-1.1.0.tar.gz
@@ -24,5 +23,6 @@ http://python-scribd.googlecode.com/files/python-scribd-1.1.0.tar.gz
 gunicorn
 # for xml output in api
 lxml
-django-tastypie
+# later versions of tastypie have a problem w/ django 1.3 w/r/t importing smart_bytes
+django-tastypie==0.9.11
 -e git://github.com/sunlightlabs/django-locksmith.git#egg=locksmith
