@@ -25,4 +25,4 @@ gunicorn
 lxml
 # later versions of tastypie have a problem w/ django 1.3 w/r/t importing smart_bytes
 django-tastypie==0.9.11
--e git://github.com/sunlightlabs/django-locksmith.git#egg=locksmith
+django-locksmith==0.8.0
