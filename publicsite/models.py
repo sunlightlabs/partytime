@@ -611,7 +611,7 @@ class Event(models.Model):
         # TODO: The document should be added to the Political Party Time collection
         # The API to do so seems broken as of 2012-08-17
         
-        #self.upload_to_scribd = True
+        self.scribd_upload = True
         self.scribd_id = doc.id
         self.scribd_url = doc.get_scribd_url()
 
@@ -638,7 +638,7 @@ class Event(models.Model):
         doc.delete()
 
         self.scribd_id = 0
-        self.upload_to_scribd = False
+        self.scribd_upload = False
         self.scribd_url = ''
 
 
