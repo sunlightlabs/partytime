@@ -536,8 +536,10 @@ class Event(models.Model):
         if self.scribd_upload and not self.status:
             self.upload_to_scribd()
         elif self.scribd_upload is not True and self.scribd_id:
-            self.delete_from_scribd()
-
+            # Why would we want to erase this from scribd? It seems like this caused loss of data.
+            # self.delete_from_scribd()
+            pass
+            
         super(Event, self).save()
 
     @models.permalink
@@ -608,7 +610,8 @@ class Event(models.Model):
 
         # TODO: The document should be added to the Political Party Time collection
         # The API to do so seems broken as of 2012-08-17
-
+        
+        #self.upload_to_scribd = True
         self.scribd_id = doc.id
         self.scribd_url = doc.get_scribd_url()
 
