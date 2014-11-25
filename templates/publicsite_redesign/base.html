@@ -29,15 +29,15 @@
 		<link rel="alternate" type="application/rss+xml" title="Party Time Recent Events" href="/feeds/recent/">
 		<link rel="shortcut icon" href="{% get_static_prefix %}images/favicon.ico">
 
-		<link rel="stylesheet" href="https://sf-icons.s3.amazonaws.com/css/sf-icons.css">
+		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/sf-icons/0.2/css/sf-icons.css">
 		<!--[if IE 8]>
-		    <script src="https://sf-icons.s3.amazonaws.com/js/sf-icons.js"></script>
+		    <script src="https://sunlight-cdn.s3.amazonaws.com/sf-icons/0.2/js/sf-icons.js"></script>
 		<![endif]-->
 
 		{% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
 		{% comment %}<link rel="stylesheet" href="{% get_static_prefix %}css/donorbanner.css" type="text/css" />{% endcomment %}
-		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.2/css/brandingbar.css">
+		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.3/css/brandingbar.css">
 		{% block css %}{% endblock %}
 
 	<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
@@ -63,42 +63,15 @@
 		<![endif]-->
 	</head>
 	<body class="{% block bodyclass %}home{% endblock %}">
-	  {% comment %}
-	   <!-- donor banner start -->
-      <div id="donor_banner" class="minimize-donorbanner">
-          <div class="donorcontainer">
-              <div class="bubble">
-                  <button value="play" href="" class="notnow toggleButton">Not now</button>
-              </div>
-              <a class="sf_logo" href="http://sunlightfoundation.com">Sunlight Foundation</a>
-              <p class="because quote">
-              &ldquo;Since I began working at Sunlight six years ago, I've seen us evolve from a small non-profit working to expose money in politics to a global leader in the transparency movement. I'm thrilled to be working everyday to help define accountability and create a more open, inclusive democracy.&rdquo;
-              <span class="attribution">&mdash; <em>John Wonderlich</em></span>
-          </p>
-              <div class="donationplea">
-                  <h2>
-                      <span class="line1">We depend </span>
-                      <span class="line2">on the generosity</span>
-                      <span class="line3">of our supporters</span>
-                  </h2>
-                  <p>
-                      <em>Take a stand for transparency.</em>
-                      </br>Donate to the Sunlight Foundation today.
-                  </p>
-                  <a class="btn donor" href="https://services.myngp.com/ngponlineservices/contribution.aspx?X=6Sey3Vcf4GELiolqJPhr4VOlgLAyLJtvF6XGP%2baQiXU%3d">Donate</a>
-              </div>
-          </div>
-      </div>
-      <!-- donor banner end -->
-      {% endcomment %}
-  	<div class="another-brand-bar-class" data-bb-brandingbar="true" data-bb-property-id="sunlightlabs-awesome">
+  	<div class="branding-bar" data-bb-brandingbar="true">
 			<div class="branding-bar_container">
 			    <div class="branding-bar_links">
 
 			        <!-- Social Media Icons -->
-			        <a class="social" href="https://www.facebook.com/sunlightfoundation"><span class="icon icon-facebook"></span></a>
-			        <a class="social" href="https://twitter.com/sunfoundation"><span class="icon icon-twitter"></span></a>
-			        <a class="social" href="https://plus.google.com/+sunlightfoundation"><span class="icon icon-google-plus"></span></a>
+							        <a class="social" href="https://www.facebook.com/sunlightfoundation"><span class="sficon-facebook"></span></a>
+							        <a class="social" href="https://twitter.com/sunfoundation"><span class="sficon-twitter"></span></a>
+							        <a class="social" href="https://plus.google.com/+sunlightfoundation"><span class="sficon-google-plus"></span></a>
+							
 
 			        <!-- Branding Bar Toggle -->
 			        <a class="branding-bar_trigger" data-bb-toggle=".bb_wrapper" href="http://sunlightfoundation.com/about/">About Sunlight Foundation</a>
@@ -110,6 +83,7 @@
 			        <a class="branding-bar_sunlight-logo" href="http://www.sunlightfoundation.com">Sunlight Foundation</a>
 			    </div>
 			</div>
+			
 		</div>
 		<header id="mainHeader" class="clearfix">
 			<a href="/">
@@ -192,7 +166,7 @@
 
 
 {% block filler %}{% endblock %}
-		<script src="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.2/js/brandingbar.min.js.gz"></script>
+		<script src="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.3/js/brandingbar.min.js.gz"></script>
 		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-1.7.2.min.js"></script>
 
 		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-placehold.min.js"></script>
