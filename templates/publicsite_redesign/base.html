@@ -37,7 +37,7 @@
 		{% block head %}{% endblock %}
 		<link rel="stylesheet" href="{% get_static_prefix %}css/main.css" type="text/css" />
 		{% comment %}<link rel="stylesheet" href="{% get_static_prefix %}css/donorbanner.css" type="text/css" />{% endcomment %}
-		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.3/css/brandingbar.css">
+		<link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.4/css/brandingbar.css">
 		{% block css %}{% endblock %}
 
 	<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
@@ -63,27 +63,8 @@
 		<![endif]-->
 	</head>
 	<body class="{% block bodyclass %}home{% endblock %}">
-  	<div class="branding-bar" data-bb-brandingbar="true">
-			<div class="branding-bar_container">
-			    <div class="branding-bar_links">
-
-			        <!-- Social Media Icons -->
-			        <a class="social" href="https://www.facebook.com/sunlightfoundation"><span class="icon icon-facebook"></span></a>
-			        <a class="social" href="https://twitter.com/sunfoundation"><span class="icon icon-twitter"></span></a>
-			        <a class="social" href="https://plus.google.com/+sunlightfoundation"><span class="icon icon-google-plus"></span></a>
-
-			        <!-- Branding Bar Toggle -->
-			        <a class="branding-bar_trigger" data-bb-toggle=".bb_wrapper" href="http://sunlightfoundation.com/about/">About Sunlight Foundation</a>
-			    </div>
-
-			    <!-- Sunlight Logo -->
-			    <div class="branding-bar_logo">
-			        <span class="branding-bar_productof">a product of </span>
-			        <a class="branding-bar_sunlight-logo" href="http://www.sunlightfoundation.com">Sunlight Foundation</a>
-			    </div>
-			</div>
+  	<div class="branding-bar" data-bb-brandingbar="true" data-bb-property-id="partytime"></div>
 			
-		</div>
 		<header id="mainHeader" class="clearfix">
 			<a href="/">
 				<h1 class="textReplace">
@@ -165,7 +146,7 @@
 
 
 {% block filler %}{% endblock %}
-		<script src="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.3/js/brandingbar.min.js.gz"></script>
+		<script src="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.4/js/brandingbar.min.js.gz"></script>
 		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-1.7.2.min.js"></script>
 
 		<script type="text/javascript" src="{% get_static_prefix %}js/jquery-placehold.min.js"></script>
