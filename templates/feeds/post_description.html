@@ -1,0 +1,10 @@
+<h1 class="h2">
+	{{ obj.title }}
+</h1>
+<div class="entryMetaData">
+	<address class="author">{{obj.author.display_name }}</address>
+	<time datetime="{{ post.post_date|date:"c"}}" class="published" pubdate="">
+	{{ obj.post_date|date:"F j, Y, P" }}
+	</time>
+</div>
+{{ obj.content|safe|linebreaks }}

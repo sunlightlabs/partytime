@@ -25,6 +25,7 @@ feeds = {
     'pol': PolFeed,
     'newlyadded':NewFeed,
     'presidential':PresidentFeed,
+    'blog':BlogFeed,
 }
 # need to add presidential to feeds
 

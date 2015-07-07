@@ -6,6 +6,8 @@ import datetime
 from django.http import Http404, HttpResponse
 import vobject
 from django.db.models import Q
+from wordpress.models import Post
+
 
 EVENT_ITEMS = (
     ('uid', 'uid'),
@@ -80,6 +82,19 @@ class IcalFeed(object):
                 summaryStr = summaryStr+unicode(str(beneficiary), errors='ignore')
         summaryStr = summaryStr.replace('&','')
         return summaryStr
+
+class BlogFeed(Feed):
+    title = "Party Time Blog Feed"
+    link = "/feeds/blog/"
+    title_template = "feeds/post_title.html"
+    description_template = "feeds/post_description.html"
+    
+    def items(self):
+        return Post.objects.published().select_related()[:5]
+    
+    def item_link(self, item):
+        return item.get_absolute_url()
+        
 
 class RecentFeed(Feed):
     title = "Party Time Recent Parties"
