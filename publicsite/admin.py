@@ -57,7 +57,7 @@ class EventAdmin(widgets.AutocompleteModelAdmin):
 
     list_filter = ('status', 'start_date', 'canceled', 'postponed', )
 
-    search_fields = ['venue__venue_name', 'beneficiaries__name', ]
+    search_fields = ['venue__venue_name', 'beneficiaries__name', 'hosts__name', 'beneficiaries__name']
 
     date_hierarchy = 'start_date'
 
@@ -114,9 +114,9 @@ class VenueAdmin(admin.ModelAdmin):
             ),
     )
 
-    list_display = ('venue_name', 'city', 'state', )
+    list_display = ('venue_name', 'address1', 'city', 'state', )
 
-    search_fields = ['venue_name', ]
+    search_fields = ['venue_name', 'address1']
 
 
 class HostAdmin(admin.ModelAdmin):
@@ -124,7 +124,7 @@ class HostAdmin(admin.ModelAdmin):
 
 
 class LawmakerAdmin(admin.ModelAdmin):
-    search_fields = ['name', ]
+    search_fields = ['title','name','crp_id', 'affiliate' ]
 
 
 class CookRatingAdmin(admin.ModelAdmin):
