@@ -1195,6 +1195,7 @@ def supercommittee(request):
 # Marked as temporary in urls.py; not sure if this is still being used.
 def updatecmtes(request,chamber):
     from sunlightapi import sunlight, SunlightApiError
+    # TODO: Remove hardcoded API key!
     sunlight.apikey = '***REMOVED***'
     newnames=''
     Cmtes = sunlight.committees.getList(chamber)
