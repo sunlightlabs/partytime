@@ -8,6 +8,7 @@ from django.core.management.base import NoArgsCommand
 from publicsite.models import *
 
 from sunlightapi import sunlight
+# TODO: don't hardcode the api key!
 sunlight.apikey = '***REMOVED***'
 
 

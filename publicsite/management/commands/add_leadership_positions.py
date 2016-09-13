@@ -4,6 +4,7 @@ from django.db.models import Q
 from publicsite.models import Lawmaker, LeadershipPosition
 
 from sunlightapi import sunlight
+#TODO : don't hardcode the apikey!
 sunlight.apikey = '***REMOVED***'
 
 

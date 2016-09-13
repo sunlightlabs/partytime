@@ -9,7 +9,7 @@ from publicsite.models import Lawmaker, Committee, CommitteeMembership
 
 from votesmart import votesmart
 
-
+# TODO: don't hardcode the api key!
 votesmart.apikey = '***REMOVED***'
 
 

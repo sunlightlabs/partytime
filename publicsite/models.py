@@ -19,6 +19,7 @@ import postmark
 from settings import SCRIBD_KEY, SCRIBD_SECRET
 
 from sunlightapi import sunlight, SunlightApiError
+#TODO: don't hardcode the api key!
 sunlight.apikey = '***REMOVED***'
 
 state_dict = dict(US_STATES)

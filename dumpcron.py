@@ -4,6 +4,7 @@ def main():
     import MySQLdb
 
     # connect
+    # TODO: don't hardcode the database credentials!
     db = MySQLdb.connect(host="politicalpartytime.org", user="partytime", passwd="***REMOVED***",db="partytime")
 
     # create a cursor
